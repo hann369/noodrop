@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noodrop - Nootropics Library</title>
+  
+  <!-- Tabular Font -->
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+  
+  <!-- Heroicons -->
+  <script src="https://unpkg.com/heroicons@1.0.1/outline/index.min.js"></script>
+  
+  <!-- Particles.js -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  
+  <style>
+    :root {
+      --cream: #e8d8c9;
+      --slate: #4b607f;
+      --orange: #f3701e;
+      --white: #ffffff;
+      --off-white: #fdfdfd;
+      --glow-cream: rgba(232, 216, 201, 0.3);
+      --glow-orange: rgba(243, 112, 30, 0.2);
+      --glow-slate: rgba(75, 96, 127, 0.1);
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      
+      /* Dark mode variables */
+      --dark-bg: #0a0e17;
+      --dark-text: #e0e0e0;
+      --dark-card-bg: rgba(30, 35, 50, 0.7);
+      --dark-border: #2a3345;
+    }
+
+    body {
+      font-family: 'Tabular', sans-serif;
+      background: var(--white);
+      color: #333;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--cream);
+      transition: border-color 0.3s;
+    }
+
+    body.dark-mode header {
+      border-bottom: 1px solid var(--dark-border);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--slate);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .logo {
+      color: var(--dark-text);
+    }
+
+    .logo svg {
+      width: 32px;
+      height: 32px;
+      color: var(--orange);
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--slate);
+      margin-left: 1.5rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    body.dark-mode nav a {
+      color: var(--dark-text);
+    }
+
+    nav a:hover {
+      color: var(--orange);
+    }
+
+    nav a.active {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    /* Auth Button */
+    #authBtn {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode #authBtn {
+      background: #d45d14;
+    }
+
+    #authBtn:hover {
+      background: #e2661a;
+      transform: translateY(-2px);
+    }
+
+    /* Glass Toggle */
+    .toggle-wrapper {
+      position: relative;
+    }
+
+    .glass-toggle {
+      width: 60px;
+      height: 30px;
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(180, 180, 180, 0.3);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 4px 12px rgba(0,0,0,0.05),
+        inset 0 2px 4px rgba(255,255,255,0.8);
+    }
+
+    body.dark-mode .glass-toggle {
+      background: rgba(30, 35, 50, 0.6);
+      border: 1px solid rgba(80, 90, 120, 0.3);
+      box-shadow: 
+        0 4px 12px rgba(0,0,0,0.2),
+        inset 0 2px 4px rgba(30, 35, 50, 0.8);
+    }
+
+    .toggle-circle {
+      width: 26px;
+      height: 26px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    body.dark-mode .toggle-circle {
+      background: #4a90e2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .glass-toggle.active {
+      background: rgba(243, 112, 30, 0.2);
+      border-color: rgba(243, 112, 30, 0.3);
+    }
+
+    body.dark-mode .glass-toggle.active {
+      background: rgba(74, 144, 226, 0.2);
+      border-color: rgba(74, 144, 226, 0.3);
+    }
+
+    .glass-toggle.active .toggle-circle {
+      transform: translateX(30px);
+      background: var(--orange);
+    }
+
+    body.dark-mode .glass-toggle.active .toggle-circle {
+      background: #4a90e2;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+      margin: 2rem 0;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px var(--glow-cream);
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    body.dark-mode .hero h1 {
+      color: var(--dark-text);
+      text-shadow: 0 2px 4px rgba(74, 144, 226, 0.3);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--slate);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .hero p {
+      color: var(--dark-text);
+    }
+
+    .cta-button {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(243, 112, 30, 0.3);
+    }
+
+    body.dark-mode .cta-button {
+      background: #d45d14;
+      box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(243, 112, 30, 0.4);
+    }
+
+    body.dark-mode .cta-button:hover {
+      box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
+    }
+
+    /* Search */
+    .search-container {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      position: relative;
+    }
+
+    #search {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      border: 1px solid var(--cream);
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.8);
+      font-family: 'Tabular', sans-serif;
+      font-size: 1rem;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode #search {
+      background: rgba(30, 35, 50, 0.8);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    #search:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    body.dark-mode #search:focus {
+      border-color: #4a90e2;
+    }
+
+    /* Category Filters */
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+
+    .category-btn {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid var(--cream);
+      border-radius: 50px;
+      padding: 0.5rem 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      color: var(--slate);
+    }
+
+    body.dark-mode .category-btn {
+      background: var(--dark-card-bg);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    .category-btn:hover,
+    .category-btn.active {
+      background: var(--orange);
+      color: white;
+      border-color: var(--orange);
+    }
+
+    body.dark-mode .category-btn:hover,
+    body.dark-mode .category-btn.active {
+      background: #4a90e2;
+      border-color: #4a90e2;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--cream);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    body.dark-mode .card {
+      background: var(--dark-card-bg);
+      border: 1px solid var(--dark-border);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      border-color: var(--orange);
+    }
+
+    body.dark-mode .card:hover {
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      border-color: #4a90e2;
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .card h3 {
+      margin: 0 0 1rem 0;
+      color: var(--slate);
+      font-size: 1.3rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .card h3 {
+      color: var(--dark-text);
+    }
+
+    .card p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .card p {
+      color: #aaa;
+    }
+
+    .benefits {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .benefit-tag {
+      background: rgba(243, 112, 30, 0.1);
+      color: var(--orange);
+      padding: 0.2rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .benefit-tag {
+      background: rgba(74, 144, 226, 0.1);
+      color: #4a90e2;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem 0;
+      color: var(--slate);
+      border-top: 1px solid var(--cream);
+      margin-top: 3rem;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    body.dark-mode footer {
+      color: var(--dark-text);
+      border-top: 1px solid var(--dark-border);
+    }
+
+    /* Cookie Consent */
+    #cookieConsent {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--slate);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      z-index: 9999;
+      display: none;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode #cookieConsent {
+      background: #1a2332;
+    }
+
+    #cookieConsent button {
+      margin-left: 1rem;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    body.dark-mode #cookieConsent button {
+      background: #4a90e2;
+    }
+
+    #cookieConsent button:hover {
+      background: #e2661a;
+    }
+
+    body.dark-mode #cookieConsent button:hover {
+      background: #3a7bc8;
+    }
+
+    /* Auth Modal */
+    #authModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      display: none;
+    }
+
+    .auth-modal-content {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .auth-modal-content {
+      background: #1a2332;
+      color: var(--dark-text);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin: 0;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .auth-title {
+      color: var(--dark-text);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .close-btn {
+      color: #aaa;
+    }
+
+    .auth-form {
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--slate);
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .form-label {
+      color: var(--dark-text);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--cream);
+      border-radius: 8px;
+      font-family: 'Tabular', sans-serif;
+      font-size: 1rem;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode .form-input {
+      background: rgba(30, 35, 50, 0.8);
+      border: 1px solid var(--dark-border);
+      color: var(--dark-text);
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--orange);
+    }
+
+    body.dark-mode .form-input:focus {
+      border-color: #4a90e2;
+    }
+
+    .auth-btn {
+      width: 100%;
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-family: 'Tabular', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode .auth-btn {
+      background: #4a90e2;
+    }
+
+    .auth-btn:hover {
+      background: #e2661a;
+    }
+
+    body.dark-mode .auth-btn:hover {
+      background: #3a7bc8;
+    }
+
+    .switch-auth {
+      text-align: center;
+      margin-top: 1rem;
+      color: var(--slate);
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .switch-auth {
+      color: var(--dark-text);
+    }
+
+    .switch-auth a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .switch-auth a {
+      color: #4a90e2;
+    }
+
+    .auth-error {
+      color: #ef4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      min-height: 1.2rem;
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .auth-error {
+      color: #ff6b6b;
+    }
+
+    /* Loading indicator */
+    .loading-indicator {
+      text-align: center;
+      padding: 2rem;
+      color: var(--slate);
+      transition: color 0.3s;
+    }
+
+    body.dark-mode .loading-indicator {
+      color: var(--dark-text);
+    }
+
+    .spinner {
+      border: 3px solid rgba(243, 112, 30, 0.3);
+      border-top: 3px solid var(--orange);
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+      transition: border-color 0.3s;
+    }
+
+    body.dark-mode .spinner {
+      border: 3px solid rgba(74, 144, 226, 0.3);
+      border-top: 3px solid #4a90e2;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Particles Background -->
+  <div id="particles-js"></div>
+
+  <!-- Auth Modal -->
+  <div id="authModal">
+    <div class="auth-modal-content">
+      <div class="auth-header">
+        <h2 class="auth-title" id="authTitle">Login</h2>
+        <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+      </div>
+      
+      <!-- Login Form -->
+      <form class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" required minlength="6">
+        </div>
+        <div class="auth-error" id="loginError"></div>
+        <button type="submit" class="auth-btn">Login</button>
+      </form>
+      
+      <!-- Signup Form -->
+      <form class="auth-form" id="signupForm" style="display: none;">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="signupEmail" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signupPassword" required minlength="6">
+        </div>
+        <div class="auth-error" id="signupError"></div>
+        <button type="submit" class="auth-btn">Create Account</button>
+      </form>
+      
+      <div class="switch-auth">
+        <span id="switchText">No account? <a id="switchLink" onclick="switchAuthMode()">Sign up</a></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+        </svg>
+        Noodrop
+      </div>
+      <nav>
+        <a href="#" class="active">Library</a>
+        <a href="stack.html">Stacks</a>
+        <a href="profile.html">Profile</a>
+      </nav>
+      <div style="display: flex; gap: 1rem; align-items: center;">
+        <button id="authBtn">Login</button>
+        <div class="toggle-wrapper">
+          <div class="glass-toggle" id="themeToggle">
+            <div class="toggle-circle"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Explore Nootropics</h1>
+      <p>Discover compounds that enhance cognition, mood, and mental performance with scientific backing.</p>
+      <button class="cta-button">Start Exploring</button>
+    </section>
+
+    <!-- Search -->
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Search nootropics...">
+    </div>
+
+    <!-- Categories -->
+    <section class="categories">
+      <button class="category-btn active" data-category="all">All</button>
+      <button class="category-btn" data-category="Racetams">Racetams</button>
+      <button class="category-btn" data-category="Cholinergics">Cholinergics</button>
+      <button class="category-btn" data-category="Stimulants">Stimulants</button>
+      <button class="category-btn" data-category="Adaptogens">Adaptogens</button>
+      <button class="category-btn" data-category="Miscellaneous">Miscellaneous</button>
+    </section>
+
+    <!-- Loading indicator -->
+    <div class="loading-indicator" id="loadingIndicator">
+      <div class="spinner"></div>
+      <p>Loading compounds...</p>
+    </div>
+
+    <!-- Grid -->
+    <section class="grid" id="grid">
+      <!-- Cards will be populated by JS -->
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 Noodrop. For educational purposes only.</p>
+    </footer>
+  </div>
+
+  <!-- Cookie Consent -->
+  <div id="cookieConsent">
+    This website uses cookies to improve your experience.
+    <button onclick="acceptCookies()">Accept</button>
+  </div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
+      authDomain: "noodrop-c9be9.firebaseapp.com",
+      projectId: "noodrop-c9be9",
+      storageBucket: "noodrop-c9be9.firebasestorage.app",
+      messagingSenderId: "903301545011",
+      appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    // Theme Toggle
+    const toggle = document.getElementById('themeToggle');
+    let isDarkMode = localStorage.getItem('darkMode') === 'true';
+    
+    // Apply saved theme on load
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+      toggle.classList.add('active');
+      initDarkParticles();
+    } else {
+      initLightParticles();
+    }
+    
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('active');
+      document.body.classList.toggle('dark-mode');
+      isDarkMode = !isDarkMode;
+      localStorage.setItem('darkMode', isDarkMode);
+      
+      // Reinitialize particles with appropriate config
+      if (isDarkMode) {
+        initDarkParticles();
+      } else {
+        initLightParticles();
+      }
+    });
+
+    // Initialize light mode particles
+    function initLightParticles() {
+      particlesJS("particles-js", {
+        "particles": {
+          "number": {
+            "value": 100,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#2F53C2"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 0.2,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 4,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#e8d8c9",
+            "opacity": 0.2,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "bubble"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          }
+        },
+        "retina_detect": true
+      });
+    }
+
+    // Initialize dark mode particles (starry night)
+    function initDarkParticles() {
+      particlesJS("particles-js", {
+        "particles": {
+          "number": {
+            "value": 150,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#ffffff"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 0.7,
+            "random": true,
+            "anim": {
+              "enable": true,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 2,
+            "random": true,
+            "anim": {
+              "enable": false,
+              "speed": 40,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 100,
+            "color": "#4a90e2",
+            "opacity": 0.1,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 0.5,
+            "direction": "none",
+            "random": true,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "grab"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          }
+        },
+        "retina_detect": true
+      });
+    }
+
+    // Auth Modal Functions
+    const authModal = document.getElementById('authModal');
+    const authBtn = document.getElementById('authBtn');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const switchLink = document.getElementById('switchLink');
+    const switchText = document.getElementById('switchText');
+    const authTitle = document.getElementById('authTitle');
+    const loginError = document.getElementById('loginError');
+    const signupError = document.getElementById('signupError');
+
+    authBtn.addEventListener('click', () => {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        window.location.href = 'profile.html';
+      } else {
+        openAuthModal();
+      }
+    });
+
+    function openAuthModal() {
+      authModal.style.display = 'flex';
+    }
+
+    function closeAuthModal() {
+      authModal.style.display = 'none';
+      loginError.textContent = '';
+      signupError.textContent = '';
+    }
+
+    function switchAuthMode() {
+      if (loginForm.style.display === 'none') {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        authTitle.textContent = 'Login';
+        switchText.innerHTML = 'No account? <a id="switchLink" onclick="switchAuthMode()">Sign up</a>';
+      } else {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        authTitle.textContent = 'Sign Up';
+        switchText.innerHTML = 'Already have an account? <a id="switchLink" onclick="switchAuthMode()">Log in</a>';
+      }
+    }
+
+    // Login Form Submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      
+      try {
+        await firebase.auth().signInWithEmailAndPassword(email, password);
+        closeAuthModal();
+        updateAuthButton();
+      } catch (error) {
+        loginError.textContent = error.message;
+      }
+    });
+
+    // Signup Form Submission
+    signupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      
+      try {
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
+          email: userCredential.user.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        closeAuthModal();
+        updateAuthButton();
+      } catch (error) {
+        signupError.textContent = error.message;
+      }
+    });
+
+    // Update auth button based on user state
+    function updateAuthButton() {
+      const user = firebase.auth().currentUser;
+      if (user) {
+        authBtn.textContent = 'Profile';
+        authBtn.title = 'Go to Profile';
+      } else {
+        authBtn.textContent = 'Login';
+        authBtn.title = 'Login / Register';
+      }
+    }
+
+    // Listen for auth state changes
+    firebase.auth().onAuthStateChanged(user => {
+      updateAuthButton();
+    });
+
+    // Cookie Consent
+    function acceptCookies() {
+      localStorage.setItem('cookiesAccepted', 'yes');
+      document.getElementById('cookieConsent').style.display = 'none';
+    }
+
+    window.onload = () => {
+      if (!localStorage.getItem('cookiesAccepted'))
+        document.getElementById('cookieConsent').style.display = 'block';
+    };
+
+    // Load data.js and initialize app
+    function loadDataAndInitialize() {
+      const script = document.createElement('script');
+      script.src = 'data.js';
+      script.onload = function() {
+        console.log('Data.js loaded successfully');
+        initializeApp();
+      };
+      script.onerror = function() {
+        console.error('Failed to load data.js');
+        document.getElementById('loadingIndicator').innerHTML = '<p>Error loading compounds. Please refresh the page.</p>';
+      };
+      document.head.appendChild(script);
+    }
+
+    // Initialize the application
+    function initializeApp() {
+      // Hide loading indicator
+      document.getElementById('loadingIndicator').style.display = 'none';
+      
+      // Check if compounds data is available
+      if (typeof window.compounds === 'undefined' || !Array.isArray(window.compounds)) {
+        console.error('Compounds data not loaded properly');
+        document.getElementById('grid').innerHTML = '<p class="loading-indicator">Error loading compounds. Please refresh the page.</p>';
+        return;
+      }
+      
+      // Render all cards initially
+      renderCards(window.compounds);
+      
+      // Set up event listeners
+      setupEventListeners();
+    }
+
+    // Set up event listeners
+    function setupEventListeners() {
+      // Search functionality
+      document.getElementById('search').addEventListener('input', handleSearch);
+      
+      // Category filtering
+      document.querySelectorAll('.category-btn').forEach(button => {
+        button.addEventListener('click', handleCategoryFilter);
+      });
+    }
+
+    // Render cards
+    function renderCards(compoundsToRender) {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      
+      if (!compoundsToRender || compoundsToRender.length === 0) {
+        grid.innerHTML = '<p class="loading-indicator">No compounds found.</p>';
+        return;
+      }
+      
+      compoundsToRender.forEach(comp => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${comp.image}" alt="${comp.name}" onerror="this.src='https://placehold.co/300x200/4a5568/FFFFFF?text=${encodeURIComponent(comp.name)}'">
+          <h3>${comp.name}</h3>
+          <p>${comp.description}</p>
+          <div class="benefits">
+            ${comp.benefits ? comp.benefits.map(b => `<span class="benefit-tag">${b}</span>`).join('') : ''}
+          </div>
+        `;
+        card.onclick = () => {
+          window.location.href = `compound.html?cid=${comp.cid}`;
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    // Handle search
+    function handleSearch(e) {
+      const term = e.target.value.toLowerCase();
+      if (window.compounds) {
+        const filtered = window.compounds.filter(c => 
+          c.name.toLowerCase().includes(term) || 
+          (c.description && c.description.toLowerCase().includes(term)) ||
+          (c.category && c.category.toLowerCase().includes(term)) ||
+          (c.benefits && c.benefits.some(b => b.toLowerCase().includes(term)))
+        );
+        renderCards(filtered);
+      }
+    }
+
+    // Handle category filter
+    function handleCategoryFilter(e) {
+      // Update active button
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      e.target.classList.add('active');
+      
+      // Filter compounds
+      const category = e.target.dataset.category;
+      if (window.compounds) {
+        if (category === 'all') {
+          renderCards(window.compounds);
+        } else {
+          const filtered = window.compounds.filter(c => c.category === category);
+          renderCards(filtered);
+        }
+      }
+    }
+
+    // Load data when page is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDataAndInitialize);
+    } else {
+      loadDataAndInitialize();
+    }
+  </script>
+</body>
+</html>
