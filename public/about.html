@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About hann369 – Noodrop | The Mind Behind the Platform</title>
+  <meta name="description" content="Meet hann369 – the founder of Noodrop. A personal journey through nootropics, cognitive optimization and building in public.">
+
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream: #e8d8c9;
+      --slate: #4b607f;
+      --orange: #f3701e;
+      --white: #ffffff;
+      --dark-slate: #2c3e50;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --glass-bg: rgba(255,255,255,0.7);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Tabular', sans-serif;
+      background: var(--white);
+      color: var(--dark-slate);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      border-bottom: 1px solid var(--cream);
+      position: fixed;
+      width: 100%;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(10px);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--slate);
+    }
+    nav a {
+      text-decoration: none;
+      color: var(--slate);
+      margin: 0 1rem;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.2s;
+    }
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0; height: 2px;
+      background: var(--orange);
+      left: 0; bottom: -4px;
+      transition: 0.3s;
+    }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+    nav a:hover, nav a.active { color: var(--orange); }
+
+    /* ── Layout ── */
+    .page { padding-top: 80px; }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 5rem 0 4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .hero-text .eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+    }
+    .hero-text h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 700;
+      color: var(--slate);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    .hero-text h1 span {
+      color: var(--orange);
+    }
+    .hero-text p {
+      font-size: 1.05rem;
+      color: #5a6a7a;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 0.85rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(243,112,30,0.3);
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(243,112,30,0.4);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--slate);
+      border: 1.5px solid var(--cream);
+      padding: 0.85rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    .btn-secondary:hover {
+      border-color: var(--slate);
+      transform: translateY(-2px);
+    }
+
+    /* ── Profile Card ── */
+    .profile-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--cream);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .profile-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--orange), #f59e0b);
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cream), #f0e0d0);
+      margin: 0 auto 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      border: 3px solid var(--orange);
+      box-shadow: 0 0 0 6px rgba(243,112,30,0.1);
+    }
+    .handle {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 0.3rem;
+    }
+    .handle-sub {
+      font-size: 0.85rem;
+      color: var(--orange);
+      margin-bottom: 1.5rem;
+      letter-spacing: 1px;
+    }
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--cream);
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--slate);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: #8a9ab0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .social-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      background: var(--cream);
+      color: var(--slate);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    .social-pill:hover {
+      background: var(--orange);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--cream);
+      margin: 0;
+    }
+
+    /* ── Story Section ── */
+    .story-section {
+      padding: 5rem 0;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+    }
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .story-text p {
+      color: #5a6a7a;
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+      font-size: 1rem;
+    }
+    .story-text p strong {
+      color: var(--slate);
+    }
+    .story-highlights {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .highlight-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--cream);
+      border-left: 3px solid var(--orange);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .highlight-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .highlight-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .highlight-title {
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 0.3rem;
+      font-size: 0.95rem;
+    }
+    .highlight-text {
+      color: #7a8a9a;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    /* ── Philosophy Section ── */
+    .philosophy-section {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #fdf7f2, #fff);
+      border-top: 1px solid var(--cream);
+      border-bottom: 1px solid var(--cream);
+    }
+    .philosophy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+    .philosophy-card {
+      background: white;
+      border: 1px solid var(--cream);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--shadow);
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .philosophy-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    }
+    .philosophy-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .philosophy-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 0.75rem;
+    }
+    .philosophy-card p {
+      font-size: 0.9rem;
+      color: #7a8a9a;
+      line-height: 1.7;
+    }
+
+    /* ── Stack Section ── */
+    .stack-section {
+      padding: 5rem 0;
+    }
+    .stack-intro {
+      max-width: 650px;
+      margin-bottom: 3rem;
+    }
+    .stack-intro p {
+      color: #5a6a7a;
+      line-height: 1.8;
+      margin-top: 1rem;
+    }
+    .current-stack {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+    }
+    .stack-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--cream);
+      border-radius: 16px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .stack-item:hover {
+      border-color: var(--orange);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(243,112,30,0.1);
+    }
+    .stack-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .stack-name {
+      font-weight: 600;
+      color: var(--slate);
+      font-size: 0.9rem;
+    }
+    .stack-category {
+      font-size: 0.75rem;
+      color: #8a9ab0;
+    }
+    .stack-cta {
+      margin-top: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .stack-note {
+      font-size: 0.85rem;
+      color: #8a9ab0;
+      font-style: italic;
+    }
+
+    /* ── Noodrop Section ── */
+    .noodrop-section {
+      padding: 5rem 0;
+      background: linear-gradient(135deg, #fdf7f2, #fff);
+      border-top: 1px solid var(--cream);
+    }
+    .noodrop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      margin-top: 3rem;
+    }
+    .noodrop-visual {
+      background: var(--glass-bg);
+      border: 1px solid var(--cream);
+      border-radius: 20px;
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+    }
+    .noodrop-visual .nd-logo {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 1.5rem;
+    }
+    .nd-feature {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--cream);
+    }
+    .nd-feature:last-child { border-bottom: none; }
+    .nd-feature-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--orange);
+      flex-shrink: 0;
+    }
+    .nd-feature-text {
+      font-size: 0.9rem;
+      color: var(--slate);
+      font-weight: 500;
+    }
+    .nd-feature-badge {
+      margin-left: auto;
+      font-size: 0.7rem;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .badge-live { background: #d1fae5; color: #065f46; }
+    .badge-soon { background: #fef3c7; color: #92400e; }
+    .noodrop-text p {
+      color: #5a6a7a;
+      line-height: 1.9;
+      margin-bottom: 1.2rem;
+    }
+    .noodrop-text p strong { color: var(--slate); }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 5rem 0;
+      text-align: center;
+    }
+    .cta-box {
+      background: linear-gradient(135deg, #fff, #fdf7f2);
+      border: 1px solid var(--cream);
+      border-radius: 24px;
+      padding: 4rem 3rem;
+      box-shadow: var(--shadow);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .cta-box h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 1rem;
+    }
+    .cta-box p {
+      color: #5a6a7a;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--cream);
+      padding: 2.5rem 0;
+      text-align: center;
+      color: var(--slate);
+    }
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .social-link {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--cream);
+      color: var(--slate);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
+      transition: all 0.3s;
+    }
+    .social-link:hover {
+      background: var(--orange);
+      color: white;
+      transform: translateY(-3px);
+    }
+
+    /* ── Animations ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; gap: 2.5rem; }
+      .story-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .philosophy-grid { grid-template-columns: 1fr; }
+      .noodrop-grid { grid-template-columns: 1fr; gap: 2rem; }
+      nav { display: none; }
+      .hero-text h1 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">Noodrop</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="stack.html">Stacks</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="about.html" class="active">About</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="page">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="hero fade-in">
+          <div class="hero-text">
+            <div class="eyebrow">Founder · Builder · Biohacker</div>
+            <h1>This is <span>hann369</span>.<br>The mind behind Noodrop.</h1>
+            <p>I'm not here to sell you supplements. I'm building in public, optimizing in real-time, and sharing every step of the journey – from the compounds I run, to the platform I'm building around them.</p>
+            <div class="hero-actions">
+              <a href="stack.html" class="btn-primary">See My Stack</a>
+              <a href="https://www.youtube.com/@hann.369" target="_blank" class="btn-secondary">Watch on YouTube →</a>
+            </div>
+          </div>
+          <div class="profile-card fade-in" style="transition-delay:0.2s">
+            <div class="avatar">🧠</div>
+            <div class="handle">hann369</div>
+            <div class="handle-sub">Noodrop Founder · Lifemaxx</div>
+            <div class="stat-row">
+              <div class="stat">
+                <span class="stat-num">2026</span>
+                <span class="stat-label">Founded</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">Live</span>
+                <span class="stat-label">Building Now</span>
+              </div>
+              <div class="stat">
+                <span class="stat-num">∞</span>
+                <span class="stat-label">Curiosity</span>
+              </div>
+            </div>
+            <div class="social-row">
+              <a href="https://x.com/hann_369" target="_blank" class="social-pill">𝕏 hann_369</a>
+              <a href="https://www.youtube.com/@hann.369" target="_blank" class="social-pill">▶ hann.369</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider">
+
+    <!-- Story -->
+    <section class="story-section">
+      <div class="container">
+        <div class="story-grid">
+          <div class="story-text fade-in">
+            <div class="section-label">The Story</div>
+            <h2 class="section-title">Not a guru.<br>A work in progress.</h2>
+            <p>It started simply – <strong>I wanted more.</strong> More focus, more energy, more output. And like most people who fall into this rabbit hole, I found nootropics.</p>
+            <p>What I didn't find was a single place that combined real information, honest reviews, and actual tools for building your own protocol. Everything was scattered, surface-level, or trying to sell me something.</p>
+            <p>So I built <strong>Noodrop</strong>. A library, a stack builder, a marketplace – all in one place. And I document everything publicly under <strong>hann369</strong>, because I believe the best way to learn is out loud.</p>
+            <p>This isn't about being perfect. It's about <strong>lifemaxx</strong> – maximizing your life by going further than most people are willing to go. Nootropics are one tool. I use them, I share what works, and I build the platform around the journey.</p>
+          </div>
+          <div class="story-highlights fade-in" style="transition-delay:0.15s">
+            <div class="highlight-card">
+              <div class="highlight-icon">🔬</div>
+              <div class="highlight-title">Evidence-first</div>
+              <div class="highlight-text">Every compound on Noodrop is backed by research. No hype, no bro-science. If the evidence is weak, I say so.</div>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-icon">🏗️</div>
+              <div class="highlight-title">Building in public</div>
+              <div class="highlight-text">Noodrop is being built live. You can watch the platform grow alongside the brand – that's the point.</div>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-icon">🧪</div>
+              <div class="highlight-title">Self-experimentation</div>
+              <div class="highlight-text">I run the stacks I recommend. My protocols are documented, tracked, and updated based on real experience.</div>
+            </div>
+            <div class="highlight-card">
+              <div class="highlight-icon">🎯</div>
+              <div class="highlight-title">Lifemaxx mindset</div>
+              <div class="highlight-text">Nootropics are a tool, not a magic pill. The goal is a life optimized across every dimension – mental, physical, creative.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Philosophy -->
+    <section class="philosophy-section">
+      <div class="container">
+        <div style="text-align:center" class="fade-in">
+          <div class="section-label">Philosophy</div>
+          <h2 class="section-title">Three things I believe in.</h2>
+        </div>
+        <div class="philosophy-grid">
+          <div class="philosophy-card fade-in" style="transition-delay:0.1s">
+            <div class="philosophy-icon">🧠</div>
+            <h3>Cognitive sovereignty</h3>
+            <p>Your mind is yours to optimize. Understanding what goes into your brain – and why – is the foundation of everything.</p>
+          </div>
+          <div class="philosophy-card fade-in" style="transition-delay:0.2s">
+            <div class="philosophy-icon">📡</div>
+            <h3>Radical transparency</h3>
+            <p>I share my stacks, my mistakes, my results. No filters. Building in public means showing the messy parts too.</p>
+          </div>
+          <div class="philosophy-card fade-in" style="transition-delay:0.3s">
+            <div class="philosophy-icon">🚀</div>
+            <h3>Going further</h3>
+            <p>Most people stop at "good enough". Lifemaxx is about finding out where the ceiling actually is – and pushing past it.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Stack -->
+    <section class="stack-section">
+      <div class="container">
+        <div class="stack-intro fade-in">
+          <div class="section-label">My Stack</div>
+          <h2 class="section-title">What I'm currently running.</h2>
+          <p>These are the compounds in my active protocol. Everything here is also available in the Noodrop library with full breakdowns. Updated regularly.</p>
+        </div>
+        <div class="current-stack fade-in" style="transition-delay:0.1s">
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#f59e0b"></div>
+            <div>
+              <div class="stack-name">Caffeine + L-Theanine</div>
+              <div class="stack-category">Stimulant · Focus</div>
+            </div>
+          </a>
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#6366f1"></div>
+            <div>
+              <div class="stack-name">Lion's Mane</div>
+              <div class="stack-category">Adaptogen · NGF</div>
+            </div>
+          </a>
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#10b981"></div>
+            <div>
+              <div class="stack-name">Ashwagandha</div>
+              <div class="stack-category">Adaptogen · Stress</div>
+            </div>
+          </a>
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#3b82f6"></div>
+            <div>
+              <div class="stack-name">Alpha-GPC</div>
+              <div class="stack-category">Cholinergic · Memory</div>
+            </div>
+          </a>
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#f3701e"></div>
+            <div>
+              <div class="stack-name">Rhodiola Rosea</div>
+              <div class="stack-category">Adaptogen · Energy</div>
+            </div>
+          </a>
+          <a href="compound.html" class="stack-item">
+            <div class="stack-dot" style="background:#8b5cf6"></div>
+            <div>
+              <div class="stack-name">Magnesium L-Threonate</div>
+              <div class="stack-category">Mineral · Sleep · Cognition</div>
+            </div>
+          </a>
+        </div>
+        <div class="stack-cta fade-in" style="transition-delay:0.2s">
+          <a href="stack.html" class="btn-primary">Build Your Own Stack</a>
+          <span class="stack-note">* My full protocol with dosages is in the Stack Builder</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Noodrop Section -->
+    <section class="noodrop-section">
+      <div class="container">
+        <div class="fade-in">
+          <div class="section-label">The Platform</div>
+          <h2 class="section-title">Why I built Noodrop.</h2>
+        </div>
+        <div class="noodrop-grid">
+          <div class="noodrop-visual fade-in" style="transition-delay:0.1s">
+            <div class="nd-logo">Noodrop</div>
+            <div class="nd-feature">
+              <div class="nd-feature-dot"></div>
+              <div class="nd-feature-text">Nootropics Library</div>
+              <span class="nd-feature-badge badge-live">Live</span>
+            </div>
+            <div class="nd-feature">
+              <div class="nd-feature-dot"></div>
+              <div class="nd-feature-text">Stack Builder</div>
+              <span class="nd-feature-badge badge-live">Live</span>
+            </div>
+            <div class="nd-feature">
+              <div class="nd-feature-dot"></div>
+              <div class="nd-feature-text">Marketplace</div>
+              <span class="nd-feature-badge badge-soon">Coming</span>
+            </div>
+            <div class="nd-feature">
+              <div class="nd-feature-dot"></div>
+              <div class="nd-feature-text">Community Stacks</div>
+              <span class="nd-feature-badge badge-soon">Coming</span>
+            </div>
+            <div class="nd-feature">
+              <div class="nd-feature-dot"></div>
+              <div class="nd-feature-text">hann369 Protocol</div>
+              <span class="nd-feature-badge badge-live">Live</span>
+            </div>
+          </div>
+          <div class="noodrop-text fade-in" style="transition-delay:0.15s">
+            <p>I wanted a single place where the information, the tools, and the products all live together – connected. <strong>Not another blog. Not another shop. Something functional.</strong></p>
+            <p>The Library is the foundation – every compound researched, every mechanism explained. The Stack Builder lets you do what I do: build and track your own protocol. The Marketplace is coming next.</p>
+            <p>And through <strong>hann369</strong>, you can watch the whole thing being built live – on YouTube, on X, and right here. That's the experiment. Building a platform while being its most visible user.</p>
+            <a href="index.html" class="btn-primary" style="margin-top:1rem">Explore the Library</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="cta-box fade-in">
+          <h2>Follow the journey.</h2>
+          <p>New videos, new protocols, new builds – all documented publicly. If you're serious about cognitive optimization, this is where to start.</p>
+          <div class="cta-buttons">
+            <a href="https://www.youtube.com/@hann.369" target="_blank" class="btn-primary">YouTube →</a>
+            <a href="https://x.com/hann_369" target="_blank" class="btn-secondary">𝕏 Twitter</a>
+            <a href="stack.html" class="btn-secondary">Build Your Stack</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="social-links">
+          <a href="https://x.com/hann_369" target="_blank" class="social-link">𝕏</a>
+          <a href="https://www.youtube.com/@hann.369" target="_blank" class="social-link">▶</a>
+        </div>
+        <p>© 2026 Noodrop – Educational purposes only.</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Scroll fade-in animation
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(el => {
+        if (el.isIntersecting) {
+          el.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>

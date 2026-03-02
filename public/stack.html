@@ -3,583 +3,518 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stack Builder - Noodrop</title>
-  
-  <!-- Tabular Font -->
+  <title>Stack Builder – Noodrop</title>
+
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  
-  <!-- Heroicons -->
-  <script src="https://unpkg.com/heroicons@1.0.1/outline/index.min.js"></script>
-  
-  <!-- SortableJS -->
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  
+
   <style>
     :root {
       --cream: #e8d8c9;
       --slate: #4b607f;
       --orange: #f3701e;
       --white: #ffffff;
-      --off-white: #fdfdfd;
       --dark-slate: #2c3e50;
-      --glow-cream: rgba(232, 216, 201, 0.3);
-      --glow-orange: rgba(243, 112, 30, 0.2);
-      --glow-slate: rgba(75, 96, 127, 0.1);
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --glass-bg: rgba(255, 255, 255, 0.7);
+      --shadow: 0 8px 28px rgba(0,0,0,0.07);
+      --bg: #fafaf8;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Tabular', sans-serif;
-      background: var(--white);
+      background: var(--bg);
       color: var(--dark-slate);
-      margin: 0;
-      padding: 0;
       min-height: 100vh;
-      position: relative;
     }
 
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Header */
+    /* ── Header ── */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 5%;
       border-bottom: 1px solid var(--cream);
-      margin-bottom: 2rem;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,250,248,0.92);
+      backdrop-filter: blur(14px);
     }
-
     .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--slate);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--slate);
     }
-
-    .logo svg {
-      width: 24px;
-      height: 24px;
-      color: var(--orange);
-    }
-
     nav a {
-      text-decoration: none;
-      color: var(--slate);
-      margin: 0 1rem;
-      font-weight: 500;
-      transition: color 0.2s;
+      text-decoration: none; color: var(--slate);
+      margin: 0 0.9rem; font-weight: 500; font-size: 0.9rem;
+      position: relative; transition: color 0.2s;
+    }
+    nav a::after {
+      content: ""; position: absolute;
+      width: 0; height: 2px; background: var(--orange);
+      left: 0; bottom: -4px; transition: 0.3s;
+    }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+    nav a:hover, nav a.active { color: var(--orange); }
+
+    /* ── Page Hero ── */
+    .page-hero {
+      padding: 4rem 5% 3rem;
+      max-width: 1400px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: flex-end;
+      border-bottom: 1px solid var(--cream);
+    }
+    .hero-left .eyebrow {
+      font-size: 0.68rem; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 0.8rem;
+    }
+    .hero-left h1 {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 600; color: var(--slate);
+      letter-spacing: -1.5px; line-height: 1.05;
+    }
+    .hero-left h1 em { font-style: normal; color: var(--orange); }
+    .hero-right {
+      font-size: 0.85rem; color: #8a9ab0;
+      text-align: right; max-width: 260px; line-height: 1.6;
     }
 
-    nav a:hover,
-    nav a.active {
-      color: var(--orange);
+    /* ── Container ── */
+    .container {
+      max-width: 1400px; margin: 0 auto;
+      padding: 2.5rem 5%;
     }
 
-    /* Title */
-    .page-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--slate);
-      margin-bottom: 1rem;
+    /* ── Loading ── */
+    .loading-indicator {
+      display: flex; flex-direction: column;
+      align-items: center; padding: 5rem 0; color: #8a9ab0;
     }
-
-    .page-subtitle {
-      color: var(--slate);
-      margin-bottom: 2rem;
-      font-size: 1.1rem;
+    .spinner {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2.5px solid rgba(243,112,30,0.2);
+      border-top-color: var(--orange);
+      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Layout */
+    /* ── Layout ── */
     .layout {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      grid-template-columns: 1fr 420px;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
     }
 
-    @media (max-width: 1000px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
-    }
+    /* ── Left column ── */
 
     /* Search */
-    .search-container {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid var(--cream);
-      box-shadow: var(--shadow);
-      margin-bottom: 2rem;
+    .search-wrap {
+      position: relative; margin-bottom: 2rem;
     }
-
+    .search-wrap::before {
+      content: "⌕"; position: absolute;
+      left: 1.2rem; top: 50%; transform: translateY(-50%);
+      color: #aab0bc; font-size: 1.1rem; pointer-events: none;
+    }
     #stackSearch {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid var(--cream);
-      border-radius: 8px;
-      background: var(--white);
-      font-family: 'Tabular', sans-serif;
-      font-size: 1rem;
+      width: 100%; padding: 0.9rem 1.2rem 0.9rem 3rem;
+      border: 1.5px solid var(--cream); border-radius: 50px;
+      background: white; font-family: 'Tabular', sans-serif;
+      font-size: 0.95rem; color: var(--dark-slate);
+      transition: all 0.25s; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
     }
-
     #stackSearch:focus {
-      outline: none;
-      border-color: var(--orange);
+      outline: none; border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(243,112,30,0.1);
     }
+    #stackSearch::placeholder { color: #aab0bc; }
 
-    /* Available Compounds Grid */
+    /* Available grid */
     .available-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
     }
 
+    /* Compound card */
     .compound-card {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      overflow: hidden;
+      background: white; border-radius: 16px;
       border: 1px solid var(--cream);
+      overflow: hidden; cursor: grab;
       box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      cursor: grab;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      display: flex; flex-direction: column;
     }
-
     .compound-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-      border-color: var(--orange);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.1);
+      border-color: rgba(243,112,30,0.35);
+    }
+    .compound-card:active { cursor: grabbing; }
+
+    .compound-card .card-img {
+      height: 130px; overflow: hidden;
+      background: #f0ece8; position: relative;
+    }
+    .compound-card .card-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.35s;
+    }
+    .compound-card:hover .card-img img { transform: scale(1.05); }
+    .cat-badge {
+      position: absolute; top: 0.6rem; left: 0.6rem;
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      color: white; font-size: 0.6rem; letter-spacing: 2px;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+      border-radius: 20px; font-weight: 600;
     }
 
-    .compound-card img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
+    .card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
+    .card-name {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 0.95rem; font-weight: 600; color: var(--slate);
+      margin-bottom: 0.4rem;
     }
-
-    .card-content {
-      padding: 1rem;
+    .card-desc {
+      font-size: 0.78rem; color: #8a9ab0; line-height: 1.55;
+      margin-bottom: 0.9rem; flex: 1;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
     }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--slate);
-      margin: 0 0 0.5rem 0;
-    }
-
-    .card-description {
-      font-size: 0.9rem;
-      color: var(--dark-slate);
-      margin: 0 0 1rem 0;
-      line-height: 1.4;
-    }
-
     .add-btn {
-      width: 100%;
-      background: var(--orange);
-      color: white;
-      border: none;
-      padding: 0.5rem;
-      border-radius: 8px;
-      font-family: 'Tabular', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      width: 100%; background: var(--orange); color: white;
+      border: none; padding: 0.5rem 0.75rem;
+      border-radius: 50px; font-family: 'Tabular', sans-serif;
+      font-weight: 700; font-size: 0.78rem;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(243,112,30,0.25);
     }
-
-    .add-btn:hover {
-      background: #e2661a;
-      transform: translateY(-2px);
+    .add-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(243,112,30,0.35);
     }
-
     .add-btn:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
+      background: #e0e8f0; color: #8a9ab0;
+      box-shadow: none; cursor: not-allowed;
     }
 
-    /* Current Stack */
-    .stack-section {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
+    /* ── Right column – Stack Panel ── */
+    .stack-panel {
+      background: white; border-radius: 20px;
       border: 1px solid var(--cream);
       box-shadow: var(--shadow);
+      position: sticky; top: 90px;
+      overflow: hidden;
     }
 
-    .stack-header {
-      display: flex;
+    .stack-panel-header {
+      padding: 1.4rem 1.6rem 1.2rem;
+      border-bottom: 1px solid var(--cream);
+      display: flex; align-items: center;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
+    }
+    .stack-panel-title {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 1rem; font-weight: 600; color: var(--slate);
+    }
+    .stack-count-badge {
+      background: rgba(243,112,30,0.1); color: var(--orange);
+      padding: 0.25rem 0.8rem; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 700;
     }
 
-    .stack-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--slate);
-      margin: 0;
+    /* Drop zone */
+    .stack-dropzone {
+      min-height: 280px; padding: 0.8rem;
+      transition: background 0.2s, border-color 0.2s;
+      border: 2px dashed transparent;
+      margin: 0.8rem;
+      border-radius: 14px;
     }
-
-    .stack-count {
-      background: rgba(243, 112, 30, 0.1);
-      color: var(--orange);
-      padding: 0.25rem 0.75rem;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    /* Current Stack Items */
-    .stack-items {
-      min-height: 300px;
-      border: 2px dashed var(--cream);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .stack-items.drag-over {
+    .stack-dropzone.drag-over {
       border-color: var(--orange);
-      background-color: rgba(243, 112, 30, 0.05);
+      background: rgba(243,112,30,0.04);
     }
 
-    .stack-item {
-      background: var(--white);
-      border: 1px solid var(--cream);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      cursor: move;
-    }
-
-    .stack-item img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .item-info {
-      flex: 1;
-    }
-
-    .item-name {
-      font-weight: 600;
-      color: var(--slate);
-      margin: 0 0 0.25rem 0;
-    }
-
-    .item-dosage {
-      font-size: 0.8rem;
-      color: var(--dark-slate);
-    }
-
-    .remove-btn {
-      background: none;
-      border: none;
-      color: #ef4444;
-      font-size: 1.5rem;
-      cursor: pointer;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-    }
-
-    .remove-btn:hover {
-      background: rgba(239, 68, 68, 0.1);
-    }
-
-    /* Safety Panel */
-    .safety-panel {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid var(--cream);
-      margin-top: 1.5rem;
-    }
-
-    .safety-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--slate);
-      margin: 0 0 1rem 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .safety-content {
-      display: flex;
-      flex-direction: column;
+    /* Empty state */
+    .empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 240px; color: #aab0bc; text-align: center;
       gap: 0.75rem;
     }
-
-    .safety-message {
-      padding: 1rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .safety-safe {
-      background: rgba(34, 197, 94, 0.1);
-      color: #22c55e;
-      border-left: 3px solid #22c55e;
-    }
-
-    .safety-warning {
-      background: rgba(245, 158, 11, 0.1);
-      color: #f59e0b;
-      border-left: 3px solid #f59e0b;
-    }
-
-    .safety-danger {
-      background: rgba(239, 68, 68, 0.1);
-      color: #ef4444;
-      border-left: 3px solid #ef4444;
-    }
-
-    /* Actions */
-    .actions {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 1rem;
-      border-radius: 12px;
-      font-family: 'Tabular', sans-serif;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid var(--cream);
-      background: var(--glass-bg);
-      color: var(--slate);
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .reset-btn:hover {
-      background: #ef4444;
-      color: white;
-      border-color: #ef4444;
-    }
-
-    .save-btn {
-      background: var(--orange);
-      color: white;
-      border-color: var(--orange);
-    }
-
-    .save-btn:hover {
-      background: #e2661a;
-      border-color: #e2661a;
-    }
-
-    .save-btn:disabled {
-      background: #cccccc;
-      cursor: not-allowed;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--dark-slate);
-    }
-
     .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #f4f0ec;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+    }
+    .empty-state p { font-size: 0.85rem; line-height: 1.55; max-width: 180px; }
+
+    /* Stack item */
+    .stack-item {
+      background: var(--bg); border: 1px solid var(--cream);
+      border-radius: 12px; padding: 0.75rem 1rem;
+      margin-bottom: 0.6rem; display: flex;
+      align-items: center; gap: 0.85rem;
+      cursor: move; transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .stack-item:hover { border-color: rgba(243,112,30,0.3); box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+    .stack-item:last-child { margin-bottom: 0; }
+
+    .item-thumb {
+      width: 40px; height: 40px; border-radius: 8px;
+      object-fit: cover; flex-shrink: 0;
+      background: var(--cream);
+    }
+    .drag-handle {
+      color: #c8d0d8; font-size: 1rem; cursor: grab;
+      flex-shrink: 0; user-select: none;
+    }
+    .item-info { flex: 1; min-width: 0; }
+    .item-name {
+      font-weight: 700; font-size: 0.85rem;
+      color: var(--slate); margin-bottom: 0.15rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-dosage { font-size: 0.72rem; color: #8a9ab0; }
+    .remove-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: none; border: none; color: #c8d0d8;
+      font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0; line-height: 1;
+    }
+    .remove-btn:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+    /* Safety / Interaction panel */
+    .safety-panel {
+      margin: 0 0.8rem 0.8rem;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .safety-header {
+      padding: 0.85rem 1.1rem;
+      background: var(--bg);
+      border: 1px solid var(--cream);
+      border-bottom: none;
+      border-radius: 14px 14px 0 0;
+      font-size: 0.68rem; letter-spacing: 3px;
+      text-transform: uppercase; color: #8a9ab0; font-weight: 600;
+    }
+    .safety-content {
+      display: flex; flex-direction: column; gap: 0;
+      border: 1px solid var(--cream); border-radius: 0 0 14px 14px;
+      overflow: hidden;
     }
 
-    /* Loading Indicator */
-    .loading-indicator {
-      text-align: center;
-      padding: 2rem;
-      color: var(--slate);
+    /* Interaction cards */
+    .inter-card {
+      padding: 0.9rem 1.1rem;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .inter-card:last-child { border-bottom: none; }
+
+    .inter-synergy { background: rgba(16,185,129,0.06); }
+    .inter-safe    { background: rgba(59,130,246,0.05); }
+    .inter-warning { background: rgba(245,158,11,0.07); }
+    .inter-danger  { background: rgba(239,68,68,0.07);  }
+    .inter-unknown { background: rgba(160,160,160,0.06); }
+
+    .inter-top {
+      display: flex; align-items: center;
+      gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;
+    }
+    .inter-icon {
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+    }
+    .inter-synergy .inter-icon { background: rgba(16,185,129,0.15); color: #059669; }
+    .inter-safe    .inter-icon { background: rgba(59,130,246,0.15); color: #2563eb; }
+    .inter-warning .inter-icon { background: rgba(245,158,11,0.15); color: #d97706; }
+    .inter-danger  .inter-icon { background: rgba(239,68,68,0.15);  color: #dc2626; }
+    .inter-unknown .inter-icon { background: rgba(160,160,160,0.15); color: #6b7280; }
+
+    .inter-title {
+      font-weight: 700; font-size: 0.82rem; color: var(--dark-slate);
+      flex: 1;
+    }
+    .inter-tag {
+      font-size: 0.62rem; letter-spacing: 1px;
+      text-transform: uppercase; font-weight: 700;
+      padding: 0.15rem 0.55rem; border-radius: 20px;
+    }
+    .tag-synergy { background: rgba(16,185,129,0.15); color: #059669; }
+    .tag-safe    { background: rgba(59,130,246,0.12); color: #2563eb; }
+    .tag-warning { background: rgba(245,158,11,0.15); color: #d97706; }
+    .tag-danger  { background: rgba(239,68,68,0.12);  color: #dc2626; }
+    .tag-unknown { background: rgba(160,160,160,0.12); color: #6b7280; }
+
+    .inter-stars {
+      font-size: 0.7rem; letter-spacing: 1px;
+      color: var(--orange); flex-shrink: 0;
+    }
+    .inter-msg {
+      font-size: 0.78rem; line-height: 1.6;
+      color: #5a6a7a;
     }
 
-    .spinner {
-      border: 3px solid rgba(243, 112, 30, 0.3);
-      border-top: 3px solid var(--orange);
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      color: var(--slate);
+    /* Action buttons */
+    .stack-actions {
+      padding: 1rem 1.2rem 1.4rem;
+      display: flex; gap: 0.75rem;
       border-top: 1px solid var(--cream);
-      margin-top: 3rem;
+    }
+    .btn-reset {
+      flex: 1; padding: 0.75rem;
+      background: white; color: var(--slate);
+      border: 1.5px solid var(--cream); border-radius: 50px;
+      font-family: 'Tabular', sans-serif; font-weight: 700;
+      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
+    }
+    .btn-reset:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.05); }
+    .btn-save {
+      flex: 2; padding: 0.75rem;
+      background: var(--orange); color: white;
+      border: none; border-radius: 50px;
+      font-family: 'Tabular', sans-serif; font-weight: 700;
+      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
+      box-shadow: 0 4px 16px rgba(243,112,30,0.3);
+    }
+    .btn-save:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(243,112,30,0.4);
+    }
+    .btn-save:disabled {
+      background: #d0d8e0; box-shadow: none; cursor: not-allowed;
     }
 
-    /* Cookie Consent */
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 2rem 0;
+      border-top: 1px solid var(--cream);
+      margin-top: 4rem; color: #8a9ab0; font-size: 0.85rem;
+    }
+
+    /* ── Cookie ── */
     #cookieConsent {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: var(--slate);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      z-index: 9999;
-      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--slate); color: white;
+      padding: 1rem 5%; display: none;
+      align-items: center; justify-content: center; gap: 1.5rem;
+      font-size: 0.88rem; flex-wrap: wrap;
+    }
+    #cookieConsent button {
+      background: var(--orange); color: white; border: none;
+      padding: 0.4rem 1.2rem; border-radius: 50px;
+      font-family: 'Tabular', sans-serif; font-weight: 600; cursor: pointer;
     }
 
-    #cookieConsent button {
-      margin-left: 1rem;
-      background: var(--orange);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      cursor: pointer;
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .page-hero { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
+      .stack-panel { position: static; }
     }
   </style>
 </head>
 <body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">Noodrop</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="stack.html" class="active">Stacks</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <!-- Page Hero -->
+  <div class="page-hero">
+    <div class="hero-left">
+      <div class="eyebrow">Noodrop · Stack Builder</div>
+      <h1>Build your<br><em>Stack.</em></h1>
+    </div>
+    <div class="hero-right">
+      Drag compounds into your stack or click "+ Add". The safety panel checks interactions automatically.
+    </div>
+  </div>
+
   <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="logo">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-        Noodrop
-      </div>
-      <nav>
-        <a href="index.html">Library</a>
-        <a href="stack.html" class="active">Stack Builder</a>
-        <a href="profile.html">Profile</a>
-      </nav>
-    </header>
 
-    <!-- Page Title -->
-    <h1 class="page-title">Stack Builder</h1>
-    <p class="page-subtitle">Drag compounds here or click to add them to your custom stack</p>
-
-    <!-- Loading Indicator -->
+    <!-- Loading -->
     <div class="loading-indicator" id="loadingIndicator">
       <div class="spinner"></div>
-      <p>Loading compounds...</p>
+      <span style="font-size:0.85rem;">Loading compounds...</span>
     </div>
 
-    <!-- Layout -->
-    <div class="layout" id="mainLayout" style="display: none;">
-      <!-- Left Column - Available Compounds -->
-      <div>
-        <!-- Search -->
-        <div class="search-container">
-          <input 
-            type="text" 
-            id="stackSearch" 
-            placeholder="Search nootropics..."
-            autocomplete="off"
-          >
-        </div>
+    <!-- Main layout -->
+    <div class="layout" id="mainLayout" style="display:none;">
 
-        <!-- Available Compounds Grid -->
-        <div class="available-grid" id="availableGrid">
-          <!-- Cards will be populated by JS -->
+      <!-- Left: Available compounds -->
+      <div>
+        <div class="search-wrap">
+          <input type="text" id="stackSearch" placeholder="Search compounds..." autocomplete="off">
         </div>
+        <div class="available-grid" id="availableGrid"></div>
       </div>
 
-      <!-- Right Column - Current Stack -->
+      <!-- Right: Stack panel -->
       <div>
-        <div class="stack-section">
-          <!-- Stack Header -->
-          <div class="stack-header">
-            <h2 class="stack-title">Your Current Stack</h2>
-            <span class="stack-count" id="stackCount">0 compounds</span>
+        <div class="stack-panel">
+
+          <div class="stack-panel-header">
+            <div class="stack-panel-title">Your Stack</div>
+            <span class="stack-count-badge" id="stackCount">0 compounds</span>
           </div>
 
-          <!-- Stack Items -->
-          <div class="stack-items" id="currentStack">
-            <div class="empty-state">
+          <!-- Drop zone -->
+          <div class="stack-dropzone" id="currentStack">
+            <div class="empty-state" id="emptyState">
               <div class="empty-icon">📋</div>
-              <p>Drop compounds here or click "+ Add to Stack"</p>
+              <p>Drag here or click "+ Add to Stack"</p>
             </div>
           </div>
 
-          <!-- Safety Panel -->
-          <div class="safety-panel" id="safetyPanel" style="display: none;">
-            <h3 class="safety-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-              </svg>
-              Safety Analysis
-            </h3>
-            <div class="safety-content" id="safetyContent">
-              <!-- Safety messages will be populated by JS -->
-            </div>
+          <!-- Safety panel -->
+          <div class="safety-panel" id="safetyPanel" style="display:none;">
+            <div class="safety-header">Safety Analysis</div>
+            <div class="safety-content" id="safetyContent"></div>
           </div>
 
           <!-- Actions -->
-          <div class="actions">
-            <button class="action-btn reset-btn" id="resetBtn">
-              Reset Stack
-            </button>
-            <button class="action-btn save-btn" id="saveBtn">
-              Save Stack
-            </button>
+          <div class="stack-actions">
+            <button class="btn-reset" id="resetBtn">Reset</button>
+            <button class="btn-save" id="saveBtn">Save Stack</button>
           </div>
+
         </div>
       </div>
+
     </div>
 
-    <!-- Footer -->
-    <footer>
-      <p>© 2026 Noodrop. For educational purposes only.</p>
-    </footer>
+    <footer>© 2026 Noodrop · For educational purposes only.</footer>
   </div>
 
-  <!-- Cookie Consent -->
+  <!-- Cookie -->
   <div id="cookieConsent">
-    This website uses cookies to improve your experience.
+    <span>This website uses cookies to improve your experience.</span>
     <button onclick="acceptCookies()">Accept</button>
   </div>
 
   <script>
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
       authDomain: "noodrop-c9be9.firebaseapp.com",
@@ -588,474 +523,285 @@
       messagingSenderId: "903301545011",
       appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
     };
-
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    // Current stack state
     let currentStack = [];
 
-    // Stack interactions database
-    const stackInteractions = {
-      "2519_228398": { safety: "safe", message: "✓ EXCELLENT COMBO: Caffeine + L-Theanine (2:1 Ratio)" },
-      "2519_4236": { safety: "danger", message: "⚠️ CAUTION: Caffeine + Modafinil = strong overstimulation" },
-      "4843_71920": { safety: "safe", message: "✓ GOOD: Piracetam + Alpha-GPC" },
-      "2519_119032": { safety: "safe", message: "✓ COMPATIBLE: Caffeine + Bacopa" },
-      "228398_119032": { safety: "safe", message: "✓ EXCELLENT: L-Theanine + Bacopa" },
-      "228398_4843": { safety: "safe", message: "✓ GOOD: L-Theanine + Piracetam" },
-      "4236_119032": { safety: "warning", message: "⚠️ Modafinil + Bacopa – monitor individual reaction" },
-      "2519_441792": { safety: "warning", message: "⚠️ Caffeine + Agmatine – potential interaction with blood pressure" },
-      "4236_2250": { safety: "danger", message: "⚠️ Modafinil + Aniracetam – risk of overstimulation and insomnia" }
-    };
+    // Interactions loaded from data.js → window.interactions
+    // Fallback for safety in case data.js loads late
+    function getInteraction(cidA, cidB) {
+      const db = window.interactions || {};
+      return db[`${cidA}_${cidB}`] || db[`${cidB}_${cidA}`] || null;
+    }
 
-    // Initialize the application
     function initApp() {
-      console.log("Initializing Stack Builder...");
-      
-      // Check authentication state
-      firebase.auth().onAuthStateChanged(user => {
-        console.log("Auth state changed:", user ? "logged in" : "not logged in");
-        updateSaveButton(user);
-      });
-      
-      // Load data.js
+      firebase.auth().onAuthStateChanged(user => updateSaveButton(user));
       loadDataAndInitialize();
     }
 
-    // Load data.js and initialize components
     function loadDataAndInitialize() {
-      console.log("Loading data.js...");
-      
-      // Check if data.js is already loaded
-      if (typeof window.compounds !== 'undefined') {
-        console.log("data.js already loaded");
-        finishInitialization();
-        return;
-      }
-      
-      const script = document.createElement('script');
-      script.src = 'data.js';
-      script.onload = function() {
-        console.log('data.js loaded successfully');
-        finishInitialization();
-      };
-      script.onerror = function() {
-        console.error('Failed to load data.js');
-        document.getElementById('loadingIndicator').innerHTML = '<p>Error loading compounds. Please refresh the page.</p>';
-      };
-      document.head.appendChild(script);
+      if (typeof window.compounds !== 'undefined') { finishInitialization(); return; }
+      const s = document.createElement('script');
+      s.src = 'data.js';
+      s.onload = finishInitialization;
+      s.onerror = () => { document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Error loading compounds.</p>'; };
+      document.head.appendChild(s);
     }
 
-    // Finish initialization after data is loaded
     function finishInitialization() {
-      console.log("Finishing initialization...");
-      
-      // Hide loading indicator and show main layout
       document.getElementById('loadingIndicator').style.display = 'none';
       document.getElementById('mainLayout').style.display = 'grid';
-      
-      // Check if compounds data is available
-      if (typeof window.compounds === 'undefined' || !Array.isArray(window.compounds)) {
-        console.error('Compounds data not loaded properly');
-        document.getElementById('availableGrid').innerHTML = '<p class="loading-indicator">Error loading compounds. Please refresh the page.</p>';
+      if (!window.compounds || !Array.isArray(window.compounds)) {
+        document.getElementById('availableGrid').innerHTML = '<p style="color:#8a9ab0">Error loading compounds.</p>';
         return;
       }
-      
-      console.log(`Loaded ${window.compounds.length} compounds`);
-      
-      // Render available compounds
       renderAvailable(window.compounds);
-      
-      // Set up event listeners
-      setupEventListeners();
-      
-      // Make stack area droppable
-      makeStackAreaDroppable();
-      
-      // Restore stack from session storage if available
-      restoreStackFromSession();
-    }
-
-    // Set up event listeners
-    function setupEventListeners() {
-      console.log("Setting up event listeners...");
-      
-      // Search functionality
-      document.getElementById('stackSearch').addEventListener('input', handleSearch);
-      
-      // Reset button
+      document.getElementById('stackSearch').addEventListener('input', e => {
+        const t = e.target.value.toLowerCase();
+        renderAvailable(t
+          ? window.compounds.filter(c =>
+              c.name.toLowerCase().includes(t) ||
+              (c.description && c.description.toLowerCase().includes(t)) ||
+              (c.category && c.category.toLowerCase().includes(t)) ||
+              (c.benefits && c.benefits.some(b => b.toLowerCase().includes(t)))
+            )
+          : window.compounds
+        );
+      });
       document.getElementById('resetBtn').addEventListener('click', clearStack);
-      
-      // Save button
       document.getElementById('saveBtn').addEventListener('click', saveStack);
+      makeDroppable();
+      restoreFromSession();
     }
 
-    // Render available compounds
-    function renderAvailable(filtered = window.compounds || []) {
-      console.log(`Rendering ${filtered.length} compounds`);
-      
+    function renderAvailable(list = window.compounds || []) {
       const grid = document.getElementById('availableGrid');
       grid.innerHTML = '';
-      
-      if (!filtered || filtered.length === 0) {
-        grid.innerHTML = '<p class="loading-indicator">No compounds found.</p>';
+      if (!list.length) {
+        grid.innerHTML = '<p style="color:#8a9ab0;font-size:0.88rem;">No compounds found.</p>';
         return;
       }
-      
-      filtered.forEach(comp => {
+      list.forEach(comp => {
         const inStack = currentStack.some(c => c.cid === comp.cid);
         const card = document.createElement('div');
         card.className = 'compound-card';
         card.draggable = true;
         card.dataset.cid = comp.cid;
-        
         card.innerHTML = `
-          <img src="${comp.image}" alt="${comp.name}" onerror="this.src='https://placehold.co/300x200/4a5568/FFFFFF?text=${encodeURIComponent(comp.name)}'">
-          <div class="card-content">
-            <h3 class="card-title">${comp.name}</h3>
-            <p class="card-description">${comp.description}</p>
+          <div class="card-img">
+            <img src="${comp.image}" alt="${comp.name}" onerror="this.parentElement.style.background='#f0ece8';this.style.display='none'">
+            <div class="cat-badge">${comp.category || 'Nootropic'}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-name">${comp.name}</div>
+            <div class="card-desc">${comp.description}</div>
             <button class="add-btn" data-cid="${comp.cid}" ${inStack ? 'disabled' : ''}>
-              ${inStack ? 'Added' : '+ Add to Stack'}
+              ${inStack ? '✓ Added' : '+ Add to Stack'}
             </button>
           </div>
         `;
-        
-        // Add drag events
-        card.addEventListener('dragstart', (e) => {
+        card.addEventListener('dragstart', e => {
           e.dataTransfer.setData('text/plain', comp.cid);
-          card.style.opacity = '0.5';
+          card.style.opacity = '0.45';
         });
-        
-        card.addEventListener('dragend', () => {
-          card.style.opacity = '1';
-        });
-        
+        card.addEventListener('dragend', () => { card.style.opacity = '1'; });
         grid.appendChild(card);
       });
-      
-      // Add event listeners to buttons
-      document.querySelectorAll('.add-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const cid = parseInt(e.target.dataset.cid);
-          addToStack(cid);
-        });
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', e => addToStack(parseInt(e.target.dataset.cid)));
       });
     }
 
-    // Render current stack
     function renderCurrentStack() {
-      console.log("Rendering current stack");
-      
       const container = document.getElementById('currentStack');
-      const countElement = document.getElementById('stackCount');
-      
-      countElement.textContent = `${currentStack.length} compounds`;
-      
+      document.getElementById('stackCount').textContent = `${currentStack.length} compound${currentStack.length !== 1 ? 's' : ''}`;
+
       if (currentStack.length === 0) {
         container.innerHTML = `
-          <div class="empty-state">
+          <div class="empty-state" id="emptyState">
             <div class="empty-icon">📋</div>
-            <p>Drop compounds here or click "+ Add to Stack"</p>
-          </div>
-        `;
+            <p>Drag here or click "+ Add to Stack"</p>
+          </div>`;
         document.getElementById('safetyPanel').style.display = 'none';
         return;
       }
-      
+
       container.innerHTML = '';
-      
-      currentStack.forEach((comp, index) => {
+      currentStack.forEach((comp, i) => {
         const item = document.createElement('div');
         item.className = 'stack-item';
         item.draggable = true;
-        item.dataset.index = index;
-        
+        item.dataset.index = i;
         item.innerHTML = `
-          <img src="${comp.image}" alt="${comp.name}" onerror="this.src='https://placehold.co/50x50/4a5568/FFFFFF?text=?'" width="50" height="50">
+          <span class="drag-handle">⠿</span>
+          <img class="item-thumb" src="${comp.image}" alt="${comp.name}" onerror="this.style.background='#e8d8c9';this.src=''">
           <div class="item-info">
             <div class="item-name">${comp.name}</div>
             <div class="item-dosage">${comp.dosage ? comp.dosage.split('\n')[0] : 'No dosage info'}</div>
           </div>
           <button class="remove-btn" data-cid="${comp.cid}">×</button>
         `;
-        
-        // Add drag events
-        item.addEventListener('dragstart', (e) => {
-          e.dataTransfer.setData('text/plain', index);
-          item.style.opacity = '0.5';
-        });
-        
-        item.addEventListener('dragend', () => {
-          item.style.opacity = '1';
-        });
-        
+        item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); item.style.opacity = '0.45'; });
+        item.addEventListener('dragend', () => { item.style.opacity = '1'; });
         container.appendChild(item);
       });
-      
-      // Make container sortable
+
       new Sortable(container, {
         animation: 150,
-        onEnd: (evt) => {
-          const oldIndex = evt.oldIndex;
-          const newIndex = evt.newIndex;
-          
-          if (oldIndex !== newIndex) {
-            const movedItem = currentStack.splice(oldIndex, 1)[0];
-            currentStack.splice(newIndex, 0, movedItem);
+        handle: '.drag-handle',
+        onEnd: evt => {
+          if (evt.oldIndex !== evt.newIndex) {
+            const moved = currentStack.splice(evt.oldIndex, 1)[0];
+            currentStack.splice(evt.newIndex, 0, moved);
             renderCurrentStack();
           }
         }
       });
-      
-      // Add event listeners to remove buttons
-      document.querySelectorAll('.remove-btn').forEach(button => {
-        button.addEventListener('click', (e) => {
-          const cid = parseInt(e.target.dataset.cid);
-          removeFromStack(cid);
-        });
+
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', e => removeFromStack(parseInt(e.target.dataset.cid)));
       });
-      
-      // Analyze stack safety
+
       analyzeStack();
     }
 
-    // Add compound to stack
     function addToStack(cid) {
-      console.log(`Adding compound with CID: ${cid}`);
-      
       const comp = window.compounds.find(c => c.cid === cid);
-      if (!comp) {
-        console.error(`Compound with CID ${cid} not found`);
-        return;
-      }
-      
-      if (currentStack.some(c => c.cid === cid)) {
-        console.log(`Compound with CID ${cid} already in stack`);
-        return;
-      }
-      
+      if (!comp || currentStack.some(c => c.cid === cid)) return;
       currentStack.push(comp);
       renderCurrentStack();
-      renderAvailable(getFilteredCompounds());
+      renderAvailable(getFiltered());
     }
 
-    // Remove compound from stack
     function removeFromStack(cid) {
-      console.log(`Removing compound with CID: ${cid}`);
-      
       currentStack = currentStack.filter(c => c.cid !== cid);
       renderCurrentStack();
-      renderAvailable(getFilteredCompounds());
+      renderAvailable(getFiltered());
     }
 
-    // Clear entire stack
     function clearStack() {
-      console.log("Clearing stack");
-      
-      if (confirm("Really reset the stack?")) {
+      if (confirm('Reset your stack?')) {
         currentStack = [];
         renderCurrentStack();
-        renderAvailable(getFilteredCompounds());
+        renderAvailable(getFiltered());
       }
     }
 
-    // Analyze stack safety
-    function analyzeStack() {
-      console.log("Analyzing stack safety");
-      
-      const panel = document.getElementById('safetyPanel');
-      const content = document.getElementById('safetyContent');
-      
-      content.innerHTML = '';
-      
-      if (currentStack.length < 2) {
-        panel.style.display = 'none';
-        return;
-      }
-      
-      panel.style.display = 'block';
-      
-      let hasWarning = false;
-      let hasDanger = false;
-      
-      // Check all combinations
-      for (let i = 0; i < currentStack.length; i++) {
-        for (let j = i + 1; j < currentStack.length; j++) {
-          const key1 = `${currentStack[i].cid}_${currentStack[j].cid}`;
-          const key2 = `${currentStack[j].cid}_${currentStack[i].cid}`;
-          const inter = stackInteractions[key1] || stackInteractions[key2];
-          
-          if (inter) {
-            const message = document.createElement('div');
-            message.className = `safety-message safety-${inter.safety}`;
-            message.textContent = inter.message;
-            content.appendChild(message);
-            
-            if (inter.safety === 'danger') {
-              hasDanger = true;
-            } else if (inter.safety === 'warning') {
-              hasWarning = true;
-            }
-          }
-        }
-      }
-      
-      // Add general safety message
-      if (!hasDanger && !hasWarning && content.children.length > 0) {
-        const message = document.createElement('div');
-        message.className = 'safety-message safety-safe';
-        message.textContent = '✓ This stack looks very safe and synergistic!';
-        content.appendChild(message);
-      }
-    }
-
-    // Save stack
-    async function saveStack() {
-      console.log("Saving stack");
-      
-      const user = firebase.auth().currentUser;
-      if (!user) {
-        alert("Please log in first.");
-        window.location.href = 'index.html';
-        return;
-      }
-      
-      if (currentStack.length === 0) {
-        alert("Stack is empty.");
-        return;
-      }
-      
-      // Ask for stack name
-      const defaultName = `Stack ${new Date().toLocaleDateString('en-US')}`;
-      const stackName = prompt("Enter a name for your stack:", defaultName);
-      
-      if (stackName === null) return; // User cancelled
-      
-      // Sanitize input
-      const cleanName = stackName.replace(/[^a-zA-Z0-9 _\-]/g, '').substring(0, 50);
-      
-      try {
-        await firebase.firestore()
-          .collection('users')
-          .doc(user.uid)
-          .collection('stacks')
-          .add({
-            name: cleanName.trim() || defaultName,
-            compounds: currentStack.map(c => ({ 
-              cid: c.cid, 
-              name: c.name,
-              category: c.category,
-              description: c.description
-            })),
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        
-        alert("✅ Stack saved successfully!");
-      } catch (e) {
-        console.error("Error saving stack:", e);
-        alert("Error saving stack. Please try again.");
-      }
-    }
-
-    // Handle search
-    function handleSearch(e) {
-      const term = e.target.value.toLowerCase();
-      const filtered = getFilteredCompounds(term);
-      renderAvailable(filtered);
-    }
-
-    // Get filtered compounds based on search term
-    function getFilteredCompounds(term = '') {
-      if (!term) {
-        return window.compounds || [];
-      }
-      
-      return (window.compounds || []).filter(c => 
-        c.name.toLowerCase().includes(term) || 
-        (c.description && c.description.toLowerCase().includes(term)) ||
-        (c.category && c.category.toLowerCase().includes(term)) ||
-        (c.benefits && c.benefits.some(b => b.toLowerCase().includes(term)))
+    function getFiltered() {
+      const t = document.getElementById('stackSearch').value.toLowerCase();
+      if (!t) return window.compounds || [];
+      return (window.compounds || []).filter(c =>
+        c.name.toLowerCase().includes(t) ||
+        (c.description && c.description.toLowerCase().includes(t)) ||
+        (c.category && c.category.toLowerCase().includes(t)) ||
+        (c.benefits && c.benefits.some(b => b.toLowerCase().includes(t)))
       );
     }
 
-    // Make stack area droppable
-    function makeStackAreaDroppable() {
-      console.log("Making stack area droppable");
-      
-      const stackArea = document.getElementById('currentStack');
-      
-      stackArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        stackArea.classList.add('drag-over');
-      });
-      
-      stackArea.addEventListener('dragleave', () => {
-        stackArea.classList.remove('drag-over');
-      });
-      
-      stackArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        stackArea.classList.remove('drag-over');
-        
-        const cid = parseInt(e.dataTransfer.getData('text/plain'));
-        if (!isNaN(cid)) {
-          addToStack(cid);
+    function analyzeStack() {
+      const panel = document.getElementById('safetyPanel');
+      const content = document.getElementById('safetyContent');
+      content.innerHTML = '';
+      if (currentStack.length < 2) { panel.style.display = 'none'; return; }
+      panel.style.display = 'block';
+
+      const results = [];
+      for (let i = 0; i < currentStack.length; i++) {
+        for (let j = i + 1; j < currentStack.length; j++) {
+          const inter = getInteraction(currentStack[i].cid, currentStack[j].cid);
+          if (inter) results.push(inter);
         }
+      }
+
+      // Sort: danger first, then warning, then synergy, then safe
+      const order = { danger: 0, warning: 1, synergy: 2, safe: 3 };
+      results.sort((a, b) => (order[a.safety] ?? 9) - (order[b.safety] ?? 9));
+
+      if (results.length === 0) {
+        content.innerHTML = `<div class="inter-card inter-unknown">
+          <div class="inter-top">
+            <span class="inter-tag tag-unknown">No Data</span>
+          </div>
+          <div class="inter-msg">No known interactions found for this combination. This does not necessarily mean it's safe — always do your own research.</div>
+        </div>`;
+        return;
+      }
+
+      results.forEach(inter => {
+        const iconMap = { synergy: '⚡', safe: '✓', warning: '⚠', danger: '✕' };
+        const stars = inter.score ? '★'.repeat(inter.score) + '☆'.repeat(5 - inter.score) : '';
+        const card = document.createElement('div');
+        card.className = `inter-card inter-${inter.safety}`;
+        card.innerHTML = `
+          <div class="inter-top">
+            <span class="inter-icon">${iconMap[inter.safety]}</span>
+            <span class="inter-title">${inter.title || ''}</span>
+            ${inter.tag ? `<span class="inter-tag tag-${inter.safety}">${inter.tag}</span>` : ''}
+            ${stars ? `<span class="inter-stars">${stars}</span>` : ''}
+          </div>
+          <div class="inter-msg">${inter.message}</div>
+        `;
+        content.appendChild(card);
       });
     }
 
-    // Update save button based on auth state
-    function updateSaveButton(user) {
-      const saveBtn = document.getElementById('saveBtn');
-      
-      if (user) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Stack';
-      } else {
-        saveBtn.disabled = true;
-        saveBtn.textContent = 'Login to Save';
-      }
-    }
-
-    // Restore stack from session storage
-    function restoreStackFromSession() {
-      console.log("Restoring stack from session storage");
-      
+    async function saveStack() {
+      const user = firebase.auth().currentUser;
+      if (!user) { alert('Please log in first.'); window.location.href = 'index.html'; return; }
+      if (currentStack.length === 0) { alert('Stack is empty.'); return; }
+      const defaultName = `Stack ${new Date().toLocaleDateString('en-US')}`;
+      const name = prompt('Name your stack:', defaultName);
+      if (name === null) return;
+      const clean = name.replace(/[^a-zA-Z0-9 _\-]/g, '').substring(0, 50);
       try {
-        const storedStack = sessionStorage.getItem('loadedStack');
-        if (storedStack) {
-          const compounds = JSON.parse(storedStack);
-          currentStack = compounds.map(comp => {
-            // Find full compound data from our dataset
-            const fullComp = window.compounds.find(c => c.cid === comp.cid);
-            return fullComp || comp;
-          });
-          
-          renderCurrentStack();
-          sessionStorage.removeItem('loadedStack'); // Clean up
-        }
-      } catch (e) {
-        console.error("Error restoring stack from session:", e);
-      }
+        await firebase.firestore().collection('users').doc(user.uid).collection('stacks').add({
+          name: clean.trim() || defaultName,
+          compounds: currentStack.map(c => ({ cid: c.cid, name: c.name, category: c.category, description: c.description })),
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert('✅ Stack saved!');
+      } catch (e) { alert('Error saving stack. Please try again.'); }
     }
 
-    // Cookie Consent
+    function updateSaveButton(user) {
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = !user;
+      btn.textContent = user ? 'Save Stack' : 'Login to Save';
+    }
+
+    function makeDroppable() {
+      const zone = document.getElementById('currentStack');
+      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault(); zone.classList.remove('drag-over');
+        const cid = parseInt(e.dataTransfer.getData('text/plain'));
+        if (!isNaN(cid)) addToStack(cid);
+      });
+    }
+
+    function restoreFromSession() {
+      try {
+        const stored = sessionStorage.getItem('loadedStack');
+        if (stored) {
+          const compounds = JSON.parse(stored);
+          currentStack = compounds.map(c => window.compounds.find(x => x.cid === c.cid) || c);
+          renderCurrentStack();
+          sessionStorage.removeItem('loadedStack');
+        }
+      } catch (e) { console.error(e); }
+    }
+
     function acceptCookies() {
       localStorage.setItem('cookiesAccepted', 'yes');
       document.getElementById('cookieConsent').style.display = 'none';
     }
-
-    window.onload = () => {
+    window.addEventListener('load', () => {
       if (!localStorage.getItem('cookiesAccepted'))
-        document.getElementById('cookieConsent').style.display = 'block';
-    };
+        document.getElementById('cookieConsent').style.display = 'flex';
+    });
 
-    // Initialize the app when the page loads
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-      initApp();
-    }
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initApp) : initApp();
   </script>
 </body>
 </html>

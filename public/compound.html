@@ -3,913 +3,644 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Compound Details - Noodrop</title>
-  
-  <!-- Tabular Font -->
+  <title>Compound – Noodrop</title>
+
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  
-  <!-- Heroicons -->
-  <script src="https://unpkg.com/heroicons@1.0.1/outline/index.min.js"></script>
-  
-  <!-- 3Dmol.js -->
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
   <script src="https://3dmol.org/build/3Dmol-min.js"></script>
-  
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  
-  <!-- Include data.js -->
   <script src="data.js"></script>
-  
+
   <style>
     :root {
       --cream: #e8d8c9;
       --slate: #4b607f;
       --orange: #f3701e;
       --white: #ffffff;
-      --off-white: #fdfdfd;
       --dark-slate: #2c3e50;
-      --glow-cream: rgba(232, 216, 201, 0.3);
-      --glow-orange: rgba(243, 112, 30, 0.2);
-      --glow-slate: rgba(75, 96, 127, 0.1);
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --glass-bg: rgba(255, 255, 255, 0.7);
+      --shadow: 0 8px 28px rgba(0,0,0,0.07);
+      --bg: #fafaf8;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Tabular', sans-serif;
-      background: var(--white);
+      background: var(--bg);
       color: var(--dark-slate);
-      margin: 0;
-      padding: 0;
       min-height: 100vh;
-      position: relative;
     }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Header */
+    /* ── Header ── */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 5%;
       border-bottom: 1px solid var(--cream);
-      margin-bottom: 2rem;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(250,250,248,0.92);
+      backdrop-filter: blur(14px);
     }
-
     .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--slate);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 1.4rem; font-weight: 700; color: var(--slate);
     }
-
-    .logo svg {
-      width: 24px;
-      height: 24px;
-      color: var(--orange);
+    nav a {
+      text-decoration: none; color: var(--slate);
+      margin: 0 0.9rem; font-weight: 500; font-size: 0.9rem;
+      position: relative; transition: color 0.2s;
     }
-
-    /* Compound Header */
-    .compound-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 2rem;
+    nav a::after {
+      content: ""; position: absolute;
+      width: 0; height: 2px; background: var(--orange);
+      left: 0; bottom: -4px; transition: 0.3s;
     }
+    nav a:hover::after { width: 100%; }
+    nav a:hover { color: var(--orange); }
 
+    /* ── Container ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 3rem 5%; }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      color: #8a9ab0; text-decoration: none; font-size: 0.85rem;
+      font-weight: 600; margin-bottom: 2.5rem; transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* ── Loading ── */
+    .loading {
+      display: flex; flex-direction: column;
+      align-items: center; padding: 6rem 0; color: #8a9ab0;
+    }
+    .spinner {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2.5px solid rgba(243,112,30,0.2);
+      border-top-color: var(--orange);
+      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Compound Hero ── */
+    .compound-hero {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 2rem;
+      margin-bottom: 2rem; flex-wrap: wrap;
+    }
+    .compound-hero-left {}
+    .compound-eyebrow {
+      font-size: 0.68rem; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 0.6rem;
+    }
     .compound-title {
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600; color: var(--slate);
+      letter-spacing: -1px; line-height: 1.05;
+    }
+    .compound-hero-right {
+      display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+    }
+
+    /* Meta pills */
+    .meta-pill {
+      display: flex; align-items: center; gap: 0.5rem;
+      background: white; border: 1px solid var(--cream);
+      border-radius: 50px; padding: 0.45rem 1rem;
+      font-size: 0.82rem; box-shadow: var(--shadow);
+    }
+    .meta-pill .label { color: var(--orange); font-weight: 700; }
+    .meta-pill .value { color: var(--slate); }
+
+    /* Bookmark button */
+    .bookmark-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: white; border: 1px solid var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.25s; box-shadow: var(--shadow);
       color: var(--slate);
-      margin: 0;
+    }
+    .bookmark-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
+    .bookmark-btn.bookmarked { color: #ef4444; border-color: #ef4444; }
+
+    /* ── Description block ── */
+    .compound-desc {
+      background: white; border: 1px solid var(--cream);
+      border-radius: 16px; padding: 1.8rem 2rem;
+      font-size: 1.02rem; line-height: 1.8; color: #5a6a7a;
+      margin-bottom: 2.5rem; box-shadow: var(--shadow);
     }
 
-    .compound-meta {
-      display: flex;
-      gap: 1rem;
-      background: var(--glass-bg);
-      padding: 0.5rem 1rem;
-      border-radius: 50px;
-      border: 1px solid var(--cream);
+    /* ── Section label ── */
+    .section-label {
+      font-size: 0.68rem; letter-spacing: 4px;
+      text-transform: uppercase; color: #aab0bc;
+      margin-bottom: 1.5rem;
     }
 
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .meta-label {
-      font-weight: 600;
-      color: var(--orange);
-    }
-
-    /* Description */
-    .description {
-      font-size: 1.1rem;
-      line-height: 1.7;
-      color: var(--dark-slate);
-      margin-bottom: 2rem;
-      padding: 1.5rem;
-      background: var(--glass-bg);
-      border-radius: 16px;
-      border: 1px solid var(--cream);
-    }
-
-    /* Grid Layout */
+    /* ── Content grid ── */
     .content-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-bottom: 2rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .content-grid { grid-template-columns: 1fr; }
+      nav { display: none; }
     }
 
-    @media (max-width: 900px) {
-      .content-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Card */
+    /* ── Card ── */
     .card {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid var(--cream);
+      background: white; border-radius: 16px;
+      border: 1px solid var(--cream); padding: 1.6rem;
       box-shadow: var(--shadow);
     }
-
     .card-title {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: var(--slate);
-      margin-top: 0;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 1rem; font-weight: 600; color: var(--slate);
+      margin-bottom: 1.2rem; display: flex;
+      align-items: center; gap: 0.6rem;
+    }
+    .card-title-icon {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: rgba(243,112,30,0.1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; flex-shrink: 0;
     }
 
-    .card-title svg {
-      width: 20px;
-      height: 20px;
-      color: var(--orange);
-    }
-
-    /* Benefits Pills */
-    .benefits {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-    }
-
+    /* Benefits pills */
+    .benefits { display: flex; flex-wrap: wrap; gap: 0.5rem; }
     .benefit-pill {
-      background: rgba(243, 112, 30, 0.1);
-      color: var(--orange);
-      padding: 0.4rem 1rem;
-      border-radius: 50px;
-      font-size: 0.9rem;
-      font-weight: 500;
+      background: rgba(243,112,30,0.1); color: var(--orange);
+      padding: 0.35rem 0.9rem; border-radius: 20px;
+      font-size: 0.82rem; font-weight: 600;
     }
 
     /* Dosage */
-    .dosage-content {
-      line-height: 1.6;
-      white-space: pre-line;
-    }
+    .dosage-text { font-size: 0.92rem; line-height: 1.75; color: #5a6a7a; white-space: pre-line; }
+    .dosage-text strong { color: var(--orange); }
 
-    .dosage-content strong {
-      color: var(--orange);
-    }
-
-    /* Pharmacokinetics */
-    .pharma-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-
+    /* Pharma grid */
+    .pharma-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem; }
     .pharma-item {
-      background: rgba(243, 112, 30, 0.05);
-      border: 1px solid rgba(243, 112, 30, 0.2);
-      padding: 1rem;
-      border-radius: 12px;
-      text-align: center;
+      background: rgba(243,112,30,0.04);
+      border: 1px solid rgba(243,112,30,0.15);
+      border-radius: 12px; padding: 1rem 0.75rem; text-align: center;
     }
-
     .pharma-label {
-      font-size: 0.8rem;
-      color: var(--slate);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      font-size: 0.68rem; text-transform: uppercase;
+      letter-spacing: 2px; color: #8a9ab0; margin-bottom: 0.4rem;
+    }
+    .pharma-value { font-size: 1rem; font-weight: 700; color: var(--orange); }
+
+    /* List items */
+    .info-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .info-item {
+      padding: 0.7rem 1rem; font-size: 0.88rem; line-height: 1.5;
+      border-radius: 8px; border-left: 3px solid var(--orange);
+      background: rgba(243,112,30,0.04); color: var(--dark-slate);
+    }
+    .info-item.warning {
+      border-left-color: #ef4444;
+      background: rgba(239,68,68,0.05); color: #ef4444;
+    }
+    .info-item.safe {
+      border-left-color: #10b981;
+      background: rgba(16,185,129,0.05); color: #059669;
     }
 
-    .pharma-value {
-      font-size: 1.1rem;
-      font-weight: 600;
+    /* Mechanisms */
+    .mechanisms-text { font-size: 0.92rem; line-height: 1.8; color: #5a6a7a; }
+
+    /* Research links */
+    .research-links { display: flex; flex-direction: column; gap: 0.6rem; }
+    .research-link {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.85rem 1rem; border-radius: 10px;
+      background: rgba(75,96,127,0.04);
+      border: 1px solid rgba(75,96,127,0.1);
+      color: var(--slate); text-decoration: none;
+      font-size: 0.88rem; font-weight: 500;
+      transition: all 0.25s;
+    }
+    .research-link:hover {
+      background: rgba(243,112,30,0.06);
+      border-color: rgba(243,112,30,0.25);
+      transform: translateX(4px);
       color: var(--orange);
     }
+    .research-link-icon { flex-shrink: 0; opacity: 0.5; }
 
-    /* Lists */
-    .list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
+    /* ── 3D Viewer ── */
+    .viewer-section { margin-top: 1.5rem; }
+    .viewer-card {
+      background: white; border-radius: 16px;
+      border: 1px solid var(--cream);
+      overflow: hidden; box-shadow: var(--shadow);
     }
-
-    .list-item {
-      padding: 0.75rem 1rem;
-      margin-bottom: 0.5rem;
-      background: rgba(243, 112, 30, 0.05);
-      border-left: 3px solid var(--orange);
-      border-radius: 4px;
-      font-size: 0.95rem;
-      line-height: 1.5;
+    .viewer-header {
+      padding: 1.2rem 1.6rem;
+      border-bottom: 1px solid var(--cream);
+      display: flex; align-items: center; gap: 0.75rem;
     }
-
-    .list-item.warning {
-      background: rgba(239, 68, 68, 0.08);
-      border-left-color: #ef4444;
-      color: #ef4444;
-    }
-
-    .list-item.safe {
-      background: rgba(34, 197, 94, 0.08);
-      border-left-color: #22c55e;
-      color: #22c55e;
-    }
-
-    /* Links */
-    .links {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .link-item {
-      display: block;
-      padding: 1rem;
-      background: rgba(75, 96, 127, 0.05);
-      border: 1px solid rgba(75, 96, 127, 0.1);
-      border-radius: 10px;
-      color: var(--slate);
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-weight: 500;
-      font-size: 0.95rem;
-    }
-
-    .link-item:hover {
-      background: rgba(75, 96, 127, 0.1);
-      border-color: var(--orange);
-      transform: translateX(4px);
-    }
-
-    /* 3D Viewer */
-    .viewer-container {
-      position: relative;
-      margin-bottom: 2rem;
-    }
-
     #viewer {
-      width: 100%;
-      height: 400px;
-      border-radius: 16px;
+      width: 100%; height: 420px;
+      background: #f8f5f2;
+      position: relative;
       overflow: hidden;
-      background: rgba(255,255,255,0.01);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      display: block;
     }
-
-    .controls {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
+    #viewer canvas {
+      position: absolute !important;
+      top: 0 !important; left: 0 !important;
+      width: 100% !important; height: 100% !important;
     }
-
-    .control-btn {
-      background: var(--glass-bg);
-      border: 1px solid var(--cream);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      color: var(--slate);
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-    }
-
-    .control-btn:hover {
-      background: var(--orange);
-      color: white;
-      border-color: var(--orange);
-    }
-
-    /* Bookmark Button */
-    #bookmarkBtn {
-      background: var(--glass-bg);
-      border: 1px solid var(--cream);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      color: var(--slate);
-      cursor: pointer;
-      font-size: 1.2rem;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    #bookmarkBtn:hover {
-      background: var(--orange);
-      color: white;
-      border-color: var(--orange);
-    }
-
-    #bookmarkBtn.bookmarked {
-      color: #ff6b6b;
-      border-color: #ff6b6b;
-    }
-
-    /* Back Button */
-    .back-btn {
-      background: var(--glass-bg);
-      border: 1px solid var(--cream);
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      color: var(--slate);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-    }
-
-    .back-btn:hover {
-      background: var(--orange);
-      color: white;
-      border-color: var(--orange);
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 2rem 0;
-      color: var(--slate);
+    .viewer-controls {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      padding: 1rem 1.4rem;
       border-top: 1px solid var(--cream);
-      margin-top: 3rem;
+      background: #fdfaf7;
+    }
+    .ctrl-btn {
+      background: white; border: 1px solid var(--cream);
+      padding: 0.4rem 1rem; border-radius: 50px;
+      color: var(--slate); font-family: 'Tabular', sans-serif;
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .ctrl-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
+
+    /* ── Full-width card ── */
+    .card-full { margin-top: 1.5rem; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 2rem 0;
+      border-top: 1px solid var(--cream);
+      margin-top: 4rem; color: #8a9ab0; font-size: 0.85rem;
     }
 
-    /* Cookie Consent */
+    /* ── Cookie ── */
     #cookieConsent {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: var(--slate);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      z-index: 9999;
-      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
+      background: var(--slate); color: white;
+      padding: 1rem 5%; display: none;
+      align-items: center; justify-content: center; gap: 1.5rem;
+      font-size: 0.88rem; flex-wrap: wrap;
     }
-
     #cookieConsent button {
-      margin-left: 1rem;
-      background: var(--orange);
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
+      background: var(--orange); color: white; border: none;
+      padding: 0.4rem 1.2rem; border-radius: 50px;
+      font-family: 'Tabular', sans-serif; font-weight: 600;
       cursor: pointer;
-    }
-
-    /* Loading states */
-    .loading {
-      text-align: center;
-      padding: 2rem;
-      color: var(--slate);
-    }
-
-    .spinner {
-      border: 3px solid rgba(243, 112, 30, 0.3);
-      border-top: 3px solid var(--orange);
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="logo">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-        </svg>
-        Noodrop
-      </div>
-      <a href="index.html" class="back-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Back to Library
-      </a>
-    </header>
 
-    <!-- Loading State -->
+  <header>
+    <div class="logo">Noodrop</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="stack.html">Stacks</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <a href="index.html" class="back-link">← Back to Library</a>
+
+    <!-- Loading -->
     <div id="loading" class="loading">
       <div class="spinner"></div>
-      <p>Loading compound data...</p>
+      <span style="font-size:0.85rem;">Loading compound...</span>
     </div>
 
-    <!-- Compound Content (hidden initially) -->
-    <div id="compoundContent" style="display: none;">
-      <!-- Compound Header -->
-      <div class="compound-header">
-        <h1 class="compound-title" id="name">Loading...</h1>
-        <div class="compound-meta">
-          <div class="meta-item">
-            <span class="meta-label">CID:</span>
-            <span id="cidDisplay">-</span>
+    <!-- Content -->
+    <div id="compoundContent" style="display:none;">
+
+      <!-- Hero -->
+      <div class="compound-hero">
+        <div class="compound-hero-left">
+          <div class="compound-eyebrow" id="compCategory">Nootropic</div>
+          <h1 class="compound-title" id="name">–</h1>
+        </div>
+        <div class="compound-hero-right">
+          <div class="meta-pill">
+            <span class="label">CID</span>
+            <span class="value" id="cidDisplay">–</span>
           </div>
-          <div class="meta-item">
-            <span class="meta-label">Type:</span>
-            <span id="typeDisplay">-</span>
-          </div>
-          <button id="bookmarkBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          <button class="bookmark-btn" id="bookmarkBtn" title="Bookmark this compound">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg>
           </button>
         </div>
       </div>
 
       <!-- Description -->
-      <div class="description" id="description">
-        Loading description...
-      </div>
+      <div class="compound-desc" id="description">–</div>
 
-      <!-- Content Grid -->
+      <!-- Main 2-col grid -->
+      <div class="section-label">Properties & Data</div>
       <div class="content-grid">
-        <!-- Left Column -->
-        <div>
-          <!-- Benefits -->
+
+        <!-- Left -->
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
           <div class="card">
-            <h2 class="card-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+            <div class="card-title">
+              <div class="card-title-icon">✓</div>
               Benefits
-            </h2>
-            <div class="benefits" id="benefits">
-              <!-- Benefits will be populated by JS -->
             </div>
+            <div class="benefits" id="benefits"></div>
           </div>
 
-          <!-- Dosage -->
-          <div class="card" style="margin-top: 2rem;">
-            <h2 class="card-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+          <div class="card">
+            <div class="card-title">
+              <div class="card-title-icon">⊕</div>
               Recommended Dosage
-            </h2>
-            <div class="dosage-content" id="dosage">
-              No dosage information available.
             </div>
+            <div class="dosage-text" id="dosage">No dosage info available.</div>
           </div>
 
-          <!-- Pharmacokinetics -->
-          <div class="card" style="margin-top: 2rem;">
-            <h2 class="card-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+          <div class="card">
+            <div class="card-title">
+              <div class="card-title-icon">◷</div>
               Pharmacokinetics
-            </h2>
+            </div>
             <div class="pharma-grid">
               <div class="pharma-item">
                 <div class="pharma-label">Half-Life</div>
-                <div class="pharma-value" id="halfLife">-</div>
+                <div class="pharma-value" id="halfLife">–</div>
               </div>
               <div class="pharma-item">
-                <div class="pharma-label">Onset Time</div>
-                <div class="pharma-value" id="onsetTime">-</div>
+                <div class="pharma-label">Onset</div>
+                <div class="pharma-value" id="onsetTime">–</div>
               </div>
               <div class="pharma-item">
                 <div class="pharma-label">Duration</div>
-                <div class="pharma-value" id="duration">-</div>
+                <div class="pharma-value" id="duration">–</div>
               </div>
             </div>
           </div>
+
         </div>
 
-        <!-- Right Column -->
-        <div>
-          <!-- Side Effects -->
+        <!-- Right -->
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+
           <div class="card">
-            <h2 class="card-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+            <div class="card-title">
+              <div class="card-title-icon">⚠</div>
               Possible Side Effects
-            </h2>
-            <ul class="list" id="sideEffects">
-              <!-- Side effects will be populated by JS -->
-            </ul>
+            </div>
+            <ul class="info-list" id="sideEffects"></ul>
           </div>
 
-          <!-- Warnings -->
-          <div class="card" style="margin-top: 2rem;">
-            <h2 class="card-title">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+          <div class="card">
+            <div class="card-title">
+              <div class="card-title-icon">🛡</div>
               Safety & Warnings
-            </h2>
-            <ul class="list" id="warnings">
-              <!-- Warnings will be populated by JS -->
-            </ul>
+            </div>
+            <ul class="info-list" id="warnings"></ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Mechanisms – full width -->
+      <div class="card card-full">
+        <div class="card-title">
+          <div class="card-title-icon">⚙</div>
+          Mechanism of Action
+        </div>
+        <div class="mechanisms-text" id="mechanisms">Mechanism information coming soon.</div>
+      </div>
+
+      <!-- Research Links – full width -->
+      <div class="card card-full">
+        <div class="card-title">
+          <div class="card-title-icon">↗</div>
+          Research & Sources
+        </div>
+        <div class="research-links" id="researchLinks"></div>
+      </div>
+
+      <!-- 3D Viewer -->
+      <div class="viewer-section">
+        <div class="viewer-card">
+          <div class="viewer-header">
+            <div class="card-title-icon">⬡</div>
+            <span class="card-title" style="margin:0;">Interactive 3D Structure</span>
+          </div>
+          <div id="viewer"></div>
+          <div class="viewer-controls">
+            <button class="ctrl-btn" onclick="setStyle('stick')">Ball & Stick</button>
+            <button class="ctrl-btn" onclick="setStyle('sphere')">Spacefill</button>
+            <button class="ctrl-btn" id="spinBtn" onclick="toggleSpin()">▶ Auto Rotate</button>
+            <button class="ctrl-btn" onclick="resetView()">↺ Reset</button>
+            <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
           </div>
         </div>
       </div>
 
-      <!-- Mechanisms -->
-      <div class="card">
-        <h2 class="card-title">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-          </svg>
-          Mechanism of Action
-        </h2>
-        <div id="mechanisms">
-          Mechanism information coming soon.
-        </div>
-      </div>
+    </div><!-- /compoundContent -->
 
-      <!-- Research Links -->
-      <div class="card" style="margin-top: 2rem;">
-        <h2 class="card-title">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-          </svg>
-          Research & Sources
-        </h2>
-        <div class="links" id="researchLinks">
-          <!-- Links will be populated by JS -->
-        </div>
-      </div>
-
-    ```html
-<!-- 3D Viewer -->
-    <div class="viewer-container">
-      <h2 class="card-title">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 22V12h6v10" />
-        </svg>
-        Interactive 3D Structure
-      </h2>
-      <div id="viewer"></div>
-      <div class="controls">
-        <button class="control-btn" onclick="setStyle('stick')">Ball & Stick</button>
-        <button class="control-btn" onclick="setStyle('sphere')">Spacefill</button>
-        <button class="control-btn" id="spinBtn" onclick="toggleSpin()">▶ Auto Rotate</button>
-        <button class="control-btn" id="resetBtn" onclick="resetView()">↺ Reset View</button>
-        <button class="control-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-      </div>
-    </div>
+    <footer>© 2026 Noodrop · For educational purposes only.</footer>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2026 Noodrop. For educational purposes only.</p>
-  </footer>
-</div>
+  <!-- Cookie -->
+  <div id="cookieConsent">
+    <span>This website uses cookies to improve your experience.</span>
+    <button onclick="acceptCookies()">Accept</button>
+  </div>
 
-<!-- Cookie Consent -->
-<div id="cookieConsent">
-  This website uses cookies to improve your experience.
-  <button onclick="acceptCookies()">Accept</button>
-</div>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
+      authDomain: "noodrop-c9be9.firebaseapp.com",
+      projectId: "noodrop-c9be9",
+      storageBucket: "noodrop-c9be9.firebasestorage.app",
+      messagingSenderId: "903301545011",
+      appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-<script>
-  // Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
-    authDomain: "noodrop-c9be9.firebaseapp.com",
-    projectId: "noodrop-c9be9",
-    storageBucket: "noodrop-c9be9.firebasestorage.app",
-    messagingSenderId: "903301545011",
-    appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
-  };
+    function getParam(n) { return new URLSearchParams(window.location.search).get(n); }
 
-  firebase.initializeApp(firebaseConfig);
+    const cidParam = getParam('cid');
+    let comp = null, viewer = null, isSpinning = false;
 
-  // Get CID from URL
-  function getParam(name) {
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
-  }
-
-  const cidParam = getParam('cid');
-  let comp = null;
-  let viewer = null;
-  let isSpinning = false;
-
-  // Wait for data.js to load and DOM to be ready
-  document.addEventListener('DOMContentLoaded', function() {
-    // Check if compounds data is available
-    if (typeof window.compounds === 'undefined') {
-      console.error('Compounds data not loaded');
-      document.getElementById('loading').innerHTML = '<p>Error loading compound data. Please refresh the page.</p>';
-      return;
-    }
-
-    // Load compound data
-    if (cidParam) {
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!window.compounds) {
+        document.getElementById('loading').innerHTML = '<p style="color:#8a9ab0">Error loading data.</p>';
+        return;
+      }
       comp = window.compounds.find(c => c.cid == cidParam);
-    }
-
-    if (!comp) {
-      document.getElementById('loading').innerHTML = '<p>Compound not found. Please provide a valid CID parameter.</p>';
-      return;
-    }
-
-    // Hide loading and show content
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('compoundContent').style.display = 'block';
-
-    // Populate basic info
-    document.getElementById('name').textContent = comp.name || '';
-    document.getElementById('cidDisplay').textContent = comp.cid || 'N/A';
-    document.getElementById('typeDisplay').textContent = comp.category || 'Nootropic';
-    document.getElementById('description').textContent = comp.description || '';
-
-    // Populate benefits
-    const benefitsDiv = document.getElementById('benefits');
-    benefitsDiv.innerHTML = '';
-    (comp.benefits || []).forEach(b => {
-      const span = document.createElement('span');
-      span.className = "benefit-pill";
-      span.textContent = b;
-      benefitsDiv.appendChild(span);
-    });
-
-    // Populate dosage
-    document.getElementById('dosage').textContent = comp.dosage || "No dosage information available yet.";
-
-    // Populate pharmacokinetics
-    document.getElementById('halfLife').textContent = comp.halfLife || "N/A";
-    document.getElementById('onsetTime').textContent = comp.onsetTime || "N/A";
-    document.getElementById('duration').textContent = comp.duration || "N/A";
-
-    // Populate mechanisms
-    document.getElementById('mechanisms').textContent = comp.mechanisms || "Mechanism information coming soon.";
-
-    // Populate side effects
-    const sideUl = document.getElementById('sideEffects');
-    sideUl.innerHTML = '';
-    (comp.sideEffects || ["No known side effects"]).forEach(s => {
-      const li = document.createElement('li');
-      li.className = "list-item";
-      li.textContent = s;
-      sideUl.appendChild(li);
-    });
-
-    // Populate warnings
-    const warningsUl = document.getElementById('warnings');
-    warningsUl.innerHTML = '';
-    if (comp.warnings && comp.warnings.length > 0) {
-      comp.warnings.forEach(warning => {
-        const li = document.createElement('li');
-        li.className = "list-item";
-        // Check if warning is a "safe" message (starts with ✓)
-        if (warning.startsWith('✓')) {
-          li.classList.add('safe');
-        } else if (warning.startsWith('⚠️')) {
-          li.classList.add('warning');
-        }
-        li.textContent = warning;
-        warningsUl.appendChild(li);
-      });
-    } else {
-      const li = document.createElement('li');
-      li.className = "list-item safe";
-      li.textContent = '✓ Limited data on risks. General precautions apply.';
-      warningsUl.appendChild(li);
-    }
-
-    // Populate research links
-    const linksDiv = document.getElementById('researchLinks');
-    linksDiv.innerHTML = '';
-    (comp.researchLinks || []).forEach(link => {
-      const a = document.createElement('a');
-      a.href = link.url;
-      a.target = "_blank";
-      a.className = "link-item";
-      a.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16" style="margin-right: 0.5rem;">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-      </svg>${link.title}`;
-      linksDiv.appendChild(a);
-    });
-
-    // Initialize 3D viewer
-    initializeViewer();
-    
-    // Initialize bookmark functionality
-    initializeBookmark();
-  });
-
-  // 3D Viewer functions
-  function initializeViewer() {
-    const viewerDiv = document.getElementById('viewer');
-    viewer = $3Dmol.createViewer(viewerDiv, {
-      backgroundColor: 'white',
-      antialias: true,
-      disableFog: true
-    });
-
-    // Only load 3D structure if CID is available
-    if (comp.cid) {
-      // Load molecule data
-      const sdfUrl = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${comp.cid}/SDF?record_type=3d`;
-      
-      fetch(sdfUrl)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(sdf => {
-          viewer.addModel(sdf, 'sdf');
-          viewer.setStyle({}, { 
-            stick: { radius: 0.15, colorscheme: 'Jmol' }
-          });
-          viewer.zoomTo();
-          viewer.render();
-        })
-        .catch(() => {
-          viewerDiv.innerHTML = '<div style="text-align:center;padding:2rem;color:#666;">3D structure not available for this compound</div>';
-        });
-    } else {
-      viewerDiv.innerHTML = '<div style="text-align:center;padding:2rem;color:#666;">3D structure not available</div>';
-    }
-  }
-
-  window.setStyle = function(style) {
-    if (!viewer) return;
-    if (style === 'stick') {
-      viewer.setStyle({}, {stick: {radius: 0.15, colorscheme: 'Jmol'}});
-    }
-    if (style === 'sphere') {
-      viewer.setStyle({}, {sphere: {scale: 0.2, colorscheme: 'Jmol'}});
-    }
-    viewer.render();
-  };
-
-  window.toggleSpin = function() {
-    if (!viewer) return;
-    isSpinning = !isSpinning;
-    viewer.spin(isSpinning ? 'vy' : false, 1);
-    document.getElementById('spinBtn').textContent = isSpinning ? '❚❚ Pause' : '▶ Auto Rotate';
-  };
-
-  window.resetView = function() {
-    if (!viewer) return;
-    isSpinning = false;
-    viewer.spin(false);
-    viewer.zoomTo();
-    viewer.render();
-    document.getElementById('spinBtn').textContent = '▶ Auto Rotate';
-  };
-
-  window.toggleFullscreen = function() {
-    const viewerDiv = document.getElementById('viewer');
-    if (!document.fullscreenElement) {
-      viewerDiv.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
-  // Bookmark functionality
-  function initializeBookmark() {
-    const bookmarkBtn = document.getElementById('bookmarkBtn');
-    let isBookmarked = false;
-
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        checkBookmarkStatus(user.uid);
-      } else {
-        bookmarkBtn.style.opacity = '0.5';
-        bookmarkBtn.style.cursor = 'not-allowed';
-        bookmarkBtn.title = 'Please log in to bookmark';
-      }
-    });
-
-    async function checkBookmarkStatus(uid) {
-      try {
-        const docSnap = await firebase.firestore().collection('users').doc(uid).collection('bookmarks').doc(String(comp.cid)).get();
-        isBookmarked = docSnap.exists;
-        updateBookmarkUI();
-      } catch (err) {
-        console.error('Error checking bookmark status:', err);
-      }
-    }
-
-    function updateBookmarkUI() {
-      const bookmarkBtn = document.getElementById('bookmarkBtn');
-      if (isBookmarked) {
-        bookmarkBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="20" height="20">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>`;
-        bookmarkBtn.classList.add('bookmarked');
-      } else {
-        bookmarkBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-        </svg>`;
-        bookmarkBtn.classList.remove('bookmarked');
-      }
-    }
-
-    bookmarkBtn.addEventListener('click', async () => {
-      const user = firebase.auth().currentUser;
-      if (!user) {
-        alert('Please log in to bookmark compounds.');
+      if (!comp) {
+        document.getElementById('loading').innerHTML = '<p style="color:#8a9ab0">Compound not found.</p>';
         return;
       }
 
-      try {
-        const bookmarkRef = firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid));
-        
-        if (isBookmarked) {
-          // Remove bookmark
-          await bookmarkRef.delete();
-          isBookmarked = false;
-        } else {
-          // Add bookmark
-          await bookmarkRef.set({
-            cid: comp.cid,
-            name: comp.name,
-            category: comp.category,
-            description: comp.description,
-            benefits: comp.benefits,
-            image: comp.image,
-            dosage: comp.dosage,
-            mechanisms: comp.mechanisms,
-            sideEffects: comp.sideEffects,
-            halfLife: comp.halfLife,
-            onsetTime: comp.onsetTime,
-            duration: comp.duration,
-            warnings: comp.warnings,
-            researchLinks: comp.researchLinks,
-            bookmarkedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          isBookmarked = true;
-        }
-        updateBookmarkUI();
-      } catch (err) {
-        console.error('Error toggling bookmark:', err);
-        alert('Failed to save bookmark. Please try again.');
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('compoundContent').style.display = 'block';
+
+      // Title + meta
+      document.getElementById('name').textContent = comp.name || '';
+      document.getElementById('compCategory').textContent = comp.category || 'Nootropic';
+      document.getElementById('cidDisplay').textContent = comp.cid || 'N/A';
+      document.getElementById('description').textContent = comp.description || '';
+      document.title = `${comp.name} – Noodrop`;
+
+      // Benefits
+      const bDiv = document.getElementById('benefits');
+      (comp.benefits || []).forEach(b => {
+        const s = document.createElement('span');
+        s.className = 'benefit-pill'; s.textContent = b;
+        bDiv.appendChild(s);
+      });
+
+      // Dosage
+      document.getElementById('dosage').textContent = comp.dosage || 'No dosage information available.';
+
+      // Pharma
+      document.getElementById('halfLife').textContent = comp.halfLife || '–';
+      document.getElementById('onsetTime').textContent = comp.onsetTime || '–';
+      document.getElementById('duration').textContent = comp.duration || '–';
+
+      // Mechanisms
+      document.getElementById('mechanisms').textContent = comp.mechanisms || 'Mechanism information coming soon.';
+
+      // Side effects
+      const seUl = document.getElementById('sideEffects');
+      (comp.sideEffects || ['No known side effects']).forEach(s => {
+        const li = document.createElement('li');
+        li.className = 'info-item'; li.textContent = s;
+        seUl.appendChild(li);
+      });
+
+      // Warnings
+      const wUl = document.getElementById('warnings');
+      (comp.warnings && comp.warnings.length ? comp.warnings : ['✓ General precautions apply.']).forEach(w => {
+        const li = document.createElement('li');
+        li.className = 'info-item';
+        if (w.startsWith('✓')) li.classList.add('safe');
+        else if (w.startsWith('⚠')) li.classList.add('warning');
+        li.textContent = w;
+        wUl.appendChild(li);
+      });
+
+      // Research links
+      const lDiv = document.getElementById('researchLinks');
+      (comp.researchLinks || []).forEach(link => {
+        const a = document.createElement('a');
+        a.href = link.url; a.target = '_blank';
+        a.className = 'research-link';
+        a.innerHTML = `<span class="research-link-icon">↗</span>${link.title}`;
+        lDiv.appendChild(a);
+      });
+      if (!comp.researchLinks || !comp.researchLinks.length) {
+        lDiv.innerHTML = '<p style="color:#8a9ab0;font-size:0.88rem;">No research links available yet.</p>';
       }
+
+      initViewer();
+      initBookmark();
     });
-  }
 
-  // Cookie Consent
-  function acceptCookies() {
-    localStorage.setItem('cookiesAccepted', 'yes');
-    document.getElementById('cookieConsent').style.display = 'none';
-  }
+    // ── 3D Viewer ──
+    function initViewer() {
+      viewer = $3Dmol.createViewer(document.getElementById('viewer'), {
+        backgroundColor: '#f8f5f2', antialias: true, disableFog: true
+      });
+      if (!comp.cid) {
+        document.getElementById('viewer').innerHTML = '<div style="text-align:center;padding:3rem;color:#8a9ab0;">3D structure not available</div>';
+        return;
+      }
+      fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${comp.cid}/SDF?record_type=3d`)
+        .then(r => { if (!r.ok) throw new Error(); return r.text(); })
+        .then(sdf => {
+          viewer.addModel(sdf, 'sdf');
+          viewer.setStyle({}, { stick: { radius: 0.15, colorscheme: 'Jmol' } });
+          viewer.zoomTo(); viewer.render();
+        })
+        .catch(() => {
+          document.getElementById('viewer').innerHTML = '<div style="text-align:center;padding:3rem;color:#8a9ab0;">3D structure not available for this compound</div>';
+        });
+    }
 
-  window.onload = () => {
-    if (!localStorage.getItem('cookiesAccepted'))
-      document.getElementById('cookieConsent').style.display = 'block';
-  };
-</script>
+    window.setStyle = s => {
+      if (!viewer) return;
+      viewer.setStyle({}, s === 'stick'
+        ? { stick: { radius: 0.15, colorscheme: 'Jmol' } }
+        : { sphere: { scale: 0.2, colorscheme: 'Jmol' } });
+      viewer.render();
+    };
+    window.toggleSpin = () => {
+      if (!viewer) return;
+      isSpinning = !isSpinning;
+      viewer.spin(isSpinning ? 'vy' : false, 1);
+      document.getElementById('spinBtn').textContent = isSpinning ? '❚❚ Pause' : '▶ Auto Rotate';
+    };
+    window.resetView = () => {
+      if (!viewer) return;
+      isSpinning = false; viewer.spin(false);
+      viewer.zoomTo(); viewer.render();
+      document.getElementById('spinBtn').textContent = '▶ Auto Rotate';
+    };
+    window.toggleFullscreen = () => {
+      const el = document.getElementById('viewer');
+      !document.fullscreenElement ? el.requestFullscreen().catch(() => {}) : document.exitFullscreen();
+    };
+
+    // ── Bookmark ──
+    function initBookmark() {
+      const btn = document.getElementById('bookmarkBtn');
+      let bookmarked = false;
+
+      firebase.auth().onAuthStateChanged(user => {
+        if (!user) { btn.style.opacity = '0.4'; btn.title = 'Login to bookmark'; return; }
+        firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid)).get()
+          .then(snap => { bookmarked = snap.exists; updateBtnUI(); })
+          .catch(() => {});
+      });
+
+      function updateBtnUI() {
+        btn.classList.toggle('bookmarked', bookmarked);
+        btn.innerHTML = bookmarked
+          ? `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="18" height="18"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
+          : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`;
+      }
+
+      btn.addEventListener('click', async () => {
+        const user = firebase.auth().currentUser;
+        if (!user) { alert('Please log in to bookmark.'); return; }
+        const ref = firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid));
+        try {
+          if (bookmarked) { await ref.delete(); bookmarked = false; }
+          else { await ref.set({ cid: comp.cid, name: comp.name, category: comp.category, description: comp.description, benefits: comp.benefits, image: comp.image, dosage: comp.dosage, mechanisms: comp.mechanisms, sideEffects: comp.sideEffects, halfLife: comp.halfLife, onsetTime: comp.onsetTime, duration: comp.duration, warnings: comp.warnings, researchLinks: comp.researchLinks, bookmarkedAt: firebase.firestore.FieldValue.serverTimestamp() }); bookmarked = true; }
+          updateBtnUI();
+        } catch (err) { console.error(err); alert('Failed to save bookmark.'); }
+      });
+    }
+
+    // ── Cookie ──
+    function acceptCookies() {
+      localStorage.setItem('cookiesAccepted', 'yes');
+      document.getElementById('cookieConsent').style.display = 'none';
+    }
+    window.addEventListener('load', () => {
+      if (!localStorage.getItem('cookiesAccepted'))
+        document.getElementById('cookieConsent').style.display = 'flex';
+    });
+  </script>
 </body>
 </html>
-```

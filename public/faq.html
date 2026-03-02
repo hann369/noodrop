@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>FAQ – Noodrop | Smart Nootropics & Cognitive Optimization</title>
+<meta name="description" content="Clear answers about nootropics, stacks, safety, payments, and how Noodrop works. Research-backed cognitive optimization insights.">
+
+<!-- Open Graph -->
+<meta property="og:title" content="Noodrop FAQ – Smarter Focus Starts Here">
+<meta property="og:description" content="Everything you need to know about nootropics and cognitive enhancement.">
+<meta property="og:type" content="website">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Noodrop FAQ">
+<meta name="twitter:description" content="Expert answers about nootropics, stacks and performance optimization.">
+
+<link rel="preconnect" href="https://fonts.fontshare.com">
+<link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+
+<style>
+:root{
+--bg:#ffffff;
+--primary:#f3701e;
+--slate:#4b607f;
+--dark:#1f2a36;
+--cream:#e8d8c9;
+--shadow:0 20px 50px rgba(0,0,0,0.08);
+--glass:rgba(255,255,255,0.75);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+font-family:'Tabular',sans-serif;
+background:var(--bg);
+color:var(--dark);
+line-height:1.6;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:2rem;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding-bottom:1.5rem;
+border-bottom:1px solid var(--cream);
+}
+
+.logo{
+font-weight:700;
+font-size:1.6rem;
+color:var(--slate);
+}
+
+nav a{
+margin-left:1.8rem;
+text-decoration:none;
+color:var(--slate);
+font-weight:500;
+position:relative;
+}
+
+nav a:after{
+content:"";
+position:absolute;
+width:0;
+height:2px;
+background:var(--primary);
+left:0;
+bottom:-4px;
+transition:0.3s;
+}
+
+nav a:hover:after,
+nav a.active:after{
+width:100%;
+}
+
+.hero{
+text-align:center;
+padding:4rem 0 3rem;
+}
+
+.hero h1{
+font-size:2.8rem;
+margin-bottom:1rem;
+color:var(--slate);
+}
+
+.hero p{
+max-width:700px;
+margin:auto;
+opacity:0.85;
+}
+
+.faq{
+max-width:850px;
+margin:3rem auto;
+}
+
+.faq-item{
+background:var(--glass);
+backdrop-filter:blur(8px);
+border-radius:18px;
+margin-bottom:1.5rem;
+box-shadow:var(--shadow);
+border:1px solid var(--cream);
+overflow:hidden;
+transition:0.3s ease;
+}
+
+.faq-item:hover{
+transform:translateY(-4px);
+box-shadow:0 25px 60px rgba(0,0,0,0.12);
+}
+
+.faq-question{
+width:100%;
+padding:1.6rem;
+background:none;
+border:none;
+text-align:left;
+font-weight:600;
+font-size:1.05rem;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+color:var(--slate);
+}
+
+.faq-toggle{
+font-size:1.5rem;
+transition:transform 0.3s ease;
+}
+
+.faq-question[aria-expanded="true"] .faq-toggle{
+transform:rotate(45deg);
+}
+
+.faq-answer{
+max-height:0;
+overflow:hidden;
+transition:max-height 0.4s cubic-bezier(.77,0,.18,1);
+padding:0 1.6rem;
+}
+
+.faq-answer p{
+margin:0 0 1.6rem;
+opacity:0.9;
+}
+
+.cta{
+margin:5rem auto;
+max-width:650px;
+padding:3rem;
+text-align:center;
+background:linear-gradient(135deg,#fff,#fdf7f2);
+border-radius:22px;
+box-shadow:var(--shadow);
+border:1px solid var(--cream);
+}
+
+.cta h2{
+margin-bottom:1rem;
+color:var(--slate);
+}
+
+.cta p{
+margin-bottom:2rem;
+}
+
+.cta form{
+display:flex;
+flex-direction:column;
+gap:1rem;
+}
+
+.cta input{
+padding:1rem;
+border-radius:12px;
+border:1px solid var(--cream);
+font-size:1rem;
+}
+
+.cta input:focus{
+outline:none;
+border-color:var(--primary);
+box-shadow:0 0 0 3px rgba(243,112,30,0.2);
+}
+
+.cta button{
+padding:1rem;
+border-radius:12px;
+border:none;
+background:var(--primary);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+.cta button:hover{
+transform:translateY(-3px);
+box-shadow:0 10px 30px rgba(243,112,30,0.3);
+}
+
+footer{
+margin-top:5rem;
+text-align:center;
+padding-top:2rem;
+border-top:1px solid var(--cream);
+color:var(--slate);
+}
+
+.social{
+display:flex;
+justify-content:center;
+gap:1.5rem;
+margin-bottom:1rem;
+}
+
+.social a{
+display:flex;
+align-items:center;
+justify-content:center;
+width:40px;
+height:40px;
+border-radius:50%;
+background:var(--cream);
+color:var(--slate);
+text-decoration:none;
+transition:0.3s;
+}
+
+.social a:hover{
+background:var(--primary);
+color:white;
+transform:translateY(-3px);
+}
+
+@media(max-width:768px){
+.hero h1{font-size:2rem}
+nav{display:none}
+}
+</style>
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"FAQPage",
+"mainEntity":[
+{"@type":"Question","name":"What are nootropics?","acceptedAnswer":{"@type":"Answer","text":"Nootropics are substances that may improve cognitive functions such as memory, creativity, motivation, and attention."}},
+{"@type":"Question","name":"Are nootropics safe?","acceptedAnswer":{"@type":"Answer","text":"Most nootropics are considered safe when used responsibly. Always consult a healthcare professional."}},
+{"@type":"Question","name":"How do I create a nootropic stack?","acceptedAnswer":{"@type":"Answer","text":"Use complementary compounds such as caffeine and L-theanine. Start low and monitor response."}},
+{"@type":"Question","name":"Can I take nootropics with my medication?","acceptedAnswer":{"@type":"Answer","text":"Consult a healthcare professional before combining supplements with medication."}},
+{"@type":"Question","name":"How long until I see results?","acceptedAnswer":{"@type":"Answer","text":"Some compounds work immediately, others may take weeks of consistent use."}},
+{"@type":"Question","name":"Are your products FDA approved?","acceptedAnswer":{"@type":"Answer","text":"Dietary supplements are not evaluated by the FDA for safety or effectiveness."}},
+{"@type":"Question","name":"What payment methods do you accept?","acceptedAnswer":{"@type":"Answer","text":"We accept all major credit cards via secure payment processing."}},
+{"@type":"Question","name":"How do I access purchased content?","acceptedAnswer":{"@type":"Answer","text":"Purchased digital products are available in your account immediately after checkout."}}
+]
+}
+</script>
+
+</head>
+
+<body>
+<div class="container">
+
+<header>
+<div class="logo">Noodrop</div>
+<nav>
+<a href="landing.html">Home</a>
+<a href="index.html">Library</a>
+<a href="stack.html">Stacks</a>
+<a href="marketplace.html">Marketplace</a>
+<a href="faq.html" class="active">FAQ</a>
+</nav>
+</header>
+
+<section class="hero">
+<h1>Your Questions. Answered Clearly.</h1>
+<p>Everything you need to know about nootropics, safety, stacks and cognitive optimization.</p>
+</section>
+
+<section class="faq">
+
+<!-- ALL QUESTIONS RESTORED -->
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">What are nootropics?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Nootropics are substances that may improve memory, creativity, motivation and attention.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">Are nootropics safe?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Most are safe when used responsibly. Consult a professional before starting supplementation.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">How do I create a nootropic stack?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Combine complementary compounds. Start with research-backed basics like caffeine + L-theanine.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">Can I take nootropics with my medication?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Always consult your healthcare provider before combining supplements with prescriptions.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">How long until I see results?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Some work instantly, others require consistent use over weeks.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">Are your products FDA approved?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Dietary supplements are not evaluated by the FDA. Information is educational only.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">What payment methods do you accept?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>We accept major credit cards via secure Stripe processing.</p></div>
+</div>
+
+<div class="faq-item">
+<button class="faq-question" aria-expanded="false">How do I access purchased content?<span class="faq-toggle">+</span></button>
+<div class="faq-answer"><p>Content is instantly accessible from your account dashboard after purchase.</p></div>
+</div>
+
+</section>
+
+<section class="cta">
+<h2>Unlock Smarter Focus</h2>
+<p>Join high performers receiving research-backed stack insights.</p>
+<form>
+<input type="email" placeholder="Enter your email" required>
+<button type="submit">Get Free Insights</button>
+</form>
+</section>
+
+<footer>
+
+<div class="social">
+<a href="https://x.com/hann_369" target="_blank" rel="noopener noreferrer">X</a>
+<a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener noreferrer">YT</a>
+</div>
+
+<p>© 2026 Noodrop – Educational purposes only.</p>
+
+</footer>
+
+</div>
+
+<script>
+const questions=document.querySelectorAll(".faq-question");
+questions.forEach(q=>{
+q.addEventListener("click",()=>{
+const answer=q.nextElementSibling;
+const open=q.getAttribute("aria-expanded")==="true";
+document.querySelectorAll(".faq-answer").forEach(a=>a.style.maxHeight=null);
+document.querySelectorAll(".faq-question").forEach(b=>b.setAttribute("aria-expanded","false"));
+if(!open){
+q.setAttribute("aria-expanded","true");
+answer.style.maxHeight=answer.scrollHeight+"px";
+}
+});
+});
+</script>
+
+</body>
+</html>

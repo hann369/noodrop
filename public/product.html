@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product – Noodrop</title>
+
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --cream: #e8d8c9;
+      --slate: #4b607f;
+      --orange: #f3701e;
+      --white: #ffffff;
+      --dark-slate: #2c3e50;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+      --bg: #fafaf8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Tabular', sans-serif;
+      background: var(--bg);
+      color: var(--dark-slate);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 5%;
+      border-bottom: 1px solid var(--cream);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+    }
+    .logo { font-size: 1.4rem; font-weight: 700; color: var(--slate); }
+    nav a {
+      text-decoration: none; color: var(--slate);
+      margin: 0 1rem; font-weight: 500; font-size: 0.9rem;
+      position: relative; transition: color 0.2s;
+    }
+    nav a::after {
+      content: ""; position: absolute;
+      width: 0; height: 2px; background: var(--orange);
+      left: 0; bottom: -4px; transition: 0.3s;
+    }
+    nav a:hover::after { width: 100%; }
+    nav a:hover { color: var(--orange); }
+
+    /* ── Container ── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 3rem 5%; }
+
+    /* ── Back link ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      color: #8a9ab0; text-decoration: none;
+      font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 2.5rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--orange); }
+
+    /* ── Loading ── */
+    .loading {
+      display: flex; flex-direction: column;
+      align-items: center; padding: 6rem 0; color: #8a9ab0;
+    }
+    .spinner {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2.5px solid rgba(243,112,30,0.2);
+      border-top-color: var(--orange);
+      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Product layout ── */
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    /* Left: visual column */
+    .visual-col {}
+
+    /* Mockup-style image container */
+    .product-mockup {
+      background: #f0ece8;
+      border-radius: 20px;
+      padding: 3rem 2.5rem;
+      display: flex; align-items: center; justify-content: center;
+      min-height: 360px;
+      position: relative;
+      border: 1px solid var(--cream);
+      overflow: hidden;
+    }
+    .product-mockup::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 30%, rgba(243,112,30,0.08), transparent 60%);
+    }
+    .product-mockup img {
+      max-width: 75%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      position: relative; z-index: 1;
+    }
+    /* Placeholder when no image */
+    .mockup-placeholder {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 1rem; z-index: 1;
+    }
+    .mockup-placeholder .guide-title {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--dark-slate); text-align: left; line-height: 1.1;
+    }
+    .mockup-placeholder .guide-price {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 2.5rem; font-weight: 700;
+      color: var(--dark-slate);
+    }
+    .mockup-placeholder .guide-creator {
+      font-size: 0.8rem; letter-spacing: 2px;
+      color: #8a9ab0; text-transform: uppercase;
+    }
+
+    /* Creator strip below image */
+    .creator-strip {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-top: 1.2rem;
+      padding: 0.9rem 1.2rem;
+      background: white;
+      border: 1px solid var(--cream);
+      border-radius: 12px;
+    }
+    .creator-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cream), #f0d8c0);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; border: 2px solid var(--orange);
+      flex-shrink: 0;
+    }
+    .creator-info { flex: 1; }
+    .creator-name { font-size: 0.88rem; font-weight: 700; color: var(--slate); }
+    .creator-role { font-size: 0.72rem; color: #8a9ab0; }
+    .creator-link {
+      font-size: 0.75rem; color: var(--orange);
+      text-decoration: none; font-weight: 600;
+    }
+    .creator-link:hover { text-decoration: underline; }
+
+    /* Right: info column */
+    .info-col {}
+
+    .product-eyebrow {
+      font-size: 0.7rem; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--orange);
+      margin-bottom: 0.75rem;
+    }
+    .product-title {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      font-weight: 600; color: var(--slate);
+      line-height: 1.1; margin-bottom: 1.2rem;
+      letter-spacing: -0.5px;
+    }
+    .product-price-display {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 2.2rem; font-weight: 700;
+      color: var(--dark-slate); margin-bottom: 1.5rem;
+    }
+    .product-price-display.free { color: var(--orange); }
+    .product-description {
+      font-size: 1rem; color: #6a7a8a;
+      line-height: 1.8; margin-bottom: 2rem;
+    }
+
+    /* Includes list */
+    .includes-title {
+      font-size: 0.7rem; letter-spacing: 3px;
+      text-transform: uppercase; color: #8a9ab0;
+      margin-bottom: 1rem;
+    }
+    .feature-list {
+      list-style: none;
+      margin-bottom: 2.5rem;
+      display: flex; flex-direction: column; gap: 0.75rem;
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+      font-size: 0.92rem; color: var(--dark-slate); line-height: 1.5;
+    }
+    .feature-check {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: rgba(243,112,30,0.12);
+      color: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; flex-shrink: 0; margin-top: 1px;
+      font-weight: 700;
+    }
+
+    /* Purchase box */
+    .purchase-box {
+      background: white;
+      border: 1px solid var(--cream);
+      border-radius: 16px;
+      padding: 1.8rem;
+      box-shadow: var(--shadow);
+    }
+    .purchase-box-title {
+      font-size: 0.7rem; letter-spacing: 3px;
+      text-transform: uppercase; color: #8a9ab0;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Auth message inside box */
+    .auth-note {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: #fdf7f2; border: 1px solid rgba(243,112,30,0.2);
+      border-radius: 10px; padding: 1rem 1.2rem;
+      margin-bottom: 1.2rem;
+    }
+    .auth-note p { font-size: 0.88rem; color: var(--slate); line-height: 1.5; }
+    .auth-note a {
+      color: var(--orange); font-weight: 700;
+      text-decoration: none; cursor: pointer;
+    }
+
+    /* Main buy button */
+    .buy-button {
+      width: 100%; padding: 1rem 1.5rem;
+      background: var(--orange); color: white;
+      border: none; border-radius: 50px;
+      font-family: 'Tabular', sans-serif;
+      font-weight: 700; font-size: 1rem;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      box-shadow: 0 6px 20px rgba(243,112,30,0.35);
+      margin-bottom: 1rem;
+    }
+    .buy-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(243,112,30,0.45);
+    }
+    .buy-button:disabled {
+      background: #d0d8e0; box-shadow: none; cursor: not-allowed;
+    }
+
+    /* Trust badges */
+    .trust-row {
+      display: flex; justify-content: center; gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    .trust-item {
+      display: flex; align-items: center; gap: 0.4rem;
+      font-size: 0.72rem; color: #8a9ab0;
+    }
+    .trust-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #10b981; flex-shrink: 0;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; padding: 2rem 0;
+      color: #8a9ab0; border-top: 1px solid var(--cream);
+      margin-top: 4rem; font-size: 0.85rem;
+    }
+
+    /* ── Auth Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 10000;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: white; border-radius: 20px;
+      padding: 2.5rem; width: 100%; max-width: 400px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 2rem;
+    }
+    .modal-header h2 {
+      font-family: 'Clash Display', 'Tabular', sans-serif;
+      font-size: 1.4rem; font-weight: 600; color: var(--slate);
+    }
+    .modal-close {
+      background: none; border: none;
+      font-size: 1.4rem; cursor: pointer; color: #999;
+    }
+    .modal-close:hover { color: var(--slate); }
+    .form-group { margin-bottom: 1.2rem; }
+    .form-label { display: block; margin-bottom: 0.5rem; color: var(--slate); font-weight: 600; font-size: 0.85rem; }
+    .form-input {
+      width: 100%; padding: 0.85rem 1rem;
+      border: 1.5px solid var(--cream); border-radius: 10px;
+      font-family: 'Tabular', sans-serif; font-size: 0.95rem;
+      color: var(--dark-slate); transition: border-color 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(243,112,30,0.1); }
+    .form-error { color: #ef4444; font-size: 0.82rem; margin-top: 0.4rem; min-height: 1rem; }
+    .btn-orange {
+      width: 100%; padding: 0.9rem;
+      background: var(--orange); color: white; border: none;
+      border-radius: 50px; font-family: 'Tabular', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .btn-orange:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(243,112,30,0.35); }
+    .switch-auth { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: var(--slate); }
+    .switch-auth a { color: var(--orange); text-decoration: none; font-weight: 600; cursor: pointer; }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .product-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Noodrop</div>
+    <nav>
+      <a href="landing.html">Home</a>
+      <a href="index.html">Library</a>
+      <a href="stack.html">Stacks</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="about.html">About</a>
+      <a href="faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="container">
+
+    <a href="marketplace.html" class="back-link">← Back to Marketplace</a>
+
+    <!-- Loading -->
+    <div class="loading" id="loadingIndicator">
+      <div class="spinner"></div>
+      <span style="font-size:0.85rem;">Loading product...</span>
+    </div>
+
+    <!-- Product Layout -->
+    <div class="product-layout" id="productLayout" style="display:none;">
+
+      <!-- LEFT: Visual -->
+      <div class="visual-col">
+        <div class="product-mockup" id="mockupArea">
+          <!-- Filled by JS -->
+        </div>
+        <div class="creator-strip">
+          <div class="creator-avatar">🧠</div>
+          <div class="creator-info">
+            <div class="creator-name">hann369</div>
+            <div class="creator-role">Founder · Noodrop</div>
+          </div>
+          <a href="about.html" class="creator-link">View profile →</a>
+        </div>
+      </div>
+
+      <!-- RIGHT: Info -->
+      <div class="info-col">
+        <div class="product-eyebrow" id="productCategory">Guide</div>
+        <h1 class="product-title" id="productName">–</h1>
+        <div class="product-price-display" id="productPrice">–</div>
+        <p class="product-description" id="productDescription">–</p>
+
+        <div class="includes-title">What's included</div>
+        <ul class="feature-list" id="featureList"></ul>
+
+        <div class="purchase-box">
+          <div class="purchase-box-title">Get instant access</div>
+
+          <!-- Auth note (shown when not logged in) -->
+          <div class="auth-note" id="authNote" style="display:none;">
+            <p>You need an account to download. <a onclick="openAuthModal()">Login or sign up</a> – it's free.</p>
+          </div>
+
+          <button class="buy-button" id="buyButton" onclick="initiatePurchase()">
+            <span id="buyLabel">Get It Now</span>
+            <span id="buttonPrice"></span>
+          </button>
+
+          <div class="trust-row">
+            <div class="trust-item"><div class="trust-dot"></div>Instant delivery</div>
+            <div class="trust-item"><div class="trust-dot"></div>Secure checkout</div>
+            <div class="trust-item"><div class="trust-dot"></div>Educational use</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>© 2026 Noodrop · For educational purposes only.</footer>
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="authTitle">Login</h2>
+        <button class="modal-close" onclick="closeAuthModal()">×</button>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" required minlength="6">
+        </div>
+        <div class="form-error" id="loginError"></div>
+        <button type="submit" class="btn-orange">Login</button>
+      </form>
+      <form id="signupForm" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="signupEmail" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signupPassword" required minlength="6">
+        </div>
+        <div class="form-error" id="signupError"></div>
+        <button type="submit" class="btn-orange">Create Account</button>
+      </form>
+      <div class="switch-auth">
+        <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
+      authDomain: "noodrop-c9be9.firebaseapp.com",
+      projectId: "noodrop-c9be9",
+      storageBucket: "noodrop-c9be9.firebasestorage.app",
+      messagingSenderId: "903301545011",
+      appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const stripe = Stripe('pk_test_XXXXXXXXXXXXXXXXXXXXXXXX');
+
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name) || '';
+    }
+
+    function initPage() {
+      const productId = getParam('id');
+      if (!productId) {
+        document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Product not found.</p>';
+        return;
+      }
+      loadProduct(productId);
+    }
+
+    async function loadProduct(productId) {
+      try {
+        const doc = await db.collection('products').doc(productId).get();
+        if (!doc.exists) {
+          document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Product not found.</p>';
+          return;
+        }
+        const product = { id: doc.id, ...doc.data() };
+        const isFree = !product.price || product.price === 0;
+
+        // Populate text
+        document.getElementById('productCategory').textContent = product.category || 'Guide';
+        document.getElementById('productName').textContent = product.name;
+        document.getElementById('productPrice').textContent = isFree ? '€0' : product.priceFormatted;
+        if (isFree) document.getElementById('productPrice').classList.add('free');
+        document.getElementById('productDescription').textContent = product.description;
+        document.getElementById('buttonPrice').textContent = isFree ? '– Free' : `– ${product.priceFormatted}`;
+        document.getElementById('buyLabel').textContent = isFree ? 'Download Free' : 'Purchase Now';
+
+        // Mockup area
+        const mockup = document.getElementById('mockupArea');
+        if (product.image) {
+          mockup.innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">`;
+        } else {
+          mockup.innerHTML = `
+            <div class="mockup-placeholder">
+              <div class="guide-price">${isFree ? '€0' : product.priceFormatted}</div>
+              <div class="guide-title">${product.name}</div>
+              <div class="guide-creator">hann369</div>
+            </div>`;
+        }
+
+        // Features
+        const featureList = document.getElementById('featureList');
+        featureList.innerHTML = '';
+        (product.features || ['Instant PDF download', 'Research-backed content', 'by hann369']).forEach(f => {
+          const li = document.createElement('li');
+          li.className = 'feature-item';
+          li.innerHTML = `<div class="feature-check">✓</div>${f}`;
+          featureList.appendChild(li);
+        });
+
+        // Auth state
+        firebase.auth().onAuthStateChanged(user => {
+          if (user) {
+            document.getElementById('authNote').style.display = 'none';
+            document.getElementById('buyButton').disabled = false;
+          } else {
+            document.getElementById('authNote').style.display = 'flex';
+            document.getElementById('buyButton').disabled = true;
+          }
+          document.getElementById('loadingIndicator').style.display = 'none';
+          document.getElementById('productLayout').style.display = 'grid';
+        });
+
+      } catch (err) {
+        document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Error loading product.</p>';
+      }
+    }
+
+    async function initiatePurchase() {
+      const user = firebase.auth().currentUser;
+      if (!user) { openAuthModal(); return; }
+      const productId = getParam('id');
+      try {
+        const doc = await db.collection('products').doc(productId).get();
+        if (!doc.exists) return;
+        const product = { id: doc.id, ...doc.data() };
+
+        // Free product – direct download
+        if (!product.price || product.price === 0) {
+          if (product.downloadUrl) window.open(product.downloadUrl, '_blank');
+          else alert('Download will be available shortly.');
+          return;
+        }
+
+        // Paid product – Stripe checkout
+        const response = await fetch('/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId: product.id, productName: product.name, amount: product.price, userId: user.uid })
+        });
+        const session = await response.json();
+        const result = await stripe.redirectToCheckout({ sessionId: session.id });
+        if (result.error) alert('Payment error: ' + result.error.message);
+      } catch (err) {
+        console.error(err);
+        alert('An error occurred. Please try again.');
+      }
+    }
+
+    function openAuthModal() { document.getElementById('authModal').classList.add('open'); }
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('open');
+      document.getElementById('loginError').textContent = '';
+      document.getElementById('signupError').textContent = '';
+    }
+    function switchAuthMode() {
+      const isLogin = document.getElementById('loginForm').style.display !== 'none';
+      document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
+      document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
+      document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
+      document.getElementById('switchText').innerHTML = isLogin
+        ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
+        : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
+    }
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      try {
+        await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+        closeAuthModal();
+      } catch (err) { document.getElementById('loginError').textContent = err.message; }
+    });
+    document.getElementById('signupForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      try {
+        const cred = await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
+        await db.collection('users').doc(cred.user.uid).set({ email: cred.user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+        closeAuthModal();
+      } catch (err) { document.getElementById('signupError').textContent = err.message; }
+    });
+
+    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initPage) : initPage();
+  </script>
+</body>
+</html>

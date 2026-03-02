@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noodrop - Enhance Your Mind</title>
+
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Observer.min.js"></script>
+
+  <style>
+    :root {
+      --cream: #e8d8c9;
+      --slate: #4b607f;
+      --orange: #f3701e;
+      --white: #ffffff;
+      --dark-slate: #2c3e50;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --glass-bg: rgba(255,255,255,0.7);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Tabular', sans-serif;
+      background: var(--white);
+      color: var(--dark-slate);
+      margin: 0; padding: 0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      width: 90%;
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* ── Overlay ── */
+    .shape-overlays {
+      width: 100%; height: 100%;
+      position: fixed; top: 0; left: 0;
+      z-index: 1000; cursor: pointer;
+    }
+    .shape-overlays__path { mix-blend-mode: screen; }
+
+    /* ── Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 5%;
+      border-bottom: 1px solid var(--cream);
+      position: fixed; width: 100%; z-index: 1001;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(10px);
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--slate); }
+    nav a {
+      text-decoration: none; color: var(--slate);
+      margin: 0 1rem; font-weight: 500;
+      position: relative; transition: color 0.2s;
+    }
+    nav a::after {
+      content: ""; position: absolute;
+      width: 0; height: 2px;
+      background: var(--orange);
+      left: 0; bottom: -4px; transition: 0.3s;
+    }
+    nav a:hover::after, nav a.active::after { width: 100%; }
+    nav a:hover, nav a.active { color: var(--orange); }
+
+    /* ── GSAP Section base ── */
+    section {
+      height: 100%; width: 100%;
+      position: fixed; top: 0; visibility: hidden;
+    }
+    .outer, .inner {
+      width: 100%; height: 100%;
+      position: relative; overflow: hidden;
+    }
+    .bg {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+
+    /* ══════════════════════════════════════
+       SECTION 1 – HERO
+    ══════════════════════════════════════ */
+    .bg-hero {
+      background: var(--white);
+      flex-direction: column;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1.2rem;
+      font-weight: 600;
+    }
+    .hero h1 {
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--slate);
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--orange);
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #6a7a8a;
+      max-width: 600px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--orange);
+      color: white; border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 50px; font-weight: 600;
+      cursor: pointer; font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 4px 20px rgba(243,112,30,0.35);
+      display: inline-block;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(243,112,30,0.45);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--slate);
+      border: 1.5px solid var(--cream);
+      padding: 0.9rem 2rem;
+      border-radius: 50px; font-weight: 600;
+      cursor: pointer; font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.3s;
+      display: inline-block;
+    }
+    .btn-ghost:hover {
+      border-color: var(--slate);
+      transform: translateY(-2px);
+    }
+    /* Scroll hint */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.5rem;
+      opacity: 0.45;
+      animation: bounceHint 2s ease-in-out infinite;
+    }
+    .scroll-hint span {
+      font-size: 0.65rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--slate);
+    }
+    .scroll-arrow {
+      width: 20px; height: 20px;
+      border-right: 1.5px solid var(--slate);
+      border-bottom: 1.5px solid var(--slate);
+      transform: rotate(45deg);
+    }
+    @keyframes bounceHint {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ══════════════════════════════════════
+       SECTION 2 – AMBIENT VIDEO
+    ══════════════════════════════════════ */
+    .bg-cinema {
+      background: #0d0d0d;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Radial ambient glow – pulses */
+    .cinema-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 55%, rgba(243,112,30,0.13) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 30% 20%, rgba(232,216,201,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 70% 80%, rgba(243,112,30,0.06) 0%, transparent 60%);
+      animation: glowPulse 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 1; }
+    }
+
+    /* Subtle grain overlay */
+    .cinema-grain {
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.4;
+    }
+
+    .cinema-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* Title above video */
+    .cinema-header {
+      text-align: center;
+    }
+    .cinema-label {
+      font-size: 0.68rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--orange);
+      opacity: 0.9;
+      margin-bottom: 0.75rem;
+    }
+    .cinema-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: #f0ebe5;
+      line-height: 1.15;
+    }
+    .cinema-title em {
+      font-style: normal;
+      color: var(--orange);
+    }
+
+    /* The video frame */
+    .video-frame-wrap {
+      width: 100%;
+      position: relative;
+    }
+
+    /* Orange glow ring around video */
+    .video-glow-ring {
+      position: absolute;
+      inset: -18px;
+      border-radius: 28px;
+      background: transparent;
+      box-shadow:
+        0 0 60px 8px rgba(243,112,30,0.18),
+        0 0 120px 20px rgba(243,112,30,0.08),
+        inset 0 0 40px rgba(243,112,30,0.04);
+      animation: ringPulse 4s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes ringPulse {
+      0%, 100% { box-shadow: 0 0 60px 8px rgba(243,112,30,0.18), 0 0 120px 20px rgba(243,112,30,0.08); }
+      50% { box-shadow: 0 0 80px 14px rgba(243,112,30,0.28), 0 0 160px 30px rgba(243,112,30,0.12); }
+    }
+
+    .video-frame {
+      position: relative;
+      z-index: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(243,112,30,0.2);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .video-aspect {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+    }
+    .video-aspect iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+
+    /* Caption below video */
+    .cinema-caption {
+      text-align: center;
+      color: rgba(240,235,229,0.45);
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+    }
+    .cinema-caption a {
+      color: var(--orange);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.2s;
+    }
+    .cinema-caption a:hover { opacity: 1; }
+
+    /* ══════════════════════════════════════
+       SECTION 3 – REVIEWS
+    ══════════════════════════════════════ */
+    .bg-reviews {
+      background: #fdfaf7;
+      flex-direction: column;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--slate);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 1000px;
+    }
+    .review-card {
+      background: var(--glass-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      border: 1px solid var(--cream);
+      box-shadow: var(--shadow);
+      text-align: center;
+      backdrop-filter: blur(8px);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .review-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    }
+    .reviewer-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      margin: 0 auto 1rem;
+      background: var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem;
+    }
+    .reviewer-name { font-weight: 700; color: var(--slate); margin-bottom: 0.25rem; }
+    .review-date { font-size: 0.78rem; color: #999; margin-bottom: 0.75rem; }
+    .review-stars { color: #f59e0b; margin-bottom: 0.75rem; letter-spacing: 2px; }
+    .review-content { font-style: italic; color: #5a6a7a; line-height: 1.65; font-size: 0.92rem; }
+
+    /* ══════════════════════════════════════
+       SECTION 4 – CTA + FOOTER
+    ══════════════════════════════════════ */
+    .bg-cta {
+      background: var(--white);
+      flex-direction: column;
+      justify-content: center;
+    }
+    .cta-box {
+      text-align: center;
+      background: linear-gradient(135deg, #fff, #fdf7f2);
+      border-radius: 22px;
+      padding: 3.5rem 3rem;
+      border: 1px solid var(--cream);
+      box-shadow: var(--shadow);
+      max-width: 650px;
+      width: 100%;
+    }
+    .cta-box h2 {
+      font-size: 2rem; font-weight: 700;
+      color: var(--slate); margin-bottom: 0.75rem;
+    }
+    .cta-box p { color: #6a7a8a; margin-bottom: 2rem; line-height: 1.7; }
+    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--cream);
+      color: var(--slate);
+      width: 100%;
+    }
+    .social-links {
+      display: flex; justify-content: center;
+      gap: 1.5rem; margin-bottom: 1rem;
+    }
+    .social-link {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--cream); color: var(--slate);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; transition: all 0.3s;
+    }
+    .social-link:hover {
+      background: var(--orange); color: white;
+      transform: translateY(-3px);
+    }
+
+    @media (max-width: 768px) {
+      nav { display: none; }
+      .hero h1 { font-size: 2rem; }
+      .cinema-title { font-size: 1.4rem; }
+      .reviews-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <svg class="shape-overlays" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#ff8709"/>
+        <stop offset="100%" stop-color="#f7bdf8"/>
+      </linearGradient>
+      <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#ffd9b0"/>
+        <stop offset="100%" stop-color="#ff8709"/>
+      </linearGradient>
+    </defs>
+    <path class="shape-overlays__path" fill="url(#gradient2)"></path>
+    <path class="shape-overlays__path" fill="url(#gradient1)"></path>
+  </svg>
+
+  <!-- Fixed header -->
+  
+
+  <!-- ── SECTION 1: HERO ── -->
+  <section class="first">
+    <div class="outer"><div class="inner">
+      <div class="bg bg-hero">
+        <div class="container hero">
+          <div class="hero-eyebrow">by hann369</div>
+          <h1>Your mind.<br><em>Optimized.</em></h1>
+          <p>A research-backed library, a personal stack builder, and a marketplace — all built by someone who actually uses this stuff.</p>
+          <div class="hero-cta">
+            <a href="index.html" class="btn-primary">Explore the Library</a>
+            <a href="about.html" class="btn-ghost">Meet hann369 →</a>
+          </div>
+        </div>
+        <div class="scroll-hint">
+          <span>Scroll</span>
+          <div class="scroll-arrow"></div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ── SECTION 2: AMBIENT CINEMA VIDEO ── -->
+  <section class="second">
+    <div class="outer"><div class="inner">
+      <div class="bg bg-cinema">
+
+        <!-- Atmosphere layers -->
+        <div class="cinema-glow"></div>
+        <div class="cinema-grain"></div>
+
+        <div class="container cinema-content">
+
+          <div class="cinema-header">
+            <div class="cinema-label">hann369 presents</div>
+            <h2 class="cinema-title">This is <em>Noodrop.</em><br>Watch the full intro.</h2>
+          </div>
+
+          <div class="video-frame-wrap">
+            <div class="video-glow-ring"></div>
+            <div class="video-frame">
+              <div class="video-aspect">
+                <!-- Replace YOUR_VIDEO_ID with your actual YouTube video ID -->
+                <iframe
+                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&modestbranding=1&color=white"
+                  title="Noodrop – Introduced by hann369"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen>
+                </iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="cinema-caption">
+            More content on <a href="https://www.youtube.com/@hann.369" target="_blank">@hann.369</a> &nbsp;·&nbsp; Follow on <a href="https://x.com/hann_369" target="_blank">X @hann_369</a>
+          </div>
+
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ── SECTION 3: REVIEWS ── -->
+  <section class="third">
+    <div class="outer"><div class="inner">
+      <div class="bg bg-reviews">
+        <div class="container" style="display:flex;flex-direction:column;align-items:center">
+          <h2 class="section-title">What the community says.</h2>
+          <div class="reviews-grid">
+            <div class="review-card">
+              <div class="reviewer-avatar">👤</div>
+              <h3 class="reviewer-name">Alex Johnson</h3>
+              <div class="review-date">October 15, 2025</div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-content">"Noodrop transformed my productivity. The stack builder helped me find the perfect combination for sustained focus without jitters."</p>
+            </div>
+            <div class="review-card">
+              <div class="reviewer-avatar">👤</div>
+              <h3 class="reviewer-name">Maria Rodriguez</h3>
+              <div class="review-date">November 3, 2025</div>
+              <div class="review-stars">★★★★★</div>
+              <p class="review-content">"The beginner's guide was exactly what I needed. Clear explanations and practical advice made starting with nootropics easy."</p>
+            </div>
+            <div class="review-card">
+              <div class="reviewer-avatar">👤</div>
+              <h3 class="reviewer-name">David Chen</h3>
+              <div class="review-date">December 22, 2025</div>
+              <div class="review-stars">★★★★☆</div>
+              <p class="review-content">"Great resource for understanding nootropics. The scientific approach gives me confidence in what I'm taking."</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ── SECTION 4: CTA + FOOTER ── -->
+  <section class="fourth">
+    <div class="outer"><div class="inner">
+      <div class="bg bg-cta" style="flex-direction:column">
+        <div class="container" style="display:flex;flex-direction:column;align-items:center">
+          <div class="cta-box">
+            <h2>Ready to optimize?</h2>
+            <p>Start with the library, build your stack, and follow the journey on YouTube and X.</p>
+            <div class="cta-buttons">
+              <a href="index.html" class="btn-primary">Explore Library</a>
+              <a href="stack.html" class="btn-ghost">Build Your Stack</a>
+            </div>
+          </div>
+          <footer>
+            <div class="social-links">
+              <a href="https://x.com/hann_369" target="_blank" class="social-link" aria-label="Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                </svg>
+              </a>
+              <a href="https://www.youtube.com/@hann.369" target="_blank" class="social-link" aria-label="YouTube">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
+                </svg>
+              </a>
+            </div>
+            <p>© 2026 Noodrop. For educational purposes only.</p>
+          </footer>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <script>
+    // ── Loading animation (original, unverändert) ──
+    let overlay = document.querySelector(".shape-overlays");
+    let paths = document.querySelectorAll(".shape-overlays__path");
+    let numPoints = 10, numPaths = paths.length;
+    let delayPointsMax = 0.6, delayPerPath = 0.5, duration = 1.5;
+    let isOpened = false, pointsDelay = [], allPoints = [];
+    let tl = gsap.timeline({ onUpdate: render, defaults: { ease: "power2.inOut", duration } });
+
+    for (let i = 0; i < numPaths; i++) {
+      let points = []; allPoints.push(points);
+      for (let j = 0; j < numPoints; j++) points.push(100);
+    }
+
+    function startAnimation() {
+      if (!tl.isActive()) { isOpened = !isOpened; toggle(); }
+    }
+    window.addEventListener('load', startAnimation);
+    if (document.readyState !== 'loading') startAnimation();
+
+    function toggle() {
+      tl.progress(0).clear();
+      for (let i = 0; i < numPoints; i++) pointsDelay[i] = Math.random() * delayPointsMax;
+      for (let i = 0; i < numPaths; i++) {
+        let points = allPoints[i];
+        let pathDelay = delayPerPath * (isOpened ? i : (numPaths - i - 1));
+        for (let j = 0; j < numPoints; j++) {
+          tl.to(points, { [j]: 0 }, pointsDelay[j] + pathDelay);
+        }
+      }
+      if (isOpened) {
+        tl.eventCallback("onComplete", function() {
+          gsap.to(".container", { opacity: 1, visibility: "visible", duration: 0.8, ease: "power2.out" });
+          gsap.to(overlay, {
+            opacity: 0, duration: 0.6,
+            onComplete: () => { overlay.style.display = "none"; document.body.style.overflow = ""; }
+          });
+        });
+      }
+    }
+
+    function render() {
+      for (let i = 0; i < numPaths; i++) {
+        let path = paths[i], points = allPoints[i], d = "";
+        d += isOpened ? `M 0 0 V ${points[0]} C` : `M 0 ${points[0]} C`;
+        for (let j = 0; j < numPoints - 1; j++) {
+          let p = (j + 1) / (numPoints - 1) * 100;
+          let cp = p - (1 / (numPoints - 1) * 100) / 2;
+          d += ` ${cp} ${points[j]} ${cp} ${points[j+1]} ${p} ${points[j+1]}`;
+        }
+        d += isOpened ? ` V 100 H 0` : ` V 0 H 0`;
+        path.setAttribute("d", d);
+      }
+    }
+
+    // ── GSAP Scroll sections (original, unverändert) ──
+    gsap.registerPlugin(Observer);
+    const sections = document.querySelectorAll("section"),
+          bgs = document.querySelectorAll(".bg"),
+          outerWrappers = gsap.utils.toArray(".outer"),
+          innerWrappers = gsap.utils.toArray(".inner");
+
+    let currentIndex = -1, animating = false;
+    const wrap = gsap.utils.wrap(0, sections.length);
+
+    gsap.set(outerWrappers, { yPercent: 100 });
+    gsap.set(innerWrappers, { yPercent: -100 });
+
+    function gotoSection(index, direction) {
+      index = wrap(index);
+      if (index === currentIndex || animating) return;
+      animating = true;
+      const dFactor = direction === -1 ? -1 : 1;
+      const tl = gsap.timeline({
+        defaults: { duration: 1.35, ease: "power2.inOut" },
+        onComplete: () => animating = false
+      });
+      if (currentIndex >= 0) {
+        gsap.set(sections[currentIndex], { zIndex: 0 });
+        tl.to(bgs[currentIndex], { yPercent: -20 * dFactor }, 0)
+          .set(sections[currentIndex], { autoAlpha: 0 }, 0.6);
+      }
+      gsap.set(sections[index], { autoAlpha: 1, zIndex: 1 });
+      tl.fromTo([outerWrappers[index], innerWrappers[index]], {
+        yPercent: i => i ? -100 * dFactor : 100 * dFactor
+      }, { yPercent: 0 }, 0)
+      .fromTo(bgs[index], { yPercent: 25 * dFactor }, { yPercent: 0 }, 0);
+      currentIndex = index;
+    }
+
+    Observer.create({
+      type: "wheel,touch,pointer", wheelSpeed: -1,
+      onDown: () => !animating && gotoSection(currentIndex - 1,  -1),
+      onUp: () => !animating && gotoSection(currentIndex + 1, 1),
+      tolerance: 25, preventDefault: true
+    });
+
+    gotoSection(0, 1);
+  </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 // =============================================
 // NOODROP CENTRALIZED DATA - data.js
-// Alle Verbindungen zentral hier verwalten
+// All compounds managed centrally here
 // =============================================
 
-// === MODULARISIERUNG NACH KATEGORIEN ===
+// === ORGANIZED BY CATEGORY ===
 
 // === RACETAMS ===
 const racetams = [
@@ -279,7 +279,7 @@ const adaptogens = [
   }
 ];
 
-// === MISCELLANEOUS/MISCELLANEOUS ===
+// === MISCELLANEOUS ===
 const miscellaneous = [
   {
     name: "Agmatine Sulfate",
@@ -458,7 +458,7 @@ const miscellaneous = [
   }
 ];
 
-// === ZUSAMMENFÜHREN ALLER VERBINDUNGEN ===
+// === MERGE ALL COMPOUNDS ===
 const compounds = [
   ...racetams,
   ...cholinergics,
@@ -467,11 +467,221 @@ const compounds = [
   ...miscellaneous
 ];
 
-// === EXPORT FÜR ANDERE MODULE ===
+// === EXPORT FOR OTHER MODULES ===
 window.compounds = compounds;
 
-// === DEBUGGING UND STARTUP INFO ===
-console.log('%c✅ Noodrop data.js geladen – ' + compounds.length + ' Verbindungen', 'color:#22c55e;font-weight:bold');
+// =============================================
+// SYNERGY & INTERACTION DATABASE
+// Format: "CID1_CID2": { ... }
+// safety: "synergy" | "safe" | "warning" | "danger"
+// type:   "cognitive" | "stimulant" | "anxiolytic" | "neuroprotective" | "metabolic" | "sedative"
+// score:  1–5 (synergy strength, only for safe/synergy)
+// =============================================
+window.interactions = {
 
-// === SICHERHEITSHINWEIS ===
-console.warn('🔒 XSS-Schutz aktiv: Alle Textinhalte werden per .textContent gerendert!');
+  // ══ CLASSIC: Caffeine + L-Theanine ══
+  "2519_228398": {
+    safety: "synergy",
+    type: "cognitive",
+    score: 5,
+    title: "Caffeine × L-Theanine",
+    message: "The golden duo. L-Theanine smooths the caffeine edge, extends focus duration and eliminates jitteriness. Optimal at a 2:1 ratio (e.g. 200mg Caffeine + 400mg L-Theanine).",
+    tag: "Classic Stack"
+  },
+
+  // ══ Piracetam + Alpha-GPC ══
+  "4843_71920": {
+    safety: "synergy",
+    type: "cognitive",
+    score: 5,
+    title: "Piracetam × Alpha-GPC",
+    message: "Racetams increase acetylcholine consumption — Alpha-GPC replenishes the choline needed. Significantly reduces racetam-typical headaches. Always pair racetams with a choline source.",
+    tag: "Essential Combo"
+  },
+
+  // ══ Aniracetam + Alpha-GPC ══
+  "2250_71920": {
+    safety: "synergy",
+    type: "cognitive",
+    score: 4,
+    title: "Aniracetam × Alpha-GPC",
+    message: "Same logic as Piracetam + Alpha-GPC. Aniracetam is fat-soluble — take both with a fatty meal for maximum absorption and bioavailability.",
+    tag: "Recommended"
+  },
+
+  // ══ L-Theanine + Bacopa ══
+  "228398_119032": {
+    safety: "synergy",
+    type: "cognitive",
+    score: 4,
+    title: "L-Theanine × Bacopa Monnieri",
+    message: "Excellent combo for deep, sustained focus. L-Theanine acts immediately by promoting alpha waves, while Bacopa builds long-term cognitive capacity over weeks.",
+    tag: "Focus Stack"
+  },
+
+  // ══ L-Theanine + Piracetam ══
+  "228398_4843": {
+    safety: "safe",
+    type: "cognitive",
+    score: 3,
+    title: "L-Theanine × Piracetam",
+    message: "Good pairing. L-Theanine dampens any restlessness from Piracetam and promotes alpha brainwaves for calm, relaxed focus. Ensure adequate choline in your stack.",
+    tag: "Compatible"
+  },
+
+  // ══ Caffeine + Bacopa ══
+  "2519_119032": {
+    safety: "safe",
+    type: "cognitive",
+    score: 3,
+    title: "Caffeine × Bacopa Monnieri",
+    message: "Works well together. Caffeine provides a short-term boost while Bacopa works long-term on memory consolidation. No known interaction risk between the two.",
+    tag: "Compatible"
+  },
+
+  // ══ Piracetam + Bacopa ══
+  "4843_119032": {
+    safety: "synergy",
+    type: "neuroprotective",
+    score: 4,
+    title: "Piracetam × Bacopa Monnieri",
+    message: "Strong neuroprotective synergy. Both promote neuronal plasticity via distinct pathways — AMPA modulation (Piracetam) combined with antioxidant adaptogenic effects (Bacopa).",
+    tag: "Neuroprotective"
+  },
+
+  // ══ Caffeine + Piracetam ══
+  "2519_4843": {
+    safety: "safe",
+    type: "cognitive",
+    score: 2,
+    title: "Caffeine × Piracetam",
+    message: "Functional but not a power combo. Caffeine provides energy and alertness, Piracetam handles cognition. Make sure you have enough choline in your stack.",
+    tag: "Neutral"
+  },
+
+  // ══ Caffeine + Agmatine ══
+  "2519_441792": {
+    safety: "warning",
+    type: "stimulant",
+    score: null,
+    title: "Caffeine × Agmatine",
+    message: "Agmatine modulates blood pressure via nitric oxide pathways. Combined with caffeine's vasoconstrictive effects, unpredictable blood pressure swings are possible. Monitor your response carefully.",
+    tag: "Use Caution"
+  },
+
+  // ══ Modafinil + Caffeine ══
+  "4236_2519": {
+    safety: "danger",
+    type: "stimulant",
+    score: null,
+    title: "Modafinil × Caffeine",
+    message: "High overstimulation risk. Modafinil alone is already very potent — adding caffeine significantly elevates heart rate, blood pressure and anxiety symptoms. Avoid or drastically reduce caffeine dose.",
+    tag: "High Risk"
+  },
+
+  // ══ Modafinil + Aniracetam ══
+  "4236_2250": {
+    safety: "danger",
+    type: "stimulant",
+    score: null,
+    title: "Modafinil × Aniracetam",
+    message: "Modafinil is a powerful wakefulness promoter. Aniracetam as an AMPA modulator can increase excitatory load further. Insomnia, agitation and overstimulation are likely outcomes.",
+    tag: "Avoid"
+  },
+
+  // ══ Modafinil + Bacopa ══
+  "4236_119032": {
+    safety: "warning",
+    type: "cognitive",
+    score: null,
+    title: "Modafinil × Bacopa Monnieri",
+    message: "Bacopa is an adaptogen, Modafinil a strong stimulant. Individual response varies greatly. Bacopa may theoretically blunt some stimulant effects — still monitor your reaction closely.",
+    tag: "Individual"
+  },
+
+  // ══ 4F-Phenibut + Caffeine ══
+  "71680_2519": {
+    safety: "warning",
+    type: "anxiolytic",
+    score: null,
+    title: "4F-Phenibut × Caffeine",
+    message: "4F-Phenibut acts GABAergically and is sedating, while caffeine is stimulating. The combination can falsely reduce the subjective sense of risk (stimulation + euphoria). Watch for dependency potential.",
+    tag: "Caution"
+  },
+
+  // ══ 4F-Phenibut + Modafinil ══
+  "71680_4236": {
+    safety: "warning",
+    type: "stimulant",
+    score: null,
+    title: "4F-Phenibut × Modafinil",
+    message: "Interesting but risky combo: GABAergic relaxation meets a wakefulness promoter. May lead to underestimating the stimulant load. Not recommended for beginners.",
+    tag: "Experienced Users"
+  },
+
+  // ══ Agmatine + Bacopa ══
+  "441792_119032": {
+    safety: "safe",
+    type: "neuroprotective",
+    score: 3,
+    title: "Agmatine × Bacopa Monnieri",
+    message: "Both have neuroprotective properties via different mechanisms. Agmatine as an NMDA antagonist, Bacopa through antioxidant activity. Good foundation for a neuroprotection-focused stack.",
+    tag: "Neuroprotective"
+  },
+
+  // ══ L-Theanine + Modafinil ══
+  "228398_4236": {
+    safety: "warning",
+    type: "anxiolytic",
+    score: null,
+    title: "L-Theanine × Modafinil",
+    message: "L-Theanine can take the edge off Modafinil slightly, but not enough to fully compensate for its stimulant load — Modafinil remains dominant. Marginally useful at best.",
+    tag: "Limited Benefit"
+  },
+
+  // ══ Piracetam + Aniracetam ══
+  "4843_2250": {
+    safety: "warning",
+    type: "cognitive",
+    score: null,
+    title: "Piracetam × Aniracetam",
+    message: "Both are racetams — combining them significantly increases total acetylcholine demand. Without adequate choline supplementation (Alpha-GPC or CDP-Choline), severe headaches are likely.",
+    tag: "Choline Required"
+  },
+
+  // ══ Alpha-GPC + Bacopa ══
+  "71920_119032": {
+    safety: "synergy",
+    type: "cognitive",
+    score: 4,
+    title: "Alpha-GPC × Bacopa Monnieri",
+    message: "Alpha-GPC boosts acetylcholine short-term, while Bacopa improves memory consolidation long-term. Ideal combination for focused learning sessions.",
+    tag: "Study Stack"
+  },
+
+  // ══ Bromantane + Caffeine ══
+  "bromantane_placeholder_2519": {
+    safety: "safe",
+    type: "stimulant",
+    score: 2,
+    title: "Bromantane × Caffeine",
+    message: "Bromantane acts as an adaptogenic stimulant via dopamine synthesis, caffeine via adenosine blockade. Different mechanisms — moderate synergy possible with no known adverse interaction.",
+    tag: "Compatible"
+  },
+
+  // ══ Agmatine + Piracetam ══
+  "441792_4843": {
+    safety: "safe",
+    type: "neuroprotective",
+    score: 3,
+    title: "Agmatine × Piracetam",
+    message: "Agmatine as an NMDA antagonist can help balance the synaptic excitatory load from Piracetam. Good pairing for a neuroprotective focus stack.",
+    tag: "Compatible"
+  }
+};
+
+// === DEBUG & STARTUP INFO ===
+console.log('%c✅ Noodrop data.js loaded – ' + compounds.length + ' compounds', 'color:#22c55e;font-weight:bold');
+
+// === SECURITY NOTE ===
+console.warn('🔒 XSS protection active: All text content rendered via .textContent');
