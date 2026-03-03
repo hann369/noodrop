@@ -515,16 +515,20 @@
         background: rgba(243,112,30,0.08) !important;
       }
 
-      /* Close button inside open menu */
-      nav.open::before {
-        content: "✕";
-        position: fixed;
-        top: 1.2rem; right: 1.4rem;
-        font-size: 1.4rem;
-        color: var(--slate, #4b607f);
-        cursor: pointer;
-        z-index: 600;
-        pointer-events: none; /* closed by JS */
+      /* Close button inside open menu – real button so it can be tapped */
+      .nav-close { display: none; }
+      @media (max-width: 768px) {
+        .nav-close {
+          display: block;
+          position: fixed;
+          top: 1.2rem; right: 1.4rem;
+          font-size: 1.4rem;
+          color: var(--slate, #4b607f);
+          background: none;
+          border: none;
+          cursor: pointer;
+          z-index: 600;
+        }
       }
 
       /* General layout helpers for mobile */
@@ -638,8 +642,15 @@
   <!-- Header -->
   <header>
     <div class="logo">Noodrop</div>
-    <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-    <nav>
+    <div class="header-right">
+      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mainNav">&#9776;</button>
+      <button class="auth-btn" id="authBtn">Login</button>
+      <div class="theme-toggle" id="themeToggle">
+        <div class="toggle-knob"></div>
+      </div>
+    </div>
+    <nav id="mainNav">
+      <button class="nav-close" aria-label="Close navigation">✕</button>
       <a href="landing.html">Home</a>
       <a href="index.html" class="active">Library</a>
       <a href="stack.html">Stacks</a>
@@ -647,12 +658,6 @@
       <a href="about.html">About</a>
       <a href="faq.html">FAQ</a>
     </nav>
-    <div class="header-right">
-      <button class="auth-btn" id="authBtn">Login</button>
-      <div class="theme-toggle" id="themeToggle">
-        <div class="toggle-knob"></div>
-      </div>
-    </div>
   </header>
 
   <!-- Page Hero -->
@@ -910,29 +915,42 @@
     if (!toggle || !nav) return;
 
     toggle.addEventListener('click', function () {
-      nav.classList.toggle('open');
-      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+      var open = nav.classList.toggle('open');
+      document.body.style.overflow = open ? 'hidden' : '';
+      toggle.setAttribute('aria-expanded', open);
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function () {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
       });
     });
+
+    var closeBtn = nav.querySelector('.nav-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        nav.classList.remove('open');
+        document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    }
 
     window.addEventListener('resize', function () {
       if (window.innerWidth > 768) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
       }
     });
 
-    /* Close on overlay click (clicking the ::before pseudo is impossible so we check click on nav itself) */
+    /* Close on overlay click (we can now click any empty space in the nav) */
     nav.addEventListener('click', function(e) {
       if (e.target === nav) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
       }
     });
   });
