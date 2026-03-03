@@ -455,8 +455,29 @@
       font-family: 'Tabular', sans-serif; font-weight: 600; cursor: pointer;
     }
 
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--slate);
+    }
+
     @media (max-width: 768px) {
-      nav { display: none; }
+      .menu-toggle { display: block; }
+      nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--bg);
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      nav.open { display: flex; }
+      nav a { margin: 0.8rem 0; }
       .page-hero { flex-direction: column; gap: 1.5rem; align-items: flex-start; }
       .stack-panel { position: static; }
     }
@@ -488,6 +509,7 @@
   <!-- Header -->
   <header>
     <div class="logo">Noodrop</div>
+    <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
     <nav>
       <a href="landing.html">Home</a>
       <a href="index.html">Library</a>
@@ -1010,6 +1032,23 @@
 
     function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     // ─────────────────────────────────────────────────────────────────────
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const menuToggle = document.querySelector('.menu-toggle');
+      const nav = document.querySelector('nav');
+      if (menuToggle && nav) {
+        menuToggle.addEventListener('click', () => {
+          nav.classList.toggle('open');
+        });
+        nav.querySelectorAll('a').forEach(a =>
+          a.addEventListener('click', () => nav.classList.remove('open'))
+        );
+        window.addEventListener('resize', () => {
+          if (window.innerWidth > 768) nav.classList.remove('open');
+        });
+      }
+    });
   </script>
 </body>
 </html>

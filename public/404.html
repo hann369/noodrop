@@ -40,13 +40,38 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:4rem 
 footer{text-align:center;padding:1.5rem 5%;border-top:1px solid var(--cream);color:#8a9ab0;font-size:.82rem;}
 footer a{color:#8a9ab0;text-decoration:none;margin:0 .5rem;transition:color .2s;}
 footer a:hover{color:var(--primary);}
-@media(max-width:768px){nav{display:none;}.error-code{font-size:7rem;letter-spacing:-3px;}}
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--slate);
+}
+
+@media(max-width:768px){
+  .menu-toggle { display: block; }
+  nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: var(--bg);
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+  }
+  nav.open { display: flex; }
+  nav a { margin: 0.8rem 0; }
+  .error-code{font-size:7rem;letter-spacing:-3px;}
+}
 </style>
 </head>
 <body>
 <div class="particles" id="particles"></div>
 <header>
   <a href="landing.html" class="logo">Noodrop</a>
+  <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
   <nav>
     <a href="landing.html">Home</a>
     <a href="index.html">Library</a>
@@ -84,6 +109,23 @@ for(let i=0;i<18;i++){
   p.style.cssText=`width:${size}px;height:${size}px;left:${Math.random()*100}%;--dur:${Math.random()*8+5}s;--delay:${Math.random()*6}s;`;
   container.appendChild(p);
 }
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    if (menuToggle && nav) {
+      menuToggle.addEventListener('click', () => {
+        nav.classList.toggle('open');
+      });
+      nav.querySelectorAll('a').forEach(a =>
+        a.addEventListener('click', () => nav.classList.remove('open'))
+      );
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) nav.classList.remove('open');
+      });
+    }
+  });
 </script>
 </body>
 </html>

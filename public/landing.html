@@ -413,8 +413,29 @@
       transform: translateY(-3px);
     }
 
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--slate);
+    }
+
     @media (max-width: 768px) {
-      nav { display: none; }
+      .menu-toggle { display: block; }
+      nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0; right: 0;
+        background: var(--bg);
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem 0;
+      }
+      nav.open { display: flex; }
+      nav a { margin: 0.8rem 0; }
       .hero h1 { font-size: 2rem; }
       .cinema-title { font-size: 1.4rem; }
       .reviews-grid { grid-template-columns: 1fr; }
@@ -670,5 +691,22 @@
 
     gotoSection(0, 1);
   </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav');
+    if (menuToggle && nav) {
+      menuToggle.addEventListener('click', () => {
+        nav.classList.toggle('open');
+      });
+      nav.querySelectorAll('a').forEach(a =>
+        a.addEventListener('click', () => nav.classList.remove('open'))
+      );
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) nav.classList.remove('open');
+      });
+    }
+  });
+</script>
 </body>
 </html>
