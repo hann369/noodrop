@@ -502,7 +502,197 @@
     .load-this-btn{background:var(--orange);color:white;border:none;padding:.4rem 1rem;border-radius:50px;font-family:'Tabular',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
     .load-this-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(243,112,30,.3);}
     .modal-empty{text-align:center;padding:2.5rem 1rem;color:#8a9ab0;font-size:.88rem;}
-  </style>
+  
+    /* ══════════════════════════════════════
+       GLOBAL MOBILE FOUNDATION
+    ══════════════════════════════════════ */
+
+    /* Prevent text from ever overflowing horizontally */
+    html { overflow-x: hidden; }
+    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+
+    /* Make images responsive by default */
+    img { max-width: 100%; height: auto; }
+
+    /* Buttons / links: comfortable touch targets */
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    /* ── Hamburger nav shared base ──────── */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--slate, #4b607f);
+      padding: 0.25rem 0.4rem;
+      line-height: 1;
+      z-index: 200;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+
+      /* Slide-down nav overlay */
+      nav {
+        display: none;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important; right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(255,255,255,0.97) !important;
+        backdrop-filter: blur(16px) !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 0.25rem !important;
+        padding: 2rem 1rem !important;
+        z-index: 500 !important;
+      }
+      nav.open { display: flex !important; }
+
+      /* Big tap targets for nav items on mobile */
+      nav a {
+        margin: 0 !important;
+        font-size: 1.3rem !important;
+        font-weight: 600 !important;
+        padding: 0.9rem 1.5rem !important;
+        width: 100% !important;
+        text-align: center !important;
+        border-radius: 12px !important;
+        transition: background 0.2s !important;
+      }
+      nav a:hover, nav a.active {
+        background: rgba(243,112,30,0.08) !important;
+      }
+
+      /* Close button inside open menu */
+      nav.open::before {
+        content: "✕";
+        position: fixed;
+        top: 1.2rem; right: 1.4rem;
+        font-size: 1.4rem;
+        color: var(--slate, #4b607f);
+        cursor: pointer;
+        z-index: 600;
+        pointer-events: none; /* closed by JS */
+      }
+
+      /* General layout helpers for mobile */
+      .container, [class*="container"] {
+        padding-left: 1.1rem !important;
+        padding-right: 1.1rem !important;
+      }
+
+      /* Typography scale */
+      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
+      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
+
+      /* Full-width CTAs */
+      .hero-cta, .cta-buttons, .quick-links {
+        flex-direction: column !important;
+        width: 100% !important;
+      }
+      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+      }
+
+      /* Stack panels / grids → single column */
+      .grid, .reviews-grid, .products-grid, .purchased-grid,
+      .available-grid, .layout, .product-layout, .content-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+      }
+
+      /* Auth banner wrap */
+      .auth-banner {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        text-align: center !important;
+      }
+      .auth-banner .btn-orange { width: 100% !important; }
+
+      /* Auth/saved-stack modals – full-screen on small screens */
+      .modal-box {
+        max-width: 100% !important;
+        margin: 0 1rem !important;
+        padding: 1.8rem 1.4rem !important;
+        border-radius: 16px !important;
+      }
+
+      /* Purchased cards wrap */
+      .purchased-card {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.75rem !important;
+      }
+      .download-btn { width: 100% !important; justify-content: center !important; }
+
+      /* Stack panel: no sticky on mobile */
+      .stack-panel { position: static !important; }
+
+      /* Stack actions vertical */
+      .stack-actions { flex-direction: column !important; }
+      .stack-actions .btn-reset,
+      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
+
+      /* Profile card */
+      .profile-header {
+        flex-direction: column !important;
+        gap: 1rem !important;
+        align-items: flex-start !important;
+      }
+      .logout-btn { width: 100% !important; }
+
+      /* Card actions */
+      .card-actions { flex-direction: column !important; }
+      .card-actions .btn { width: 100% !important; }
+
+      /* Footer */
+      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
+
+      /* Page heroes */
+      .page-hero {
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+        align-items: flex-start !important;
+        padding: 2rem 1.1rem !important;
+      }
+      .hero-right { align-items: flex-start !important; width: 100% !important; }
+
+      /* Cookie banner */
+      #cookieConsent {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        text-align: center !important;
+        padding: 1rem !important;
+      }
+    }
+
+    /* ── Extra-small phones ──────────────── */
+    @media (max-width: 375px) {
+      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
+      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
+      .purchase-box { padding: 1.2rem !important; }
+      .cta-box { padding: 1.8rem 1rem !important; }
+      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
+    }
+
+    @media (max-width: 768px) {
+      .layout { display: flex !important; flex-direction: column !important; }
+      .available-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.8rem !important; }
+      .compound-card .card-img { height: 100px !important; }
+      .stack-dropzone { min-height: 160px !important; }
+      .load-stack-wrap { padding: 0 0.8rem 0.8rem !important; }
+    }
+    @media (max-width: 480px) {
+      .available-grid { grid-template-columns: 1fr !important; }
+    }
+</style>
 </head>
 <body>
 
@@ -1033,22 +1223,43 @@
     function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     // ─────────────────────────────────────────────────────────────────────
   </script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const menuToggle = document.querySelector('.menu-toggle');
-      const nav = document.querySelector('nav');
-      if (menuToggle && nav) {
-        menuToggle.addEventListener('click', () => {
-          nav.classList.toggle('open');
-        });
-        nav.querySelectorAll('a').forEach(a =>
-          a.addEventListener('click', () => nav.classList.remove('open'))
-        );
-        window.addEventListener('resize', () => {
-          if (window.innerWidth > 768) nav.classList.remove('open');
-        });
+  
+
+<script>
+  /* ── Mobile nav toggle ── */
+  document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.querySelector('.menu-toggle');
+    var nav    = document.querySelector('nav');
+    if (!toggle || !nav) return;
+
+    toggle.addEventListener('click', function () {
+      nav.classList.toggle('open');
+      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    });
+
+    nav.querySelectorAll('a').forEach(function(a) {
+      a.addEventListener('click', function () {
+        nav.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 768) {
+        nav.classList.remove('open');
+        document.body.style.overflow = '';
       }
     });
-  </script>
+
+    /* Close on overlay click (clicking the ::before pseudo is impossible so we check click on nav itself) */
+    nav.addEventListener('click', function(e) {
+      if (e.target === nav) {
+        nav.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
