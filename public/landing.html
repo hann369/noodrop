@@ -492,6 +492,12 @@
         z-index: 500 !important;
       }
       nav.open { display: flex !important; }
+      /* nav menu should scroll if it overflows the viewport */
+      nav {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
 
       /* Big tap targets for nav items on mobile */
       nav a {
@@ -689,7 +695,7 @@
     <div class="header-right">
       <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mainNav">&#9776;</button>
     </div>
-    <nav id="mainNav">
+    <nav id="mainNav" role="dialog" aria-modal="true" aria-hidden="true">
       <button class="nav-close" aria-label="Close navigation">✕</button>
       <a href="landing.html" class="active">Home</a>
       <a href="index.html">Library</a>
@@ -700,29 +706,8 @@
     </nav>
   </header>
 
-  <!-- ── SECTION 1: HERO ── -->
+  <!-- ── SECTION 1: AMBIENT CINEMA VIDEO ── -->
   <section class="first">
-    <div class="outer"><div class="inner">
-      <div class="bg bg-hero">
-        <div class="container hero">
-          <div class="hero-eyebrow">by hann369</div>
-          <h1>Your mind.<br><em>Optimized.</em></h1>
-          <p>A research-backed library, a personal stack builder, and a marketplace — all built by someone who actually uses this stuff.</p>
-          <div class="hero-cta">
-            <a href="index.html" class="btn-primary">Explore the Library</a>
-            <a href="about.html" class="btn-ghost">Meet hann369 →</a>
-          </div>
-        </div>
-        <div class="scroll-hint">
-          <span>Scroll</span>
-          <div class="scroll-arrow"></div>
-        </div>
-      </div>
-    </div></div>
-  </section>
-
-  <!-- ── SECTION 2: AMBIENT CINEMA VIDEO ── -->
-  <section class="second">
     <div class="outer"><div class="inner">
       <div class="bg bg-cinema">
 
@@ -756,6 +741,27 @@
             More content on <a href="https://www.youtube.com/@hann.369" target="_blank">@hann.369</a> &nbsp;·&nbsp; Follow on <a href="https://x.com/hann_369" target="_blank">X @hann_369</a>
           </div>
 
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ── SECTION 2: HERO ── -->
+  <section class="second">
+    <div class="outer"><div class="inner">
+      <div class="bg bg-hero">
+        <div class="container hero">
+          <div class="hero-eyebrow">by hann369</div>
+          <h1>Your mind.<br><em>Optimized.</em></h1>
+          <p>A research-backed library, a personal stack builder, and a marketplace — all built by someone who actually uses this stuff.</p>
+          <div class="hero-cta">
+            <a href="index.html" class="btn-primary">Explore the Library</a>
+            <a href="about.html" class="btn-ghost">Meet hann369 →</a>
+          </div>
+        </div>
+        <div class="scroll-hint">
+          <span>Scroll</span>
+          <div class="scroll-arrow"></div>
         </div>
       </div>
     </div></div>
@@ -975,10 +981,15 @@
     var nav    = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    // initialize ARIA attributes
+    toggle.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-hidden', 'true');
+
     toggle.addEventListener('click', function () {
       var open = nav.classList.toggle('open');
       document.body.style.overflow = open ? 'hidden' : '';
       toggle.setAttribute('aria-expanded', open);
+      nav.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
@@ -986,6 +997,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     });
 
@@ -995,6 +1007,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     }
 
@@ -1003,6 +1016,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -1012,6 +1026,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
   });

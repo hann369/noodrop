@@ -114,6 +114,11 @@ footer a:hover{color:var(--primary);}
         z-index: 500 !important;
       }
       nav.open { display: flex !important; }
+      nav {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
 
       /* Big tap targets for nav items on mobile */
       nav a {
@@ -257,7 +262,7 @@ footer a:hover{color:var(--primary);}
 <header>
   <a href="landing.html" class="logo">Noodrop</a>
   <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-  <nav>
+  <nav role="dialog" aria-modal="true" aria-hidden="true">
     <a href="landing.html">Home</a>
     <a href="index.html">Library</a>
     <a href="stack.html">Stacks</a>
@@ -304,15 +309,23 @@ for(let i=0;i<18;i++){
     var nav    = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    // initialize ARIA
+    toggle.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-hidden', 'true');
+
     toggle.addEventListener('click', function () {
-      nav.classList.toggle('open');
-      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+      var open = nav.classList.toggle('open');
+      document.body.style.overflow = open ? 'hidden' : '';
+      toggle.setAttribute('aria-expanded', open);
+      nav.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function () {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     });
 
@@ -320,6 +333,8 @@ for(let i=0;i<18;i++){
       if (window.innerWidth > 768) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -328,6 +343,8 @@ for(let i=0;i<18;i++){
       if (e.target === nav) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
   });

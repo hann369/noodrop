@@ -411,6 +411,11 @@
         z-index: 500 !important;
       }
       nav.open { display: flex !important; }
+      nav {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
 
       /* Big tap targets for nav items on mobile */
       nav a {
@@ -872,15 +877,23 @@
     var nav    = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    // initialize ARIA
+    toggle.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-hidden', 'true');
+
     toggle.addEventListener('click', function () {
-      nav.classList.toggle('open');
-      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+      var open = nav.classList.toggle('open');
+      document.body.style.overflow = open ? 'hidden' : '';
+      toggle.setAttribute('aria-expanded', open);
+      nav.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function () {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     });
 
@@ -888,6 +901,8 @@
       if (window.innerWidth > 768) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -896,6 +911,8 @@
       if (e.target === nav) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
+        toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
   });

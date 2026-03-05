@@ -458,6 +458,11 @@
         z-index: 500 !important;
       }
       nav.open { display: flex !important; }
+      nav {
+        overflow-y: auto !important;
+        max-height: 100vh !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
 
       /* Big tap targets for nav items on mobile */
       nav a {
@@ -610,7 +615,7 @@
     <div class="header-right">
       <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mainNav">&#9776;</button>
     </div>
-    <nav id="mainNav">
+    <nav id="mainNav" role="dialog" aria-modal="true" aria-hidden="true">
       <button class="nav-close" aria-label="Close navigation">✕</button>
       <a href="landing.html">Home</a>
       <a href="index.html">Library</a>
@@ -842,10 +847,15 @@
     var nav    = document.querySelector('nav');
     if (!toggle || !nav) return;
 
+    // init ARIA
+    toggle.setAttribute('aria-expanded', 'false');
+    nav.setAttribute('aria-hidden', 'true');
+
     toggle.addEventListener('click', function () {
       var open = nav.classList.toggle('open');
       document.body.style.overflow = open ? 'hidden' : '';
       toggle.setAttribute('aria-expanded', open);
+      nav.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
@@ -853,6 +863,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     });
 
@@ -862,6 +873,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       });
     }
 
@@ -870,6 +882,7 @@
         nav.classList.remove('open');
         document.body.style.overflow = '';
         toggle.setAttribute('aria-expanded', 'false');
+        nav.setAttribute('aria-hidden', 'true');
       }
     });
 
