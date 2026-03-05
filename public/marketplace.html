@@ -30,6 +30,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      padding-top: 64px;
       font-family: 'Tabular', sans-serif;
       background: var(--bg);
       color: var(--dark-slate);
@@ -458,11 +459,6 @@
         z-index: 500 !important;
       }
       nav.open { display: flex !important; }
-      nav {
-        overflow-y: auto !important;
-        max-height: 100vh !important;
-        -webkit-overflow-scrolling: touch !important;
-      }
 
       /* Big tap targets for nav items on mobile */
       nav a {
@@ -605,26 +601,297 @@
       .product-image-wrap { height: 180px !important; }
       .purchased-grid { grid-template-columns: 1fr !important; }
     }
+
+/* ═══════════════════════════════════════════
+   NOODROP – UNIFIED HEADER
+   ═══════════════════════════════════════════ */
+.nd-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  display: flex; align-items: center;
+  padding: 0 5%;
+  height: 64px;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(232,216,201,0.7);
+  box-shadow: 0 1px 24px rgba(0,0,0,0.06);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+.nd-header.scrolled {
+  background: rgba(255,255,255,0.97);
+  box-shadow: 0 2px 32px rgba(0,0,0,0.10);
+}
+.nd-logo {
+  font-family: 'Clash Display', 'Tabular', sans-serif;
+  font-weight: 700; font-size: 1.35rem;
+  color: #4b607f; text-decoration: none;
+  letter-spacing: -0.03em;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+.nd-logo:hover { color: #f3701e; }
+.nd-nav {
+  display: flex; align-items: center;
+  gap: 0.15rem;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+.nd-nav__link {
+  position: relative;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.875rem; font-weight: 500;
+  color: #4b607f; text-decoration: none;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.nd-nav__link::after {
+  content: '';
+  position: absolute; bottom: 2px; left: 50%; right: 50%;
+  height: 2px; border-radius: 2px;
+  background: #f3701e;
+  transition: left 0.25s, right 0.25s;
+}
+.nd-nav__link:hover { color: #f3701e; background: rgba(243,112,30,0.06); }
+.nd-nav__link:hover::after,
+.nd-nav__link.active::after { left: 0.85rem; right: 0.85rem; }
+.nd-nav__link.active { color: #f3701e; font-weight: 600; }
+.nd-header__right {
+  display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0;
+}
+.nd-burger {
+  display: none;
+  flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px;
+  width: 40px; height: 40px;
+  background: none; border: none; cursor: pointer;
+  padding: 6px; border-radius: 10px;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.nd-burger:hover { background: rgba(243,112,30,0.08); }
+.nd-burger span {
+  display: block; width: 22px; height: 2px;
+  background: #4b607f; border-radius: 2px;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1),
+              opacity 0.25s, width 0.3s;
+  transform-origin: center;
+}
+.nd-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nd-burger.is-open span:nth-child(2) { opacity: 0; width: 0; }
+.nd-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+@media (max-width: 768px) {
+  .nd-burger { display: flex; }
+  .nd-nav {
+    position: fixed; inset: 0;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.35rem;
+    background: rgba(255,255,255,0.97);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: 800;
+    padding: 5rem 2rem 3rem;
+    opacity: 0; pointer-events: none;
+    transform: translateY(-12px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+  .nd-nav.is-open { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .nd-nav__link {
+    font-size: 1.4rem; font-weight: 600;
+    padding: 0.85rem 2rem;
+    width: 100%; text-align: center;
+    border-radius: 14px;
+  }
+  .nd-nav__link:hover, .nd-nav__link.active {
+    background: rgba(243,112,30,0.08); color: #f3701e;
+  }
+  .nd-nav__link::after { display: none; }
+}
+
+
+/* ══════════════════════════════════════════════════
+   NOODROP – REFINED ORANGE HOVER SYSTEM
+   ══════════════════════════════════════════════════ */
+
+/* ── Transition foundation ── */
+a, button, [class*="btn"], [class*="card"],
+[class*="chip"], [class*="pill"], [class*="link"],
+.category-btn, .compound-card, .product-card,
+.review-card, .highlight-card, .philosophy-card,
+.stack-item, .faq-item, .social-link, .social-pill,
+.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
+.suggest-chip, .research-link {
+  transition-property: color, background, border-color,
+                        box-shadow, transform, opacity;
+  transition-duration: 0.22s;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Primary buttons ── */
+.btn-primary:hover,
+.btn-orange:hover,
+.buy-button:hover:not(:disabled),
+.add-btn:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
+              0 2px 8px  rgba(243,112,30,0.18) !important;
+  filter: brightness(1.06);
+}
+
+/* ── Ghost / secondary buttons ── */
+.btn-ghost:hover,
+.btn-secondary:hover,
+.btn-load:hover,
+.btn-save:hover:not(:disabled) {
+  border-color: rgba(243,112,30,0.55) !important;
+  color: #f3701e !important;
+  background: rgba(243,112,30,0.06) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
+}
+
+/* ── Auth button ── */
+.auth-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
+  filter: brightness(1.05);
+}
+
+/* ── Cards – lift + orange accent border glow ── */
+.card:hover,
+.compound-card:hover,
+.product-card:hover,
+.review-card:hover,
+.highlight-card:hover,
+.philosophy-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: rgba(243,112,30,0.28) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
+              0 0  0 1.5px rgba(243,112,30,0.14) !important;
+}
+
+/* ── Stack items ── */
+.stack-item:hover {
+  border-color: rgba(243,112,30,0.35) !important;
+  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
+}
+
+/* ── FAQ items ── */
+.faq-item:hover {
+  border-color: rgba(243,112,30,0.3) !important;
+  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
+}
+
+/* ── Social links (circle icons) ── */
+.social-link:hover {
+  background: #f3701e !important;
+  color: white !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
+}
+
+/* ── Social pills ── */
+.social-pill:hover {
+  background: rgba(243,112,30,0.09) !important;
+  border-color: rgba(243,112,30,0.4) !important;
+  color: #f3701e !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ── Suggest chips / category chips ── */
+.suggest-chip:hover,
+.category-btn:hover,
+.category-btn.active {
+  background: rgba(243,112,30,0.08) !important;
+  border-color: rgba(243,112,30,0.40) !important;
+  color: #f3701e !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Back / nav text links ── */
+.back-link:hover,
+.nd-back-btn:hover {
+  color: #f3701e !important;
+  background: rgba(243,112,30,0.07) !important;
+  border-color: rgba(243,112,30,0.3) !important;
+}
+
+/* ── Bookmark & ctrl buttons ── */
+.bookmark-btn:hover,
+.ctrl-btn:hover {
+  background: #f3701e !important;
+  color: white !important;
+  border-color: #f3701e !important;
+  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
+}
+
+/* ── Research / external links ── */
+.research-link:hover {
+  color: #f3701e !important;
+  border-color: rgba(243,112,30,0.5) !important;
+  background: rgba(243,112,30,0.05) !important;
+}
+
+/* ── Download / load stack btn ── */
+.download-btn:hover,
+.load-this-btn:hover {
+  background: #3a4a63 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
+}
+
+/* ── Dark mode card hover ── */
+body.dark .card:hover,
+body.dark .compound-card:hover {
+  border-color: rgba(243,112,30,0.45) !important;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
+              0 0 0 1.5px rgba(243,112,30,0.22) !important;
+}
+
+/* ── Cookie consent button ── */
+#cookieConsent button:hover {
+  background: #e2661a !important;
+  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
+}
+
+/* ── Remove / reset (red) – keep red, just smooth it ── */
+.remove-btn:hover {
+  background: rgba(239,68,68,0.10) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239,68,68,0.3) !important;
+}
+.btn-reset:hover {
+  border-color: #ef4444 !important;
+  color: #ef4444 !important;
+  background: rgba(239,68,68,0.05) !important;
+}
+
 </style>
 </head>
 <body>
 
+<header class="nd-header">
+  <a href="landing.html" class="nd-logo">Noodrop</a>
+
+  <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
+      <a href="landing.html" class="nd-nav__link">Home</a>
+      <a href="index.html" class="nd-nav__link">Library</a>
+      <a href="stack.html" class="nd-nav__link">Stacks</a>
+      <a href="marketplace.html" class="nd-nav__link active">Marketplace</a>
+      <a href="about.html" class="nd-nav__link">About</a>
+      <a href="faq.html" class="nd-nav__link">FAQ</a>
+  </nav>
+
+  <div class="nd-header__right">
+        <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+
+
   <!-- Header -->
-  <header>
-    <div class="logo">Noodrop</div>
-    <div class="header-right">
-      <button class="menu-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mainNav">&#9776;</button>
-    </div>
-    <nav id="mainNav" role="dialog" aria-modal="true" aria-hidden="true">
-      <button class="nav-close" aria-label="Close navigation">✕</button>
-      <a href="landing.html">Home</a>
-      <a href="index.html">Library</a>
-      <a href="stack.html">Stacks</a>
-      <a href="marketplace.html" class="active">Marketplace</a>
-      <a href="about.html">About</a>
-      <a href="faq.html">FAQ</a>
-    </nav>
-  </header>
+  
 
   <!-- Page Hero -->
   <div class="page-hero">
@@ -847,42 +1114,22 @@
     var nav    = document.querySelector('nav');
     if (!toggle || !nav) return;
 
-    // init ARIA
-    toggle.setAttribute('aria-expanded', 'false');
-    nav.setAttribute('aria-hidden', 'true');
-
     toggle.addEventListener('click', function () {
       var open = nav.classList.toggle('open');
       document.body.style.overflow = open ? 'hidden' : '';
-      toggle.setAttribute('aria-expanded', open);
-      nav.setAttribute('aria-hidden', open ? 'false' : 'true');
     });
 
     nav.querySelectorAll('a').forEach(function(a) {
       a.addEventListener('click', function () {
         nav.classList.remove('open');
         document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
-        nav.setAttribute('aria-hidden', 'true');
       });
     });
-
-    var closeBtn = nav.querySelector('.nav-close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
-        nav.classList.remove('open');
-        document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
-        nav.setAttribute('aria-hidden', 'true');
-      });
-    }
 
     window.addEventListener('resize', function () {
       if (window.innerWidth > 768) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
-        nav.setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -891,11 +1138,58 @@
       if (e.target === nav) {
         nav.classList.remove('open');
         document.body.style.overflow = '';
-        toggle.setAttribute('aria-expanded', 'false');
       }
     });
   });
 </script>
 
+
+<script>
+/* ── Noodrop unified header JS ── */
+(function () {
+  var burger = document.getElementById('ndBurger');
+  var nav    = document.getElementById('ndNav');
+  var header = document.querySelector('.nd-header');
+  if (!burger || !nav) return;
+
+  function openMenu() {
+    nav.classList.add('is-open');
+    burger.classList.add('is-open');
+    burger.setAttribute('aria-expanded', 'true');
+    burger.setAttribute('aria-label', 'Close menu');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMenu() {
+    nav.classList.remove('is-open');
+    burger.classList.remove('is-open');
+    burger.setAttribute('aria-expanded', 'false');
+    burger.setAttribute('aria-label', 'Open menu');
+    document.body.style.overflow = '';
+  }
+
+  burger.addEventListener('click', function () {
+    nav.classList.contains('is-open') ? closeMenu() : openMenu();
+  });
+
+  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
+    a.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeMenu();
+  });
+
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 768) closeMenu();
+  });
+
+  /* Scroll shadow */
+  if (header) {
+    window.addEventListener('scroll', function () {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+  }
+})();
+</script>
 </body>
 </html>
