@@ -794,37 +794,121 @@ body.dark .nd-burger span { background: #c0c8d8; }
 .nd-burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
 .nd-burger.is-open span:nth-child(2) { opacity: 0; width: 0; }
 .nd-burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .nd-nav-header, .nd-nav-close { display: none; }
 @media (max-width: 768px) {
   .nd-burger { display: flex; }
-  .nd-nav {
+
+  /* Backdrop */
+  .nd-nav-backdrop {
+    display: block;
     position: fixed; inset: 0;
-    flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 0.35rem;
-    background: rgba(255,255,255,0.97);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    z-index: 800;
-    padding: 5rem 2rem 3rem;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 799;
     opacity: 0; pointer-events: none;
-    transform: translateY(-12px);
-    transition: opacity 0.28s ease, transform 0.28s ease;
+    transition: opacity 0.32s ease;
+  }
+  .nd-nav-backdrop.is-open { opacity: 1; pointer-events: all; }
+
+  /* Modal panel slides up from bottom */
+  .nd-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0; top: auto;
+    flex-direction: column;
+    align-items: stretch;
+    background: rgba(255,255,255,0.98);
+    backdrop-filter: blur(32px) saturate(180%);
+    -webkit-backdrop-filter: blur(32px) saturate(180%);
+    z-index: 800;
+    padding: 0;
     margin: 0;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -8px 48px rgba(0,0,0,0.18);
+    border-top: 1px solid rgba(232,216,201,0.6);
+    opacity: 1;
+    transform: translateY(100%);
+    transition: transform 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+    pointer-events: none;
+    max-height: 85svh;
+    overflow-y: auto;
   }
   body.dark .nd-nav {
-    background: rgba(10,14,23,0.97);
+    background: rgba(10,14,23,0.98);
+    border-top-color: rgba(30,42,58,0.8);
   }
-  .nd-nav.is-open { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .nd-nav.is-open { transform: translateY(0); pointer-events: all; }
+
+  /* Drag handle */
+  .nd-nav::before {
+    content: '';
+    display: block;
+    width: 40px; height: 4px;
+    background: rgba(0,0,0,0.12);
+    border-radius: 2px;
+    margin: 14px auto 4px;
+    flex-shrink: 0;
+  }
+  body.dark .nd-nav::before { background: rgba(255,255,255,0.15); }
+
+  /* Modal header row */
+  .nd-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 16px;
+    border-bottom: 1px solid rgba(232,216,201,0.5);
+  }
+  body.dark .nd-nav-header { border-bottom-color: rgba(30,42,58,0.6); }
+  .nd-nav-title {
+    font-family: 'Clash Display', 'Tabular', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    color: #4b607f; letter-spacing: -0.02em;
+  }
+  body.dark .nd-nav-title { color: #c0c8d8; }
+  .nd-nav-close {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(232,216,201,0.4);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #4b607f; font-size: 1.1rem;
+    transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body.dark .nd-nav-close { background: rgba(255,255,255,0.08); color: #c0c8d8; }
+  .nd-nav-close:hover { background: rgba(243,112,30,0.12); color: #f3701e; }
+
+  /* Nav links */
   .nd-nav__link {
-    font-size: 1.4rem; font-weight: 600;
-    padding: 0.85rem 2rem;
-    width: 100%; text-align: center;
-    border-radius: 14px;
+    font-size: 1.05rem; font-weight: 600;
+    padding: 1rem 20px;
+    width: 100%; text-align: left;
+    border-radius: 0;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(232,216,201,0.3);
+    color: #4b607f;
+    transition: background 0.18s, color 0.18s;
   }
-  .nd-nav__link:hover, .nd-nav__link.active {
-    background: rgba(243,112,30,0.08); color: #f3701e;
-  }
+  .nd-nav__link:last-of-type { border-bottom: none; }
+  body.dark .nd-nav__link { color: #c0c8d8; border-bottom-color: rgba(30,42,58,0.4); }
   .nd-nav__link::after { display: none; }
+  .nd-nav__link:hover { background: rgba(243,112,30,0.06); color: #f3701e; }
+  .nd-nav__link.active {
+    color: #f3701e; font-weight: 700;
+    background: rgba(243,112,30,0.06);
+  }
+  .nd-nav__link .nav-arrow {
+    font-size: 0.85rem; opacity: 0.4;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .nd-nav__link.active .nav-arrow,
+  .nd-nav__link:hover .nav-arrow { opacity: 1; transform: translateX(3px); }
+
+  /* Bottom padding for safe area */
+  .nd-nav-links { padding-bottom: env(safe-area-inset-bottom, 12px); }
 }
 
 </style>
@@ -835,13 +919,20 @@ body.dark .nd-burger span { background: #c0c8d8; }
   <a href="landing.html" class="nd-logo">Noodrop</a>
 
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-    <a href="landing.html" class="nd-nav__link">Home</a>
-    <a href="index.html" class="nd-nav__link">Library</a>
-    <a href="stack.html" class="nd-nav__link">Stacks</a>
-    <a href="marketplace.html" class="nd-nav__link active">Marketplace</a>
-    <a href="about.html" class="nd-nav__link">About</a>
-    <a href="faq.html" class="nd-nav__link">FAQ</a>
-  </nav>
+  <div class="nd-nav-header">
+    <span class="nd-nav-title">Noodrop</span>
+    <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
+  </div>
+  <div class="nd-nav-links">
+    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+    <a href="index.html" class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+    <a href="stack.html" class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+    <a href="marketplace.html" class="nd-nav__link active">Marketplace<span class="nav-arrow">›</span></a>
+    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+    <a href="faq.html" class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+  </div>
+</nav>
+<div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
 
   <div class="nd-header__right">
     <button class="auth-btn" id="authBtn">Login</button>
@@ -1120,6 +1211,8 @@ body.dark .nd-burger span { background: #c0c8d8; }
   function openMenu() {
     nav.classList.add('is-open');
     burger.classList.add('is-open');
+    var bd = document.getElementById('ndNavBackdrop');
+    if (bd) bd.classList.add('is-open');
     burger.setAttribute('aria-expanded', 'true');
     burger.setAttribute('aria-label', 'Close menu');
     document.body.style.overflow = 'hidden';
@@ -1127,6 +1220,8 @@ body.dark .nd-burger span { background: #c0c8d8; }
   function closeMenu() {
     nav.classList.remove('is-open');
     burger.classList.remove('is-open');
+    var bd = document.getElementById('ndNavBackdrop');
+    if (bd) bd.classList.remove('is-open');
     burger.setAttribute('aria-expanded', 'false');
     burger.setAttribute('aria-label', 'Open menu');
     document.body.style.overflow = '';
@@ -1135,6 +1230,11 @@ body.dark .nd-burger span { background: #c0c8d8; }
   burger.addEventListener('click', function () {
     nav.classList.contains('is-open') ? closeMenu() : openMenu();
   });
+
+  var closeBtn = document.getElementById('ndNavClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  var backdrop = document.getElementById('ndNavBackdrop');
+  if (backdrop) backdrop.addEventListener('click', closeMenu);
 
   nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
     a.addEventListener('click', closeMenu);
