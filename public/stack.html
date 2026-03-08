@@ -1307,6 +1307,25 @@ body.dark .compound-card:hover {
       document.getElementById('saveBtn').addEventListener('click', saveStack);
       makeDroppable();
       restoreFromSession();
+
+      // ── Extension: auto-load compounds from Noodrop browser extension ──
+      (function loadFromExtension() {
+        const hash = window.location.hash;
+        if (!hash.startsWith('#load=')) return;
+        const cidList = decodeURIComponent(hash.slice(6))
+          .split(',').map(s => s.trim()).filter(Boolean);
+        if (!cidList.length) return;
+        let added = 0;
+        cidList.forEach(cid => {
+          const comp = window.compounds?.find(c => String(c.cid) === String(cid));
+          if (comp && !currentStack.some(s => String(s.cid) === String(cid))) {
+            addToStack(String(comp.cid));
+            added++;
+          }
+        });
+        // Remove hash from URL without reloading
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      })();
     }
 
     function renderAvailable(list = window.compounds || []) {
@@ -1739,6 +1758,8 @@ body.dark .compound-card:hover {
     }, 200);
     window.addEventListener('resize', hookFab);
   })();
-</script>
+
+
+  </script>
 </body>
 </html>
