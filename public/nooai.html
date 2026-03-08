@@ -553,7 +553,18 @@ if (authBtn) {
         body: JSON.stringify({ messages: chatHistory })
       });
 
-      var data = await res.json();
+      // Safe JSON parse — if server returns HTML (404/500 page), give a readable error
+      var rawText = await res.text();
+      var data;
+      try {
+        data = JSON.parse(rawText);
+      } catch(_) {
+        if (res.status === 404) {
+          throw new Error('API endpoint not found (/api/chat). Check that chat.js is in the api/ folder and Vercel has redeployed.');
+        }
+        throw new Error('Server returned non-JSON response (HTTP ' + res.status + '). Check Vercel function logs.');
+      }
+
       if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
 
       hideTyping();
