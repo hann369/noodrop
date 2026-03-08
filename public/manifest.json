@@ -1,0 +1,41 @@
+{
+  "name": "Noodrop",
+  "short_name": "Noodrop",
+  "description": "Nootropics research platform — library, stack builder & marketplace",
+  "start_url": "/landing.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fafaf8",
+  "theme_color": "#f3701e",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/noodrop/image/upload/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://res.cloudinary.com/noodrop/image/upload/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "education", "lifestyle"],
+  "shortcuts": [
+    {
+      "name": "Library",
+      "short_name": "Library",
+      "description": "Browse compounds",
+      "url": "/index.html",
+      "icons": [{ "src": "https://res.cloudinary.com/noodrop/image/upload/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Stack Builder",
+      "short_name": "Stacks",
+      "description": "Build your nootropic stack",
+      "url": "/stack.html",
+      "icons": [{ "src": "https://res.cloudinary.com/noodrop/image/upload/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}
