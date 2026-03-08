@@ -1312,19 +1312,24 @@ body.dark .compound-card:hover {
       (function loadFromExtension() {
         const hash = window.location.hash;
         if (!hash.startsWith('#load=')) return;
+
+        // Clean up URL immediately so refreshing doesn't re-add
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+
         const cidList = decodeURIComponent(hash.slice(6))
           .split(',').map(s => s.trim()).filter(Boolean);
         if (!cidList.length) return;
-        let added = 0;
-        cidList.forEach(cid => {
-          const comp = window.compounds?.find(c => String(c.cid) === String(cid));
-          if (comp && !currentStack.some(s => String(s.cid) === String(cid))) {
+
+        cidList.forEach(rawCid => {
+          // Match by numeric cid OR by name slug (for placeholder compounds)
+          const comp = window.compounds?.find(c =>
+            String(c.cid) === String(rawCid) ||
+            c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === String(rawCid).toLowerCase().replace(/[^a-z0-9]/g, '')
+          );
+          if (comp && !currentStack.some(s => String(s.cid) === String(comp.cid))) {
             addToStack(String(comp.cid));
-            added++;
           }
         });
-        // Remove hash from URL without reloading
-        history.replaceState(null, '', window.location.pathname + window.location.search);
       })();
     }
 

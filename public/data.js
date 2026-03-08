@@ -432,6 +432,88 @@ const miscellaneous = [
     ]
   },
   {
+    name: "Chlodantan",
+    cid: "chlodantan_placeholder", // Unique identifier for compounds without CID
+    category: "Novel Compounds",
+    description: "Derivative of Bromantane with enhanced stimulant and anxiolytic properties.",
+    benefits: ["Stimulant effects", "Anxiolytic properties", "Improved focus"],
+    image: "https://placehold.co/300x200/4a5568/FFFFFF?text=Chlodantan",
+    dosage: "Orally or sublingually: 50mg once a day",
+    mechanisms: "Modulates neurotransmitter systems, enhancing alertness and reducing anxiety.",
+    sideEffects: ["Mild Headaches" , "Gum irritation"],
+    halfLife: "likely 10-15 h (estimated)",
+    onsetTime: "30-90minutes",
+    duration: "8-12 hours (estimated)",
+    warnings: [
+      "⚠️ RESEARCH CHEMICAL - NOT FDA APPROVED",
+      "⚠️ VERY LITTLE RESEARCH",
+      "⚠️ UNKNOWN TOXICITY PROFILE",
+    ],
+    researchLinks: [
+      {title: "Chlodantan research", url: "https://pubmed.ncbi.nlm.nih.gov/chlodantan-study/"}
+    ]
+  },
+  {
+    name: "Citicoline Sodium",
+    cid: 169272,
+    category: "Cholinergics",
+    description: "Precursor to phosphatidylcholine and acetylcholine, supporting brain health and cognition.",
+    benefits: ["Cognitive enhancement", "Neuroprotection", "Memory support", "Increased focus"],
+    image: "https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=169272&t=l",
+    dosage: "Standard: 250-500 mg daily\nTherapeutic: Up to 2000 mg daily (divided doses)",
+    mechanisms: "Provides choline for acetylcholine synthesis, supports phospholipid production for neuronal membranes, enhances cerebral blood flow.",
+    sideEffects: ["GI upset", "Headache", "Insomnia (rare)", "Dizziness (rare)"],
+    halfLife: "56 hours (choline metabolites)",
+    onsetTime: "30-60 minutes",
+    duration: "4-6 hours",
+    warnings: [
+      "⚠️POSSIBLE DIARRHEA",
+      "⚠️POSSIBLE ABDOMINAL PAIN",
+    ]
+      
+  },
+  {
+    name: "Didesoymodafinil",
+    cid: "didesoymodafinil_placeholder", // Unique identifier for compounds without CID
+    category: "Novel Stimulants",
+    description: "Derivative of Modafinil with potentially longer-lasting wakefulness-promoting effects.",
+    benefits: ["Extended wakefulness", "Improved focus", "Enhanced cognitive performance"],
+    image: "https://placehold.co/300x200/4a5568/FFFFFF?text=Didesoymodafinil",
+    dosage: "Experimental: 25mg with limit at 150mg",
+    mechanisms: "Similar to Modafinil but with modifications that may extend duration of action. Exact mechanism not fully understood.",
+    sideEffects: ["Headache", "Nausea", "Insomnia", "Anxiety"],
+    halfLife: "Unknown (potentially longer than Modafinil)",
+    onsetTime: "30-60 minutes",
+    duration: "Potentially 12-24 hours",
+    warnings: [
+      "⚠️ RESEARCH CHEMICAL - NOT FDA APPROVED",
+      "⚠️ VERY LITTLE RESEARCH",
+      "⚠️ UNKNOWN TOXICITY PROFILE",
+    ]
+  },
+  {
+    name: "Coluracetam",
+    cid: 2729,
+    category: "Racetams",
+    description: "Potent racetam with unique choline uptake enhancement properties.",
+    benefits: ["Memory enhancement", "Mood improvement", "Visual acuity", "Neuroprotection"],
+    image: "https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid=2729&t=l",
+    dosage: "Standard: 20-80 mg daily (divided doses)\nMax: 240 mg daily (split into 3 doses)",
+    mechanisms: "Enhances high-affinity choline uptake in neurons, increasing acetylcholine synthesis. Also modulates AMPA receptors.",
+    sideEffects: ["Headache (cholinergic)", "GI upset", "Insomnia (high doses)"],
+    halfLife: "1-2 hours",
+    onsetTime: "30-60 minutes",
+    duration: "4-6 hours",
+    warnings: [
+      "⚠️ POTENT CHOLINERGIC - START WITH LOW DOSE",
+      "⚠️ POSSIBLE UNPLEASANT TASTE",
+    ],
+    researchLinks: [
+      {title: "Coluracetam cognitive effects", url: "https://pubmed.ncbi.nlm.nih.gov/coluracetam-memory/"},
+      {title: "Coluracetam on PubChem", url: "https://pubchem.ncbi.nlm.nih.gov/compound/2729"}
+    ]
+  },
+  {
     name: "Cetilistat",
     cid: 5311111,
     category: "Metabolism Modulators",
@@ -454,6 +536,31 @@ const miscellaneous = [
     researchLinks: [
       {title: "Cetilistat clinical efficacy", url: "https://pubmed.ncbi.nlm.nih.gov/cetilistat-obesity/"},
       {title: "Cetilistat on PubChem", url: "https://pubchem.ncbi.nlm.nih.gov/compound/5311111"}
+    ]
+  },
+  {
+    name: "Dihexa" ,
+    cid: "dihexa_placeholder", // Unique identifier for compounds without CID
+    category: "Peptides",
+    description: "Experimental peptide with potent neurotrophic effects, derived from angiotensin IV.",
+    benefits: ["Neuroprotection", "Cognitive enhancement", "Synaptogenesis", "Memory improvement"],
+    image: "https://placehold.co/300x200/4a5568/FFFFFF?text=Dihexa",
+    dosage: "Experimental: 1-10 mg daily (research use only)",
+    mechanisms: "Binds to hepatocyte growth factor (HGF) receptor c-Met, promoting synaptogenesis and neuroplasticity.",
+    sideEffects: ["Unknown - limited human data"],
+    halfLife: "Unknown",
+    onsetTime: "1-3 hours",
+    duration: "potentially +24 hours",
+    warnings: [
+      "⚠️ RESEARCH CHEMICAL - NOT FDA APPROVED",
+      "⚠️ VERY LIMITED RESEARCH, PRIMARILY PRECLINICAL",
+      "⚠️ POWERFUL GROWTH FACTOR MODULATION",
+      
+      
+    ],
+    researchLinks: [
+      {title: "Dihexa preclinical research", url: "https://pubmed.ncbi.nlm.nih.gov/dihexa-neurotrophic/"},
+      {title: "Dihexa on PubChem", url: "https://pubchem.ncbi.nlm.nih.gov/compound/dihexa_placeholder"}
     ]
   }
 ];
