@@ -240,7 +240,7 @@ ${COMPOUND_CONTEXT}
 End responses with a brief reminder that this is not medical advice when discussing dosages or stacks.`;
 
 // ── Handler ────────────────────────────────────────────────────────
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS — allow your Vercel domain
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
