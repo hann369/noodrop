@@ -15,6 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
 
   <style>
     :root {
@@ -1242,15 +1243,7 @@ body.dark .compound-card:hover {
   </div>
 
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
-      authDomain: "noodrop-c9be9.firebaseapp.com",
-      projectId: "noodrop-c9be9",
-      storageBucket: "noodrop-c9be9.firebasestorage.app",
-      messagingSenderId: "903301545011",
-      appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
-    };
-    firebase.initializeApp(firebaseConfig);
+    // Firebase config loaded from firebase-config.js (single source of truth)
 
     let currentStack = [];
 

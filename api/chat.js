@@ -104,6 +104,79 @@ Description: Neurotrophic peptide mixture promoting neuronal growth.
 Mechanism: Contains BDNF/NGF/GDNF mimetics.
 Warnings: CLINICAL USE ONLY | Injection required | Expensive
 
+## Coluracetam (Racetams)
+Description: Potent racetam with unique high-affinity choline uptake enhancement (HACU).
+Mechanism: Enhances HACU in neurons, increasing acetylcholine synthesis. Also modulates AMPA receptors.
+Dosage: Standard: 20-80 mg daily (divided doses) | Max: 240 mg/day (3 doses)
+Benefits: Memory enhancement, Mood improvement, Visual acuity, Neuroprotection
+Side effects: Headache (cholinergic), GI upset, Insomnia (high doses)
+Warnings: Potent cholinergic — start low | Pair with choline source | Short half-life (1-2h), multiple doses needed
+
+## Citicoline Sodium / CDP-Choline (Cholinergics)
+Description: Precursor to phosphatidylcholine and acetylcholine, highly bioavailable choline source.
+Mechanism: Provides choline for ACh synthesis, supports neuronal membrane phospholipids, enhances cerebral blood flow.
+Dosage: Standard: 250-500 mg daily | Therapeutic: up to 2000 mg/day (divided)
+Benefits: Cognitive enhancement, Neuroprotection, Memory support, Focus
+Side effects: GI upset, Headache, Insomnia (rare), Dizziness (rare)
+Warnings: Generally safe | May cause GI discomfort at high doses
+
+## Aticaprant (CRF Antagonists)
+Description: Investigational CRF1 receptor antagonist for depression and anxiety. Not approved for sale.
+Mechanism: Corticotropin-releasing factor type 1 receptor antagonist — blocks the stress response cascade.
+Dosage: Clinical trial doses only: 10-40 mg daily
+Benefits: Antidepressant, Anxiolytic, Stress reduction, Resilience
+Side effects: Headache, Nausea, Somnolence, Dry mouth
+Warnings: NOT APPROVED — INVESTIGATIONAL ONLY | Very limited human data | May interfere with normal stress adaptation
+
+## Betahistine Mesylate (Vestibular Agents)
+Description: Histamine H3 antagonist / H4 agonist used clinically for vertigo and Ménière's disease.
+Mechanism: H3 antagonism increases histamine release in vestibular nuclei; H4 agonism modulates inflammation.
+Dosage: Standard: 16-48 mg/day (divided) | Acute: up to 144 mg/day under supervision
+Benefits: Reduces vertigo episodes, Improves balance, Decreases tinnitus, Cerebral circulation
+Side effects: GI upset, Headache, Drowsiness, Itching
+Warnings: Generally well-tolerated | Contains mesylate salt — sulfite-sensitive individuals beware | May cause drowsiness initially
+
+## Brexipiprazole (Atypical Antipsychotics)
+Description: Partial D2/D3 and 5-HT1A agonist. Prescription antipsychotic/antidepressant adjunct (Rexulti).
+Mechanism: Partial D2/D3 agonist, 5-HT1A partial agonist, 5-HT2A antagonist, α1/α2 adrenergic antagonist.
+Dosage: Starting: 0.5-1 mg/day | Maintenance: 2-4 mg/day | Max: 4 mg/day
+Benefits: Antipsychotic, Antidepressant adjunct, Anxiolytic, Improved motivation
+Side effects: Akathisia, Weight gain, Sedation, Hyperprolactinemia
+Warnings: PRESCRIPTION ONLY | Risk of tardive dyskinesia long-term | Increased mortality risk in elderly with dementia | Very long half-life (96h)
+
+## Chlodantan (Novel Compounds)
+Description: Bromantane derivative with enhanced stimulant and anxiolytic properties. Research chemical.
+Mechanism: Modulates dopamine/serotonin neurotransmitter systems; exact mechanism not fully characterized.
+Dosage: Orally or sublingually: 50 mg once daily
+Benefits: Stimulant effects, Anxiolytic, Improved focus
+Side effects: Mild headaches, Gum irritation (sublingual)
+Warnings: RESEARCH CHEMICAL — NOT FDA APPROVED | Very little published research | Unknown long-term toxicity profile
+
+## Didesoymodafinil (Novel Stimulants)
+Description: Modafinil derivative with potentially longer-lasting wakefulness effects. Unscheduled research chemical.
+Mechanism: Similar to Modafinil (DAT inhibition/dopamine modulation) but modified structure may extend duration.
+Dosage: Experimental: start 25 mg | Max: 150 mg
+Benefits: Extended wakefulness, Improved focus, Cognitive performance
+Side effects: Headache, Nausea, Insomnia, Anxiety
+Half-life: Unknown (potentially 12-24h)
+Warnings: RESEARCH CHEMICAL — NOT APPROVED | Very limited safety data | Assume Modafinil-class interactions apply
+
+## Cetilistat (Metabolism Modulators)
+Description: Reversible pancreatic lipase inhibitor for weight management. Prescription in most markets.
+Mechanism: Prevents triglyceride hydrolysis in intestines, reducing dietary fat absorption by ~30%.
+Dosage: Standard: 60 mg three times daily with meals | Max: 120 mg three times daily
+Benefits: Weight loss, Fat malabsorption, Cholesterol improvement, Glycemic control
+Side effects: GI distress, Oily spotting, Flatulence, Fat-soluble vitamin deficiency (long-term)
+Warnings: PRESCRIPTION MEDICATION | Requires fat-soluble vitamin supplementation | Reduce dietary fat to minimize GI effects | Not primarily a nootropic
+
+## Dihexa (Peptides)
+Description: Experimental peptide derived from angiotensin IV with potent neurotrophic effects. Preclinical only.
+Mechanism: Binds hepatocyte growth factor (HGF) receptor c-Met, promoting synaptogenesis and neuroplasticity.
+Dosage: Experimental: 1-10 mg daily — research use only, no established human dosing
+Benefits: Neuroprotection, Cognitive enhancement, Synaptogenesis, Memory improvement
+Side effects: Largely unknown — very limited human data
+Warnings: RESEARCH CHEMICAL — NOT APPROVED | Primarily preclinical data | Powerful growth factor modulation — unknown long-term oncology risk | Half-life potentially >24h
+
 === KNOWN STACK INTERACTIONS ===
 
 [Classic Stack ⭐] Caffeine × L-Theanine: The golden duo. 2:1 ratio (200mg Caffeine + 400mg L-Theanine). Smooth focus, no jitters.

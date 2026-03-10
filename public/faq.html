@@ -763,14 +763,214 @@ body.dark .compound-card:hover {
 
 </section>
 
-<section class="cta">
+<section class="cta" id="newsletterCta">
 <h2>Unlock Smarter Focus</h2>
 <p>Join high performers receiving research-backed stack insights.</p>
-<form>
-<input type="email" placeholder="Enter your email" required>
-<button type="submit">Get Free Insights</button>
-</form>
+
+<!-- Kit embed wrapper – anime.js intercepts the submit button inside -->
+<div id="kitEmbedWrapper">
+  <script async data-uid="4ab7c26359" src="https://hann369.kit.com/4ab7c26359/index.js"></script>
+</div>
 </section>
+
+<!-- anime.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
+<script>
+(function () {
+  /* ── Anime.js button animation for Kit newsletter embed ── */
+
+  /* Particle burst helper */
+  function burstParticles(btn) {
+    var rect = btn.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2 + window.scrollY;
+
+    var colors = ['#f3701e', '#ffb347', '#e8d8c9', '#4b607f', '#fff'];
+    var container = document.createElement('div');
+    container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:9999;';
+    document.body.appendChild(container);
+
+    var dots = [];
+    for (var i = 0; i < 14; i++) {
+      var dot = document.createElement('div');
+      dot.style.cssText = [
+        'position:fixed',
+        'width:8px',
+        'height:8px',
+        'border-radius:50%',
+        'background:' + colors[i % colors.length],
+        'left:' + cx + 'px',
+        'top:' + cy + 'px',
+        'transform:translate(-50%,-50%)',
+        'pointer-events:none',
+        'z-index:9999'
+      ].join(';');
+      document.body.appendChild(dot);
+      dots.push(dot);
+    }
+
+    anime({
+      targets: dots,
+      translateX: function () { return anime.random(-90, 90); },
+      translateY: function () { return anime.random(-90, 90); },
+      scale: [1, 0],
+      opacity: [1, 0],
+      duration: 700,
+      easing: 'easeOutExpo',
+      delay: anime.stagger(30),
+      complete: function () { dots.forEach(function (d) { d.parentNode && d.parentNode.removeChild(d); }); }
+    });
+  }
+
+  /* Ripple inside the button */
+  function rippleEffect(btn) {
+    var ripple = document.createElement('span');
+    var size = Math.max(btn.offsetWidth, btn.offsetHeight) * 2;
+    ripple.style.cssText = [
+      'position:absolute',
+      'border-radius:50%',
+      'width:' + size + 'px',
+      'height:' + size + 'px',
+      'background:rgba(255,255,255,0.35)',
+      'top:50%',
+      'left:50%',
+      'transform:translate(-50%,-50%) scale(0)',
+      'pointer-events:none'
+    ].join(';');
+    btn.style.position = 'relative';
+    btn.style.overflow = 'hidden';
+    btn.appendChild(ripple);
+
+    anime({
+      targets: ripple,
+      scale: [0, 1],
+      opacity: [0.6, 0],
+      duration: 600,
+      easing: 'easeOutExpo',
+      complete: function () { ripple.parentNode && ripple.parentNode.removeChild(ripple); }
+    });
+  }
+
+  /* Press-and-bounce animation */
+  function bounceBtn(btn) {
+    anime({
+      targets: btn,
+      scale: [1, 0.93, 1.04, 1],
+      duration: 420,
+      easing: 'easeOutElastic(1, 0.6)'
+    });
+  }
+
+  /* Text morphs to ✓ then back */
+  function confirmText(btn) {
+    var original = btn.textContent;
+    anime({
+      targets: btn,
+      opacity: [1, 0],
+      duration: 160,
+      easing: 'easeInQuad',
+      complete: function () {
+        btn.textContent = '✓ Subscribed!';
+        btn.style.background = '#4b607f';
+        anime({
+          targets: btn,
+          opacity: [0, 1],
+          duration: 200,
+          easing: 'easeOutQuad',
+          complete: function () {
+            setTimeout(function () {
+              anime({
+                targets: btn,
+                opacity: [1, 0],
+                duration: 160,
+                complete: function () {
+                  btn.textContent = original;
+                  btn.style.background = '';
+                  anime({ targets: btn, opacity: [0, 1], duration: 200 });
+                }
+              });
+            }, 2200);
+          }
+        });
+      }
+    });
+  }
+
+  /* Attach to Kit's submit button once it renders */
+  function attachAnimation() {
+    var wrapper = document.getElementById('kitEmbedWrapper');
+    if (!wrapper) return;
+
+    /* Kit renders inside an iframe OR directly into the DOM –
+       we watch for any <button type="submit"> or [data-element="submit"] */
+    var observer = new MutationObserver(function () {
+      var btns = wrapper.querySelectorAll(
+        'button[type="submit"], input[type="submit"], [data-element="submit"], button.formkit-submit'
+      );
+      if (!btns.length) return;
+
+      btns.forEach(function (btn) {
+        if (btn._noodropAnimated) return;
+        btn._noodropAnimated = true;
+
+        /* Idle shimmer */
+        anime({
+          targets: btn,
+          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+          duration: 3200,
+          easing: 'easeInOutSine',
+          loop: true
+        });
+
+        /* Hover lift */
+        btn.addEventListener('mouseenter', function () {
+          anime({ targets: btn, translateY: -3, boxShadow: '0 10px 28px rgba(243,112,30,0.38)', duration: 220, easing: 'easeOutQuad' });
+        });
+        btn.addEventListener('mouseleave', function () {
+          anime({ targets: btn, translateY: 0, boxShadow: '0 0px 0px rgba(243,112,30,0)', duration: 300, easing: 'easeOutQuad' });
+        });
+
+        /* Click: ripple + bounce + particles + confirm */
+        btn.addEventListener('click', function () {
+          rippleEffect(btn);
+          bounceBtn(btn);
+          burstParticles(btn);
+          confirmText(btn);
+        });
+      });
+    });
+
+    observer.observe(wrapper, { childList: true, subtree: true });
+
+    /* Also try immediately (if Kit already rendered synchronously) */
+    var btns = wrapper.querySelectorAll(
+      'button[type="submit"], input[type="submit"], [data-element="submit"], button.formkit-submit'
+    );
+    btns.forEach(function (btn) {
+      if (btn._noodropAnimated) return;
+      btn._noodropAnimated = true;
+      btn.addEventListener('mouseenter', function () {
+        anime({ targets: btn, translateY: -3, duration: 220, easing: 'easeOutQuad' });
+      });
+      btn.addEventListener('mouseleave', function () {
+        anime({ targets: btn, translateY: 0, duration: 300, easing: 'easeOutQuad' });
+      });
+      btn.addEventListener('click', function () {
+        rippleEffect(btn);
+        bounceBtn(btn);
+        burstParticles(btn);
+        confirmText(btn);
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', attachAnimation);
+  } else {
+    attachAnimation();
+  }
+})();
+</script>
 
 <footer>
 

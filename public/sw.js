@@ -1,5 +1,7 @@
-/* Noodrop Service Worker – v1 */
-const CACHE = 'noodrop-v1';
+/* Noodrop Service Worker – v2 */
+/* ⚠️  Bump the version string (v2 → v3 etc.) on every deploy
+        so returning users get fresh files immediately.          */
+const CACHE = 'noodrop-v2';
 const OFFLINE_URL = '/404.html';
 
 const PRECACHE = [
@@ -7,8 +9,16 @@ const PRECACHE = [
   '/index.html',
   '/stack.html',
   '/marketplace.html',
+  '/compound.html',
+  '/product.html',
+  '/about.html',
+  '/faq.html',
+  '/nooai.html',
+  '/profile.html',
+  '/impressum.html',
   '/global.css',
   '/data.js',
+  '/firebase-config.js',
   '/manifest.json',
   OFFLINE_URL
 ];

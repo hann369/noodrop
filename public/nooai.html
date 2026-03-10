@@ -13,6 +13,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
 
   <style>
     /* ── Page layout ── */
@@ -282,9 +283,23 @@
       background: rgba(239,68,68,0.07);
       border: 1px solid rgba(239,68,68,0.2);
       color: #b91c1c; font-size: 0.78rem;
-      padding: 7px 14px; border-radius: 8px;
+      padding: 10px 14px; border-radius: 8px;
       text-align: center; margin-bottom: 6px;
+      display: none; align-items: center;
+      justify-content: center; gap: 10px; flex-wrap: wrap;
     }
+    #nooaiError.visible { display: flex; }
+    #nooaiErrorMsg { flex: 1; min-width: 0; }
+    #nooaiRetry {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #b91c1c; font-size: 0.75rem;
+      padding: 4px 10px; border-radius: 6px;
+      cursor: pointer; white-space: nowrap;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    #nooaiRetry:hover { background: rgba(239,68,68,0.22); }
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
@@ -362,7 +377,10 @@
     </div>
 
     <!-- Error -->
-    <div id="nooaiError"></div>
+    <div id="nooaiError" role="alert" aria-live="polite">
+      <span id="nooaiErrorMsg"></span>
+      <button id="nooaiRetry" title="Retry last message">↺ Retry</button>
+    </div>
 
     <!-- Chips -->
     <div class="nooai-chips" id="nooaiChips">
@@ -407,15 +425,7 @@
 <!-- ── Scripts ── -->
 <script>
 // ── Firebase init + auth button ────────────────────────────────────
-const firebaseConfig = {
-  apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
-  authDomain: "noodrop-c9be9.firebaseapp.com",
-  projectId: "noodrop-c9be9",
-  storageBucket: "noodrop-c9be9.firebasestorage.app",
-  messagingSenderId: "903301545011",
-  appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
-};
-firebase.initializeApp(firebaseConfig);
+// Firebase config loaded from firebase-config.js (single source of truth)
 
 const authBtn = document.getElementById('authBtn');
 firebase.auth().onAuthStateChanged(user => {
@@ -437,13 +447,36 @@ if (authBtn) {
 
   let chatHistory = [];
   let busy = false;
+  let lastUserText = ''; // tracks last sent message for retry
 
   const msgsEl   = document.getElementById('nooaiMsgs');
   const emptyEl  = document.getElementById('nooaiEmpty');
   const chipsEl  = document.getElementById('nooaiChips');
   const inp      = document.getElementById('nooaiInp');
   const sendBtn  = document.getElementById('nooaiSend');
+  const inp      = document.getElementById('nooaiInp');
+  const sendBtn  = document.getElementById('nooaiSend');
   const errEl    = document.getElementById('nooaiError');
+  const errMsgEl = document.getElementById('nooaiErrorMsg');
+  const retryBtn = document.getElementById('nooaiRetry');
+
+  function showError(msg) {
+    errMsgEl.textContent = msg;
+    errEl.classList.add('visible');
+    retryBtn.style.display = lastUserText ? 'inline-block' : 'none';
+  }
+  function hideError() {
+    errEl.classList.remove('visible');
+    errMsgEl.textContent = '';
+  }
+
+  // Retry button — resend last user message
+  retryBtn.addEventListener('click', function() {
+    if (!lastUserText || busy) return;
+    hideError();
+    inp.value = lastUserText;
+    send();
+  });
 
   // ── Input auto-resize ──
   inp.addEventListener('input', function() {
@@ -540,13 +573,20 @@ if (authBtn) {
 
     busy = true;
     sendBtn.disabled = true;
+    lastUserText = text;      // save for retry
     inp.value = ''; inp.style.height = 'auto';
+    hideError();              // dismiss any previous error
 
     addMsg('user', text);
     chatHistory.push({ role: 'user', content: text });
     showTyping();
 
     try {
+      // Network check before fetch
+      if (!navigator.onLine) {
+        throw new Error('No internet connection. Check your network and retry.');
+      }
+
       var res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -560,25 +600,29 @@ if (authBtn) {
         data = JSON.parse(rawText);
       } catch(_) {
         if (res.status === 404) {
-          throw new Error('API endpoint not found (/api/chat). Check that chat.js is in the api/ folder and Vercel has redeployed.');
+          throw new Error('API not found. Ensure chat.js is in /api/ and Vercel has redeployed.');
         }
-        throw new Error('Server returned non-JSON response (HTTP ' + res.status + '). Check Vercel function logs.');
+        throw new Error('Unexpected server response (HTTP ' + res.status + '). Try again in a moment.');
       }
 
-      if (!res.ok) throw new Error(data.error || 'Server error ' + res.status);
+      if (!res.ok) {
+        // Rate limit
+        if (res.status === 429) throw new Error('Rate limit reached. Please wait a moment before sending another message.');
+        throw new Error(data.error || 'Server error ' + res.status + '. Please try again.');
+      }
 
       hideTyping();
       var reply = data.reply || '(empty response)';
       addMsg('ai', reply);
       chatHistory.push({ role: 'assistant', content: reply });
+      lastUserText = ''; // clear after successful response — no retry needed
 
       // Keep context lean — last 20 turns
       if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
 
     } catch(err) {
       hideTyping();
-      errEl.textContent = 'Error: ' + err.message;
-      errEl.style.display = 'block';
+      showError(err.message);
     }
 
     busy = false;
