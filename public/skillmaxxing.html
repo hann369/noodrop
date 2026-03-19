@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skillmaxxing — Noodrop</title>
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<!-- GSAP loaded synchronously before anything else -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+/* ─────────────────────────────────────
+   LOADER  (position:fixed, above body)
+───────────────────────────────────── */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #0B0B09;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+}
+#loader.hidden { pointer-events: none; }
+#lsvg { width: min(520px, 92vw); height: min(420px, 68vh); overflow: visible; display: block; }
+#lsvg path, #lsvg circle, #lsvg line { vector-effect: non-scaling-stroke; }
+#lword {
+  margin-top: 24px;
+  font-family: 'Clash Display', sans-serif; font-size: 14px;
+  font-weight: 300; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(245,240,232,.28); opacity: 0;
+}
+#lhint {
+  position: absolute; bottom: 36px;
+  font-family: 'Clash Display', sans-serif; font-size: 9px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(245,240,232,.18); opacity: 0;
+}
+
+/* ─────────────────────────────────────
+   BODY — visible by default (loader covers it)
+───────────────────────────────────── */
+body { opacity: 1; }
+
+/* ─── HERO ─── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  overflow: hidden; padding: 120px 24px 80px; text-align: center;
+}
+.hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+.stars-wrap { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.star { position: absolute; border-radius: 50%; background: rgba(245,240,232,.85);
+  animation: tw var(--d,3s) ease-in-out infinite var(--dl,0s); }
+@keyframes tw { 0%,100%{opacity:var(--b,.4);transform:scale(1)} 50%{opacity:1;transform:scale(1.5)} }
+.hero-inner { position: relative; z-index: 10; max-width: 820px; }
+.eyebrow { font-size: 10px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--orange); display: block; margin-bottom: 18px; }
+.hero h1 { font-family: 'Clash Display', sans-serif; font-size: clamp(3.4rem,9.5vw,7.5rem);
+  font-weight: 300; letter-spacing: -.055em; line-height: .88; color: #F5F0E8; margin-bottom: 10px; }
+.hero h1 em { font-style: normal; font-weight: 600; color: var(--orange); }
+.hero-sub { font-family: 'Clash Display', sans-serif; font-size: clamp(1.2rem,3vw,2.1rem);
+  font-weight: 300; letter-spacing: -.025em; color: rgba(245,240,232,.32); margin-bottom: 28px; display: block; }
+.hero-lead { font-size: 15px; font-weight: 300; line-height: 1.8; color: rgba(245,240,232,.48);
+  max-width: 500px; margin: 0 auto 44px; }
+.hero-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.btn-o { display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 12px 28px; border-radius: 100px; background: var(--orange);
+  color: #fff; border: none; cursor: pointer; text-decoration: none;
+  transition: opacity .2s, transform .15s; }
+.btn-o:hover { opacity: .88; transform: translateY(-2px); }
+.btn-g { display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 400;
+  padding: 12px 28px; border-radius: 100px; border: 1px solid rgba(245,240,232,.15);
+  color: rgba(245,240,232,.58); background: transparent; cursor: pointer; text-decoration: none;
+  transition: border-color .2s, color .2s; }
+.btn-g:hover { border-color: rgba(245,240,232,.4); color: #F5F0E8; }
+.scroll-hint { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+  z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 7px;
+  opacity: 0; animation: fadeUp .8s ease 1.2s forwards; }
+.scroll-hint span { font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: rgba(245,240,232,.2); }
+.sc-line { width: 1px; height: 32px; background: linear-gradient(to bottom, rgba(232,84,26,.5), transparent);
+  animation: lp 2.2s ease-in-out infinite; }
+@keyframes lp { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(.45);opacity:.3} }
+@keyframes fadeUp { from{opacity:0;transform:translate(-50%,10px)} to{opacity:1;transform:translateX(-50%)} }
+
+/* ─── PHILOSOPHY ─── */
+.phil { padding: 88px 5%; }
+.phil-in { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+.phil-left h2 { font-family: 'Clash Display', sans-serif; font-size: clamp(2rem,4vw,3.2rem);
+  font-weight: 300; letter-spacing: -.04em; line-height: 1.05; color: #F5F0E8; margin-bottom: 18px; }
+.phil-left h2 strong { font-weight: 600; color: var(--orange); }
+.phil-left p { font-size: 14px; font-weight: 300; line-height: 1.9; color: rgba(245,240,232,.54); }
+.pillars { display: flex; flex-direction: column; gap: 10px; }
+.pillar { background: rgba(245,240,232,.03); border: 1px solid rgba(245,240,232,.06);
+  border-radius: 12px; padding: 16px 18px; display: flex; align-items: flex-start; gap: 12px;
+  transition: border-color .25s, background .25s, transform .2s; }
+.pillar:hover { border-color: rgba(232,84,26,.3); background: rgba(232,84,26,.04); transform: translateX(4px); }
+.pi { font-size: 19px; flex-shrink: 0; margin-top: 1px; }
+.pt { font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500; color: #F5F0E8; margin-bottom: 3px; }
+.pb { font-size: 12px; font-weight: 300; color: rgba(245,240,232,.44); line-height: 1.6; }
+
+/* ─── TREE SECTION ─── */
+.tree-sec { padding: 60px 0 40px; }
+.sec-hd { text-align: center; padding: 0 5%; margin-bottom: 44px; }
+.sec-ey { font-size: 10px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--orange); display: block; margin-bottom: 12px; }
+.sec-t { font-family: 'Clash Display', sans-serif; font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 300; letter-spacing: -.04em; color: #F5F0E8; margin-bottom: 10px; }
+.sec-s { font-size: 14px; font-weight: 300; color: rgba(245,240,232,.44); max-width: 380px; margin: 0 auto; line-height: 1.75; }
+
+/* toggle */
+.vtoggle { display: flex; justify-content: center; margin-bottom: 44px; }
+.vp { font-family: 'Clash Display', sans-serif; font-size: 12px; font-weight: 400;
+  padding: 9px 26px; cursor: pointer; border: 1px solid rgba(245,240,232,.1);
+  background: transparent; color: rgba(245,240,232,.38); transition: all .2s; }
+.vp:first-child { border-radius: 100px 0 0 100px; }
+.vp:last-child { border-radius: 0 100px 100px 0; border-left: none; }
+.vp.on { background: rgba(232,84,26,.1); border-color: rgba(232,84,26,.4); color: var(--orange); }
+
+/* hann tree SVG */
+#hann-wrap { width: 100%; }
+#hann-svg { display: block; width: 100%; max-width: 1100px; margin: 0 auto; overflow: visible; height: auto; }
+/* All hann branches start hidden — GSAP animates them */
+#hann-svg .hb { fill: none; stroke-linecap: round; }
+.legend { display: flex; gap: 18px; justify-content: center; margin-top: 18px; flex-wrap: wrap; padding: 0 5%; }
+.legend span { font-size: 11px; color: rgba(245,240,232,.4); display: flex; align-items: center; gap: 6px; }
+.leg-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+/* own tree */
+#own-wrap { display: none; padding: 0 5%; max-width: 1080px; margin: 0 auto; }
+.bld-bar { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+.bld-bar h3 { font-family: 'Clash Display', sans-serif; font-size: 20px; font-weight: 300; letter-spacing: -.03em; color: #F5F0E8; }
+.bld-bar p { font-size: 13px; color: rgba(245,240,232,.38); margin-top: 3px; }
+.btn-add { display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500;
+  padding: 10px 22px; border-radius: 100px; background: rgba(232,84,26,.1); color: var(--orange);
+  border: 1px solid rgba(232,84,26,.28); cursor: pointer; flex-shrink: 0;
+  transition: background .2s, border-color .2s; }
+.btn-add:hover { background: rgba(232,84,26,.18); border-color: rgba(232,84,26,.5); }
+#own-svg-wrap { text-align: center; margin-bottom: 28px; }
+#own-svg { width: 100%; max-width: 520px; overflow: visible; }
+.sk-row { display: flex; flex-wrap: wrap; gap: 8px; min-height: 44px; }
+.sk-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 300;
+  padding: 7px 13px; border-radius: 100px; border: 1px solid rgba(245,240,232,.1);
+  color: rgba(245,240,232,.62); background: rgba(245,240,232,.03); }
+.sk-tag[data-c=lang]     { border-color:rgba(100,160,255,.22); color:rgba(140,190,255,.82); }
+.sk-tag[data-c=sport]    { border-color:rgba(74,222,128,.22);  color:rgba(134,239,172,.82); }
+.sk-tag[data-c=creative] { border-color:rgba(232,84,26,.26);   color:rgba(253,186,116,.85); }
+.sk-tag[data-c=mind]     { border-color:rgba(167,139,250,.22); color:rgba(196,181,253,.82); }
+.sk-tag[data-c=tech]     { border-color:rgba(56,189,248,.22);  color:rgba(125,211,252,.82); }
+.sk-rm { background:none; border:none; color:rgba(245,240,232,.2); cursor:pointer; font-size:14px; padding:0; line-height:1; transition:color .15s; }
+.sk-rm:hover { color: rgba(255,60,60,.7); }
+.empty-hint { font-size: 13px; color: rgba(245,240,232,.28); font-style: italic; }
+
+/* ─── CATEGORY CARDS — two modes ─── */
+.cats { padding: 40px 5% 80px; }
+.cats-in { max-width: 1080px; margin: 0 auto; }
+
+/* Mode selector */
+.card-mode-bar {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 32px; justify-content: center;
+}
+.cm-btn { font-family: 'Clash Display', sans-serif; font-size: 11px; font-weight: 400;
+  padding: 8px 22px; cursor: pointer; border: 1px solid rgba(245,240,232,.1);
+  background: transparent; color: rgba(245,240,232,.38); transition: all .2s; }
+.cm-btn:first-child { border-radius: 100px 0 0 100px; }
+.cm-btn:last-child  { border-radius: 0 100px 100px 0; border-left: none; }
+.cm-btn.on { background: rgba(232,84,26,.1); border-color: rgba(232,84,26,.4); color: var(--orange); }
+
+.cats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; }
+.cc { background: rgba(245,240,232,.03); border: 1px solid rgba(245,240,232,.06);
+  border-radius: 16px; padding: 26px; position: relative; overflow: hidden;
+  cursor: pointer; transition: border-color .25s, transform .2s, background .25s; }
+.cc::before { content: ''; position: absolute; inset: 0; border-radius: 16px;
+  background: radial-gradient(circle at 15% 15%, var(--cc, rgba(232,84,26,.07)), transparent 55%);
+  opacity: 0; transition: opacity .3s; }
+.cc:hover::before { opacity: 1; }
+.cc:hover { border-color: var(--cb, rgba(232,84,26,.3)); transform: translateY(-3px); }
+.cc-top { display: flex; align-items: center; gap: 12px; margin-bottom: 13px; }
+.cc-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--ci, rgba(232,84,26,.1));
+  display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.cc-t { font-family: 'Clash Display', sans-serif; font-size: 17px; font-weight: 400; letter-spacing: -.02em; color: #F5F0E8; }
+.cc-c { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.26); margin-top: 2px; }
+.cc-d { font-size: 13px; font-weight: 300; color: rgba(245,240,232,.44); line-height: 1.7; margin-bottom: 16px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 11px; font-weight: 400; letter-spacing: .03em; padding: 4px 11px;
+  border-radius: 100px; border: 1px solid rgba(245,240,232,.09); color: rgba(245,240,232,.44);
+  transition: all .2s; }
+.chip.on  { border-color: var(--cb, rgba(232,84,26,.3)); color: var(--ct, var(--orange)); background: var(--ci, rgba(232,84,26,.07)); }
+.chip.off { opacity: .3; }
+
+/* Hann-mode vs Default-mode card variants */
+.hann-variant  { display: none; }
+.default-variant { display: block; }
+body.cards-hann .hann-variant    { display: block; }
+body.cards-hann .default-variant { display: none; }
+
+/* ─── PROTOCOLS ─── */
+.proto { padding: 80px 5%; border-top: 1px solid rgba(245,240,232,.05); }
+.proto-in { max-width: 1080px; margin: 0 auto; }
+.proto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; margin-top: 48px; }
+.pc { background: rgba(245,240,232,.03); border: 1px solid rgba(245,240,232,.07);
+  border-radius: 14px; padding: 24px; position: relative; overflow: hidden;
+  transition: border-color .2s, background .2s, transform .2s; cursor: pointer; }
+.pc:not(.locked):hover { border-color: rgba(245,240,232,.14); background: rgba(245,240,232,.05); transform: translateY(-2px); }
+.pc::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--orange), transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s; }
+.pc:not(.locked):hover::after { transform: scaleX(1); }
+.pc-lock { position: absolute; inset: 0; border-radius: 14px;
+  background: rgba(10,10,8,.76); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; z-index: 5; }
+.lock-ico { font-size: 24px; opacity: .62; }
+.lock-lbl { font-family: 'Clash Display', sans-serif; font-size: 10px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase; color: rgba(245,240,232,.38); }
+.btn-ul { display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'Clash Display', sans-serif; font-size: 11px; font-weight: 500;
+  padding: 7px 16px; border-radius: 100px; background: var(--orange); color: #fff;
+  border: none; cursor: pointer; margin-top: 4px; transition: opacity .2s, transform .15s; }
+.btn-ul:hover { opacity: .84; transform: scale(1.04); }
+.pbadge { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 600;
+  letter-spacing: .1em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; margin-bottom: 12px; }
+.free { background: rgba(74,222,128,.08); color: #4ade80; border: 1px solid rgba(74,222,128,.2); }
+.prem { background: rgba(232,84,26,.1); color: var(--orange); border: 1px solid rgba(232,84,26,.25); }
+.pc-t { font-family: 'Clash Display', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: -.02em; color: #F5F0E8; margin-bottom: 7px; }
+.pc-d { font-size: 12px; font-weight: 300; color: rgba(245,240,232,.42); line-height: 1.7; margin-bottom: 14px; }
+.pc-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.pc-tag { font-size: 10px; padding: 3px 9px; border-radius: 100px;
+  background: rgba(245,240,232,.05); color: rgba(245,240,232,.43); border: 1px solid rgba(245,240,232,.08); }
+.pstrip { margin-top: 30px; background: rgba(232,84,26,.06); border: 1px solid rgba(232,84,26,.17);
+  border-radius: 16px; padding: 26px 30px;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.pstrip h3 { font-family: 'Clash Display', sans-serif; font-size: 17px; font-weight: 400; letter-spacing: -.02em; color: #F5F0E8; margin-bottom: 4px; }
+.pstrip p { font-size: 13px; font-weight: 300; color: rgba(245,240,232,.46); }
+.pstrip-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-prem { display: inline-flex; align-items: center; gap: 6px; font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 22px; border-radius: 100px; background: var(--orange); color: #fff; border: none; cursor: pointer; transition: opacity .2s, transform .15s; text-decoration: none; }
+.btn-prem:hover { opacity: .85; transform: translateY(-1px); }
+.btn-all { display: inline-flex; align-items: center; gap: 6px; font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 400; padding: 10px 22px; border-radius: 100px; border: 1px solid rgba(245,240,232,.13); color: rgba(245,240,232,.55); background: transparent; cursor: pointer; text-decoration: none; transition: border-color .2s, color .2s; }
+.btn-all:hover { border-color: rgba(245,240,232,.35); color: #F5F0E8; }
+
+/* ─── CTA + FOOTER ─── */
+.cta { padding: 88px 5%; text-align: center; }
+.cta h2 { font-family: 'Clash Display', sans-serif; font-size: clamp(2rem,4vw,3.2rem); font-weight: 300; letter-spacing: -.04em; color: #F5F0E8; margin-bottom: 14px; }
+.cta h2 strong { font-weight: 600; color: var(--orange); }
+.cta p { font-size: 14px; font-weight: 300; color: rgba(245,240,232,.46); line-height: 1.8; margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.pg-footer { padding: 28px 5%; border-top: 1px solid rgba(245,240,232,.05); text-align: center; }
+.soc { display: flex; justify-content: center; gap: 14px; margin-bottom: 10px; }
+.soc a { color: rgba(245,240,232,.28); transition: color .2s; }
+.soc a:hover { color: var(--orange); }
+
+/* ─── MODAL ─── */
+.md-ov { position: fixed; inset: 0; z-index: 800; background: rgba(0,0,0,.65); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: all .25s; padding: 24px; }
+.md-ov.open { opacity: 1; visibility: visible; }
+.md-box { background: #1A1A18; border: 1px solid rgba(245,240,232,.08); border-radius: 20px; padding: 32px; width: 100%; max-width: 480px; position: relative; transform: translateY(16px) scale(.97); transition: transform .3s cubic-bezier(.16,1,.3,1); }
+.md-ov.open .md-box { transform: none; }
+.md-x { position: absolute; top: 16px; right: 20px; background: none; border: none; color: rgba(245,240,232,.3); font-size: 18px; cursor: pointer; transition: color .15s; }
+.md-x:hover { color: #F5F0E8; }
+.md-box h2 { font-family: 'Clash Display', sans-serif; font-size: 22px; font-weight: 300; letter-spacing: -.03em; color: #F5F0E8; margin-bottom: 24px; }
+.ff { margin-bottom: 18px; }
+.ff label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(245,240,232,.36); margin-bottom: 8px; }
+.fi { width: 100%; background: rgba(245,240,232,.04); border: 1px solid rgba(245,240,232,.1); border-radius: 10px; padding: 11px 14px; color: #F5F0E8; font-family: inherit; font-size: 14px; font-weight: 300; transition: border-color .2s; box-sizing: border-box; }
+.fi:focus { outline: none; border-color: rgba(232,84,26,.45); }
+.fi::placeholder { color: rgba(245,240,232,.2); }
+.cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.co { padding: 10px 8px; border-radius: 10px; text-align: center; border: 1px solid rgba(245,240,232,.08); background: rgba(245,240,232,.03); cursor: pointer; transition: all .2s; font-size: 12px; font-weight: 300; color: rgba(245,240,232,.43); }
+.co.sel { border-color: rgba(232,84,26,.4); background: rgba(232,84,26,.08); color: var(--orange); }
+.co-i { font-size: 20px; display: block; margin-bottom: 4px; }
+.md-acts { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+.btn-conf { font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500; padding: 10px 24px; border-radius: 100px; background: var(--orange); color: #fff; border: none; cursor: pointer; }
+.btn-conf:hover { opacity: .85; }
+.btn-cnc { font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 400; padding: 10px 24px; border-radius: 100px; background: transparent; color: rgba(245,240,232,.42); border: 1px solid rgba(245,240,232,.12); cursor: pointer; }
+
+/* ─── TOOLTIP ─── */
+.tt { position: fixed; z-index: 700; background: #1C1C1A; border: 1px solid rgba(232,84,26,.3); border-radius: 12px; padding: 13px 17px; max-width: 230px; pointer-events: none; opacity: 0; transition: opacity .12s; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+.tt.vis { opacity: 1; }
+.tt-t { font-family: 'Clash Display', sans-serif; font-size: 13px; font-weight: 500; color: #F5F0E8; margin-bottom: 5px; }
+.tt-b { font-size: 11px; font-weight: 300; color: rgba(245,240,232,.5); line-height: 1.6; }
+.tt-s { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; margin-top: 8px; }
+.tt-s.a { background: rgba(74,222,128,.1); color: #4ade80; border: 1px solid rgba(74,222,128,.2); }
+.tt-s.f { background: rgba(245,240,232,.06); color: rgba(245,240,232,.32); border: 1px solid rgba(245,240,232,.1); }
+
+/* ─── TOAST ─── */
+.toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(12px); background: #1C1C1A; border: 1px solid rgba(232,84,26,.26); color: rgba(245,240,232,.8); font-family: inherit; font-size: 13px; font-weight: 300; padding: 11px 22px; border-radius: 100px; z-index: 9999; opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ─── SCROLL REVEAL ─── */
+.rv { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.rv.in { opacity: 1; transform: none; }
+.rv.d1 { transition-delay: .1s; } .rv.d2 { transition-delay: .2s; }
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px) { .phil-in { grid-template-columns: 1fr; gap: 40px; } .cats-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:580px)  { .cats-grid { grid-template-columns: 1fr; } .proto-grid { grid-template-columns: 1fr; } .pstrip { flex-direction: column; } }
+
+body.light .hero h1, body.light .phil-left h2, body.light .sec-t, body.light .cc-t, body.light .pc-t, body.light .cta h2 { color: #141412; }
+body.light .md-box { background: #FAFAF8; }
+body.light .fi { background: rgba(20,20,18,.04); border-color: rgba(20,20,18,.1); color: #141412; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOADER — SVG tree animated by GSAP
+     NOTE: body is visible, loader is fixed on top
+═══════════════════════════════════════ -->
+<div id="loader">
+  <svg id="lsvg" viewBox="-200 -30 1000 560" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- ROOT NODE — bottom center -->
+    <circle id="ln-root-glow" cx="300" cy="505" r="44"  fill="rgba(232,84,26,0.12)" opacity="0"/>
+    <circle id="ln-root"      cx="300" cy="505" r="22"  fill="#C8520F" opacity="0"/>
+
+    <!-- ══ TRUNK ══ -->
+    <path class="lbr" id="lb-t1" d="M300,505 C299,468 298,432 297,392" stroke="rgba(215,178,132,0.92)" stroke-width="7"   fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-t2" d="M297,392 C296,350 295,308 294,268" stroke="rgba(198,162,120,0.84)" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-t3" d="M294,268 C293,236 292,204 292,172" stroke="rgba(182,150,110,0.74)" stroke-width="4.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-t4" d="M292,172 C291,148 290,126 290,104" stroke="rgba(168,138,100,0.64)" stroke-width="3.0" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ ROOTS ══ -->
+    <path class="lbr" id="lb-rd1" d="M300,505 C272,516 238,522 198,528"  stroke="rgba(182,148,102,0.48)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd2" d="M300,505 C328,516 362,522 402,528"  stroke="rgba(182,148,102,0.48)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd3" d="M198,528 C162,536 122,540  76,544"  stroke="rgba(165,132,88,0.32)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd4" d="M402,528 C438,536 478,540 524,544"  stroke="rgba(165,132,88,0.32)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd5" d="M76,544  C40,548   2,551 -42,554"   stroke="rgba(150,118,78,0.20)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd6" d="M524,544 C560,548 598,551 642,554"  stroke="rgba(150,118,78,0.20)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd7" d="M-42,554 C-72,557 -104,559 -140,562" stroke="rgba(138,108,68,0.13)" stroke-width="1.0" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-rd8" d="M642,554 C672,557 704,559 740,562"   stroke="rgba(138,108,68,0.13)" stroke-width="1.0" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ LEVEL 1 MAIN BRANCHES ══ -->
+    <!-- Far left -->
+    <path class="lbr" id="lb-a1" d="M297,420 C260,396 208,374 140,356"   stroke="rgba(178,148,108,0.80)" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    <!-- Far right -->
+    <path class="lbr" id="lb-a2" d="M297,420 C334,396 386,374 454,356"   stroke="rgba(178,148,108,0.80)" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+    <!-- Mid-left -->
+    <path class="lbr" id="lb-a3" d="M295,340 C268,314 240,290 208,268"   stroke="rgba(172,142,104,0.74)" stroke-width="3.0" fill="none" stroke-linecap="round"/>
+    <!-- Mid-right -->
+    <path class="lbr" id="lb-a4" d="M295,340 C322,314 350,290 382,268"   stroke="rgba(172,142,104,0.74)" stroke-width="3.0" fill="none" stroke-linecap="round"/>
+    <!-- Upper-left -->
+    <path class="lbr" id="lb-a5" d="M293,270 C268,246 242,224 212,204"   stroke="rgba(165,136,98,0.68)"  stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Upper-right -->
+    <path class="lbr" id="lb-a6" d="M293,270 C318,246 344,224 374,204"   stroke="rgba(165,136,98,0.68)"  stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ LEVEL 2 BRANCHES ══ -->
+    <!-- From a1 (140,356) -->
+    <path class="lbr" id="lb-b1"  d="M140,356 C102,332  60,312  10,296"  stroke="rgba(160,130,92,0.66)"  stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b2"  d="M140,356 C120,330 102,306  88,282"  stroke="rgba(158,128,90,0.60)"  stroke-width="2.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b3"  d="M140,356 C158,332 172,308 182,282"  stroke="rgba(156,126,88,0.56)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <!-- From a2 (454,356) -->
+    <path class="lbr" id="lb-b4"  d="M454,356 C492,332 534,312 590,296"  stroke="rgba(160,130,92,0.66)"  stroke-width="2.4" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b5"  d="M454,356 C474,330 490,306 502,282"  stroke="rgba(158,128,90,0.60)"  stroke-width="2.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b6"  d="M454,356 C436,332 422,308 412,282"  stroke="rgba(156,126,88,0.56)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <!-- From a3 (208,268) -->
+    <path class="lbr" id="lb-b7"  d="M208,268 C176,244 142,222 102,204"  stroke="rgba(156,126,88,0.60)"  stroke-width="2.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b8"  d="M208,268 C192,242 178,218 168,194"  stroke="rgba(154,124,86,0.56)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b9"  d="M208,268 C222,244 234,220 242,196"  stroke="rgba(152,122,84,0.52)"  stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    <!-- From a4 (382,268) -->
+    <path class="lbr" id="lb-b10" d="M382,268 C414,244 448,222 492,204"  stroke="rgba(156,126,88,0.60)"  stroke-width="2.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b11" d="M382,268 C398,242 412,218 422,194"  stroke="rgba(154,124,86,0.56)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b12" d="M382,268 C368,244 356,220 348,196"  stroke="rgba(152,122,84,0.52)"  stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    <!-- From a5 (212,204) -->
+    <path class="lbr" id="lb-b13" d="M212,204 C182,180 150,158 112,140"  stroke="rgba(152,122,84,0.58)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b14" d="M212,204 C198,178 186,154 178,130"  stroke="rgba(150,120,82,0.54)"  stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    <!-- From a6 (374,204) -->
+    <path class="lbr" id="lb-b15" d="M374,204 C404,180 436,158 478,140"  stroke="rgba(152,122,84,0.58)"  stroke-width="1.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b16" d="M374,204 C388,178 400,154 408,130"  stroke="rgba(150,120,82,0.54)"  stroke-width="1.7" fill="none" stroke-linecap="round"/>
+    <!-- From crown tip a5→a6 through t4 (290,104) -->
+    <path class="lbr" id="lb-b17" d="M290,104 C268, 80 244, 58 216, 38"  stroke="rgba(150,120,82,0.60)"  stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b18" d="M290,104 C310, 80 332, 58 356, 38"  stroke="rgba(150,120,82,0.60)"  stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-b19" d="M290,104 C288, 78 287, 54 286, 28"  stroke="rgba(148,118,80,0.56)"  stroke-width="1.6" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ LEVEL 3 TWIGS ══ -->
+    <path class="lbr" id="lb-c1"  d="M10,296   C-22,272 -56,252 -96,234"  stroke="rgba(142,112,74,0.46)"  stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c2"  d="M10,296   C  0,270  -8,246 -14,222"  stroke="rgba(140,110,72,0.42)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c3"  d="M88,282   C 68,256  50,232  36,208"  stroke="rgba(140,110,72,0.44)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c4"  d="M88,282   C 96,256 102,232 106,208"  stroke="rgba(138,108,70,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c5"  d="M102,204  C 82,180  62,158  38,138"  stroke="rgba(138,108,70,0.42)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c6"  d="M168,194  C150,168 134,144 122,120"  stroke="rgba(136,106,68,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c7"  d="M112,140  C 92,116  72, 94  48, 74"  stroke="rgba(136,106,68,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c8"  d="M178,130  C162,104 148, 80 136, 56"  stroke="rgba(134,104,66,0.38)"  stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c9"  d="M590,296  C622,272 656,252 696,234"  stroke="rgba(142,112,74,0.46)"  stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c10" d="M590,296  C600,270 608,246 614,222"  stroke="rgba(140,110,72,0.42)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c11" d="M502,282  C522,256 540,232 554,208"  stroke="rgba(140,110,72,0.44)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c12" d="M492,204  C512,180 532,158 558,138"  stroke="rgba(138,108,70,0.42)"  stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c13" d="M422,194  C440,168 456,144 468,120"  stroke="rgba(136,106,68,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c14" d="M478,140  C498,116 518, 94 542, 74"  stroke="rgba(136,106,68,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c15" d="M408,130  C424,104 438, 80 450, 56"  stroke="rgba(134,104,66,0.38)"  stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c16" d="M216, 38  C200, 16 184,  -4 166,-24"  stroke="rgba(134,104,66,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c17" d="M356, 38  C372, 16 388,  -4 406,-24"  stroke="rgba(134,104,66,0.40)"  stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-c18" d="M286, 28  C284,  4 282,-18 280,-42"  stroke="rgba(132,102,64,0.38)"  stroke-width="1.1" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ LEVEL 4 FINEST ══ -->
+    <path class="lbr" id="lb-d1"  d="M-96,234 C-118,212 -142,192 -170,174" stroke="rgba(128,100,62,0.30)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d2"  d="M-14,222  C -26,198 -36,176 -44,154"  stroke="rgba(128,100,62,0.28)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d3"  d="M36,208   C  22,184   8,162  -6,140"  stroke="rgba(128,100,62,0.28)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d4"  d="M38,138   C  20,114   2, 92 -18, 72"  stroke="rgba(126,98,60,0.26)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d5"  d="M122,120  C106, 96  90, 74  72, 52"   stroke="rgba(126,98,60,0.26)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d6"  d="M136, 56  C120, 32 106,  8  90,-16"   stroke="rgba(124,96,58,0.24)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d7"  d="M48, 74   C  30, 50  12, 28  -8,  6"  stroke="rgba(124,96,58,0.24)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d8"  d="M696,234  C718,212 742,192 770,174"   stroke="rgba(128,100,62,0.30)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d9"  d="M614,222  C626,198 636,176 644,154"   stroke="rgba(128,100,62,0.28)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d10" d="M554,208  C568,184 582,162 596,140"   stroke="rgba(128,100,62,0.28)" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d11" d="M542, 74  C560, 50 578, 28 598,  6"   stroke="rgba(126,98,60,0.26)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d12" d="M558,138  C576,114 592, 92 612, 72"   stroke="rgba(126,98,60,0.26)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d13" d="M450, 56  C464, 32 478,  8 492,-16"   stroke="rgba(124,96,58,0.24)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d14" d="M166,-24  C150,-46 132,-66 112,-88"   stroke="rgba(122,94,56,0.24)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d15" d="M406,-24  C422,-46 440,-66 460,-88"   stroke="rgba(122,94,56,0.24)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+    <path class="lbr" id="lb-d16" d="M280,-42  C278,-64 276,-86 274,-110"  stroke="rgba(122,94,56,0.22)"  stroke-width="0.8" fill="none" stroke-linecap="round"/>
+
+    <!-- ══ TERMINAL BUDS ══ -->
+    <!-- Warm parchment outer crown -->
+    <circle class="ld" id="ld-1"  cx="-170" cy="174"  r="4"   fill="rgba(218,192,152,0.52)" opacity="0"/>
+    <circle class="ld" id="ld-2"  cx="-44"  cy="154"  r="3.5" fill="rgba(215,188,148,0.48)" opacity="0"/>
+    <circle class="ld" id="ld-3"  cx="-6"   cy="140"  r="3.5" fill="rgba(215,188,148,0.46)" opacity="0"/>
+    <circle class="ld" id="ld-4"  cx="-18"  cy="72"   r="3"   fill="rgba(212,184,144,0.44)" opacity="0"/>
+    <circle class="ld" id="ld-5"  cx="-8"   cy="6"    r="3"   fill="rgba(212,184,144,0.44)" opacity="0"/>
+    <circle class="ld" id="ld-6"  cx="72"   cy="52"   r="3"   fill="rgba(210,182,142,0.44)" opacity="0"/>
+    <circle class="ld" id="ld-7"  cx="90"   cy="-16"  r="3"   fill="rgba(210,182,142,0.42)" opacity="0"/>
+    <circle class="ld" id="ld-8"  cx="770"  cy="174"  r="4"   fill="rgba(218,192,152,0.52)" opacity="0"/>
+    <circle class="ld" id="ld-9"  cx="644"  cy="154"  r="3.5" fill="rgba(215,188,148,0.48)" opacity="0"/>
+    <circle class="ld" id="ld-10" cx="596"  cy="140"  r="3.5" fill="rgba(215,188,148,0.46)" opacity="0"/>
+    <circle class="ld" id="ld-11" cx="612"  cy="72"   r="3"   fill="rgba(212,184,144,0.44)" opacity="0"/>
+    <circle class="ld" id="ld-12" cx="598"  cy="6"    r="3"   fill="rgba(212,184,144,0.44)" opacity="0"/>
+    <circle class="ld" id="ld-13" cx="492"  cy="-16"  r="3"   fill="rgba(210,182,142,0.42)" opacity="0"/>
+    <!-- Orange apex glow -->
+    <circle class="ld" id="ld-14" cx="112"  cy="-88"  r="4"   fill="rgba(232,84,26,0.60)"   opacity="0"/>
+    <circle class="ld" id="ld-15" cx="460"  cy="-88"  r="4"   fill="rgba(232,84,26,0.60)"   opacity="0"/>
+    <circle class="ld" id="ld-16" cx="274"  cy="-110" r="5"   fill="rgba(232,84,26,0.75)"   opacity="0"/>
+
+  </svg>
+  <div id="lword">noodrop · skillmaxxing</div>
+    <div id="lword">noodrop · skillmaxxing</div>
+  <div id="lhint">click anywhere to continue</div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="nd-header" id="ndHeader">
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
+  <nav class="nd-nav" id="ndNav">
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose">✕</button></div>
+    <div class="nd-nav-links">
+      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+      <a href="skillmaxxing.html" class="nd-nav__link active">Skillmaxxing<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+    </div>
+  </nav>
+  <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
+  <div class="nd-header__right">
+    <button class="auth-btn" id="authBtn">Login</button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="stars-wrap" id="starsWrap"></div>
+  <svg class="hero-bg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <radialGradient id="hg" cx="50%" cy="25%" r="65%"><stop offset="0%" stop-color="#0D0C0A"/><stop offset="100%" stop-color="#111110"/></radialGradient>
+      <radialGradient id="hm" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="rgba(232,84,26,0.16)"/><stop offset="100%" stop-color="transparent"/></radialGradient>
+      <filter id="gsf"><feGaussianBlur stdDeviation="4"/></filter>
+    </defs>
+    <rect width="1440" height="900" fill="url(#hg)"/>
+    <ellipse cx="720" cy="160" rx="380" ry="225" fill="url(#hm)" opacity=".38"/>
+    <circle cx="720" cy="148" r="40" fill="rgba(245,240,232,.05)" filter="url(#gsf)"/>
+    <circle cx="720" cy="148" r="20" fill="rgba(245,240,232,.065)"/>
+    <circle cx="720" cy="148" r="10" fill="rgba(245,240,232,.085)"/>
+    <path d="M0,635 L95,545 L190,596 L300,502 L410,558 L515,476 L618,532 L718,460 L728,492 L738,456 L848,512 L968,466 L1068,518 L1168,480 L1268,538 L1388,496 L1440,522 L1440,900 L0,900Z" fill="rgba(245,240,232,.019)"/>
+    <path d="M0,706 L135,606 L248,658 L376,580 L498,626 L618,566 L728,600 L838,556 L958,596 L1078,560 L1198,610 L1320,576 L1440,602 L1440,900 L0,900Z" fill="rgba(245,240,232,.037)"/>
+    <path d="M0,780 L126,718 L258,752 L406,696 L546,730 L686,700 L728,714 L768,700 L908,726 L1068,696 L1208,720 L1360,702 L1440,712 L1440,900 L0,900Z" fill="rgba(245,240,232,.054)"/>
+    <path d="M0,840 C185,826 368,836 550,829 C732,821 914,833 1096,827 C1278,821 1385,831 1440,829 L1440,900 L0,900Z" fill="rgba(245,240,232,.066)"/>
+    <ellipse cx="728" cy="826" rx="595" ry="135" fill="rgba(232,84,26,.05)"/>
+    <rect x="0" y="726" width="1440" height="174" fill="url(#hg)" opacity=".56"/>
+  </svg>
+  <div class="hero-inner">
+    <span class="eyebrow">Noodrop · Skillmaxxing</span>
+    <h1>Your brain is<br>the <em>instrument.</em></h1>
+    <span class="hero-sub">Map it. Train it. Transcend it.</span>
+    <p class="hero-lead">Skillmaxxing is systematic mastery — deliberate practice, neuroplasticity science, and optionally, the right compounds.</p>
+    <div class="hero-btns">
+      <button class="btn-o" onclick="document.getElementById('treeSec').scrollIntoView({behavior:'smooth'})">See Skill Trees ↓</button>
+      <a href="stack.html" class="btn-g">Build a Stack →</a>
+    </div>
+  </div>
+  <div class="scroll-hint"><div class="sc-line"></div><span>scroll</span></div>
+</section>
+
+<!-- ═══ PHILOSOPHY ═══ -->
+<section class="phil rv">
+  <div class="phil-in">
+    <div class="phil-left">
+      <h2>The brain responds to <strong>deliberate stress</strong> — like a muscle.</h2>
+      <p>Every time you switch to a foreign language, execute a new movement, or improvise a melody, you're physically rewiring neural circuitry. Neuroplasticity isn't passive — it's earned.<br><br>Compounds can accelerate certain pathways. Sleep and nutrition form the foundation. But the real driver is always intentional, repeated practice.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><div class="pi">🧠</div><div><div class="pt">Neuroplasticity First</div><div class="pb">LTP, BDNF, and myelination are your allies. Every skill is a new physical structure in your brain.</div></div></div>
+      <div class="pillar"><div class="pi">📐</div><div><div class="pt">Deliberate Practice</div><div class="pb">Not reps — targeted discomfort at the edge of your ceiling. 45 focused minutes beats 3h of autopilot.</div></div></div>
+      <div class="pillar"><div class="pi">⚗️</div><div><div class="pt">Compounds as Amplifiers</div><div class="pb">Optional, never mandatory. Lion's Mane for BDNF. Bacopa for consolidation. Alpha GPC for acetylcholine.</div></div></div>
+      <div class="pillar"><div class="pi">🌙</div><div><div class="pt">Recovery Is Training</div><div class="pb">Skill consolidation happens during sleep. 8 hours isn't luxury — it's when adaptation actually occurs.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SKILL TREE ═══ -->
+<section class="tree-sec" id="treeSec">
+  <div class="sec-hd rv">
+    <span class="sec-ey">Interactive</span>
+    <h2 class="sec-t">The Skill Tree</h2>
+    <p class="sec-s">Build your own tree — or view Hann's as a blueprint. Hover nodes to explore.</p>
+  </div>
+  <div class="vtoggle">
+    <button class="vp" id="pillH" onclick="setView('hann')">👁 Hann's Tree</button>
+    <button class="vp on" id="pillO" onclick="setView('own')">✦ Build My Tree</button>
+  </div>
+
+  <!-- HANN TREE -->
+  <div id="hann-wrap" style="display:none;">
+    <svg id="hann-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="rg"><feGaussianBlur stdDeviation="11" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <path class="hb" id="hb-trunk"  d="M500,462 C500,422 500,382 500,326" stroke="rgba(232,84,26,0.72)" stroke-width="3"/>
+      <path class="hb" id="hb-rl"     d="M500,446 C474,460 444,468 408,476" stroke="rgba(232,84,26,0.22)" stroke-width="1.4"/>
+      <path class="hb" id="hb-rr"     d="M500,446 C526,460 556,468 592,476" stroke="rgba(232,84,26,0.22)" stroke-width="1.4"/>
+      <path class="hb" id="hb-lang"   d="M500,348 C460,305 375,265 255,238" stroke="rgba(100,160,255,0.62)" stroke-width="2.3"/>
+      <path class="hb" id="hb-sport"  d="M500,348 C540,305 625,265 745,238" stroke="rgba(74,222,128,0.62)" stroke-width="2.3"/>
+      <path class="hb" id="hb-create" d="M500,326 C500,290 500,254 500,200" stroke="rgba(232,84,26,0.6)" stroke-width="2.2"/>
+      <path class="hb" id="hb-l1"     d="M255,238 C222,216 182,198 135,180" stroke="rgba(100,160,255,0.4)" stroke-width="1.55"/>
+      <path class="hb" id="hb-l2"     d="M255,238 C244,210 234,182 224,157" stroke="rgba(100,160,255,0.36)" stroke-width="1.4"/>
+      <path class="hb" id="hb-l3"     d="M255,238 C270,214 282,192 290,168" stroke="rgba(100,160,255,0.32)" stroke-width="1.3"/>
+      <path class="hb" id="hb-l4"     d="M255,238 C294,220 322,205 348,188" stroke="rgba(100,160,255,0.26)" stroke-width="1.25"/>
+      <path class="hb" id="hb-s1"     d="M745,238 C778,216 818,198 862,180" stroke="rgba(74,222,128,0.4)" stroke-width="1.55"/>
+      <path class="hb" id="hb-s2"     d="M745,238 C754,210 762,182 768,157" stroke="rgba(74,222,128,0.36)" stroke-width="1.4"/>
+      <path class="hb" id="hb-s3"     d="M745,238 C728,214 716,192 708,168" stroke="rgba(74,222,128,0.28)" stroke-width="1.25"/>
+      <path class="hb" id="hb-c1"     d="M500,200 C472,174 442,150 408,126" stroke="rgba(232,84,26,0.42)" stroke-width="1.5"/>
+      <path class="hb" id="hb-c2"     d="M500,200 C492,172 486,146 482,118" stroke="rgba(232,84,26,0.4)" stroke-width="1.45"/>
+      <path class="hb" id="hb-c3"     d="M500,200 C508,172 514,146 518,118" stroke="rgba(232,84,26,0.38)" stroke-width="1.4"/>
+      <path class="hb" id="hb-c4"     d="M500,200 C526,174 550,152 578,128" stroke="rgba(232,84,26,0.34)" stroke-width="1.3"/>
+      <path class="hb" id="hb-c5"     d="M500,200 C548,178 582,162 612,144" stroke="rgba(232,84,26,0.28)" stroke-width="1.2"/>
+      <!-- Nodes -->
+      <g filter="url(#rg)" style="cursor:pointer" onmouseenter="tip(event,'You — The Root','Every branch is a dimension of your growth.','')" onmouseleave="ht()">
+        <circle cx="500" cy="462" r="44" fill="rgba(232,84,26,0.1)"/><circle cx="500" cy="462" r="27" fill="#E8541A"/>
+        <text x="500" y="458" text-anchor="middle" dominant-baseline="middle" font-family="'Clash Display',sans-serif" font-size="10" font-weight="600" fill="white">YOU</text>
+        <text x="500" y="471" text-anchor="middle" dominant-baseline="middle" font-family="'Clash Display',sans-serif" font-size="7" font-weight="300" fill="rgba(255,255,255,0.6)">the root</text>
+      </g>
+      <g id="hn-lang" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'Languages 🌍','Grey matter increase, stronger executive function.','a')" onmouseleave="ht()" onclick="pingCard('lang')">
+        <circle cx="255" cy="238" r="38" fill="rgba(100,160,255,0.08)" stroke="rgba(100,160,255,0.46)" stroke-width="1.6"/>
+        <text x="255" y="233" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="15" fill="rgba(140,190,255,0.92)">🌍</text>
+        <text x="255" y="250" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="10" font-weight="400" fill="rgba(140,190,255,0.82)">Languages</text>
+      </g>
+      <g id="hn-pt" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🇧🇷 Portuguese','B1 level — active immersion via music and conversation.','a')" onmouseleave="ht()"><circle cx="135" cy="180" r="23" fill="rgba(100,160,255,0.08)" stroke="rgba(100,160,255,0.52)" stroke-width="1.3"/><text x="135" y="175" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="14" fill="rgba(140,190,255,0.9)">🇧🇷</text><text x="135" y="190" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(140,190,255,0.65)">B1</text></g>
+      <g id="hn-fr" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🇫🇷 French','A1 — building phoneme recognition.','a')" onmouseleave="ht()"><circle cx="224" cy="157" r="21" fill="rgba(100,160,255,0.07)" stroke="rgba(100,160,255,0.42)" stroke-width="1.1"/><text x="224" y="152" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(140,190,255,0.85)">🇫🇷</text><text x="224" y="166" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(140,190,255,0.6)">A1</text></g>
+      <g id="hn-de" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🇩🇪 German','Native language — the root tongue.','a')" onmouseleave="ht()"><circle cx="290" cy="168" r="20" fill="rgba(100,160,255,0.06)" stroke="rgba(100,160,255,0.35)" stroke-width="1"/><text x="290" y="163" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(140,190,255,0.8)">🇩🇪</text><text x="290" y="177" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(140,190,255,0.55)">native</text></g>
+      <g id="hn-jp" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🇯🇵 Japanese','Locked — queued after French reaches B1.','f')" onmouseleave="ht()"><circle cx="348" cy="188" r="18" fill="rgba(100,160,255,0.03)" stroke="rgba(100,160,255,0.18)" stroke-width="1" stroke-dasharray="4,3"/><text x="348" y="183" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(140,190,255,0.28)">🇯🇵</text><text x="348" y="197" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="7" fill="rgba(140,190,255,0.24)">locked</text></g>
+      <g id="hn-sport" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'Sports ⚡','BDNF surge after HIT. Motor learning = neuroplasticity.','a')" onmouseleave="ht()" onclick="pingCard('sport')">
+        <circle cx="745" cy="238" r="38" fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.46)" stroke-width="1.6"/>
+        <text x="745" y="233" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="15" fill="rgba(134,239,172,0.92)">⚡</text>
+        <text x="745" y="250" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="10" font-weight="400" fill="rgba(134,239,172,0.82)">Sports</text>
+      </g>
+      <g id="hn-hit" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🏋️ Mike Mentzer HIT','Maximum intensity, minimum volume.','a')" onmouseleave="ht()"><circle cx="862" cy="180" r="23" fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.52)" stroke-width="1.3"/><text x="862" y="175" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="14" fill="rgba(134,239,172,0.9)">🏋️</text><text x="862" y="190" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(134,239,172,0.65)">HIT</text></g>
+      <g id="hn-cal" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🤸 Calisthenics','Motor complexity trains coordination circuitry.','a')" onmouseleave="ht()"><circle cx="768" cy="157" r="21" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.42)" stroke-width="1.1"/><text x="768" y="152" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(134,239,172,0.85)">🤸</text><text x="768" y="166" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(134,239,172,0.6)">Cali</text></g>
+      <g id="hn-sw" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🏊 Swimming','Locked — planned post-Abitur.','f')" onmouseleave="ht()"><circle cx="708" cy="168" r="18" fill="rgba(74,222,128,0.03)" stroke="rgba(74,222,128,0.17)" stroke-width="1" stroke-dasharray="4,3"/><text x="708" y="163" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(134,239,172,0.28)">🏊</text><text x="708" y="177" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="7" fill="rgba(134,239,172,0.24)">locked</text></g>
+      <g id="hn-create" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'Creative Work ✦','5 active disciplines. Music trains the most complex networks.','a')" onmouseleave="ht()" onclick="pingCard('creative')">
+        <circle cx="500" cy="200" r="38" fill="rgba(232,84,26,0.08)" stroke="rgba(232,84,26,0.52)" stroke-width="1.6"/>
+        <text x="500" y="195" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="15" fill="rgba(253,186,116,0.92)">✦</text>
+        <text x="500" y="212" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="10" font-weight="400" fill="rgba(253,186,116,0.82)">Creative</text>
+      </g>
+      <g id="hn-sax" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🎷 Saxophone','Jazz improv = real-time neural synthesis.','a')" onmouseleave="ht()"><circle cx="408" cy="126" r="22" fill="rgba(232,84,26,0.08)" stroke="rgba(232,84,26,0.52)" stroke-width="1.2"/><text x="408" y="121" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="13" fill="rgba(253,186,116,0.9)">🎷</text><text x="408" y="135" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(253,186,116,0.65)">Sax</text></g>
+      <g id="hn-pno" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🎹 Piano','Bimanual independence = spatial reasoning.','a')" onmouseleave="ht()"><circle cx="482" cy="118" r="20" fill="rgba(232,84,26,0.07)" stroke="rgba(232,84,26,0.46)" stroke-width="1.1"/><text x="482" y="113" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="12" fill="rgba(253,186,116,0.85)">🎹</text><text x="482" y="127" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(253,186,116,0.6)">Piano</text></g>
+      <g id="hn-gtr" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🎸 Guitar','Fingerpicking builds fine motor circuits.','a')" onmouseleave="ht()"><circle cx="518" cy="118" r="20" fill="rgba(232,84,26,0.07)" stroke="rgba(232,84,26,0.43)" stroke-width="1.1"/><text x="518" y="113" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="12" fill="rgba(253,186,116,0.85)">🎸</text><text x="518" y="127" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(253,186,116,0.6)">Guitar</text></g>
+      <g id="hn-drw" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'✏️ Drawing','Visuospatial processing and hand-eye coordination.','a')" onmouseleave="ht()"><circle cx="578" cy="128" r="20" fill="rgba(232,84,26,0.06)" stroke="rgba(232,84,26,0.4)" stroke-width="1.1"/><text x="578" y="123" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="12" fill="rgba(253,186,116,0.82)">✏️</text><text x="578" y="137" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="8" fill="rgba(253,186,116,0.56)">Draw</text></g>
+      <g id="hn-fl" style="opacity:0;cursor:pointer" onmouseenter="tip(event,'🎛️ FL Studio','Pattern recognition, harmonic intuition, time.','a')" onmouseleave="ht()"><circle cx="612" cy="144" r="19" fill="rgba(232,84,26,0.06)" stroke="rgba(232,84,26,0.36)" stroke-width="1"/><text x="612" y="139" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="11" fill="rgba(253,186,116,0.8)">🎛️</text><text x="612" y="153" text-anchor="middle" font-family="'Clash Display',sans-serif" font-size="7" fill="rgba(253,186,116,0.54)">FL Studio</text></g>
+    </svg>
+    <div class="legend">
+      <span><span class="leg-dot" style="background:var(--orange)"></span>Root</span>
+      <span><span class="leg-dot" style="background:rgba(100,160,255,.6)"></span>Languages</span>
+      <span><span class="leg-dot" style="background:rgba(74,222,128,.6)"></span>Sports</span>
+      <span><span class="leg-dot" style="background:rgba(253,186,116,.6)"></span>Creative</span>
+      <span><span class="leg-dot" style="border:1px dashed rgba(245,240,232,.25);background:transparent"></span>Future</span>
+    </div>
+  </div>
+
+  <!-- OWN TREE (default) -->
+  <div id="own-wrap">
+    <div class="bld-bar">
+      <div><h3>Your Skill Tree</h3><p>Add skills across any category — your tree builds itself live.</p></div>
+      <button class="btn-add" onclick="openMd()">+ Add Skill</button>
+    </div>
+    <div id="own-svg-wrap">
+      <svg id="own-svg" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg">
+        <defs><filter id="owng"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <path id="own-trunk" d="M200,258 C200,228 200,205 200,175" fill="none" stroke="rgba(232,84,26,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+        <g filter="url(#owng)">
+          <circle cx="200" cy="258" r="34" fill="rgba(232,84,26,0.1)"/>
+          <circle cx="200" cy="258" r="21" fill="#E8541A"/>
+          <text x="200" y="254" text-anchor="middle" dominant-baseline="middle" font-family="'Clash Display',sans-serif" font-size="9" font-weight="600" fill="white">YOU</text>
+          <text x="200" y="267" text-anchor="middle" dominant-baseline="middle" font-family="'Clash Display',sans-serif" font-size="7" font-weight="300" fill="rgba(255,255,255,0.55)">the root</text>
+        </g>
+        <g id="ob"></g><g id="on"></g>
+      </svg>
+    </div>
+    <div class="sk-row" id="sk-row"><span class="empty-hint">No skills yet — add your first above ↑</span></div>
+  </div>
+
+  <!-- CATEGORY CARDS -->
+  <div class="cats">
+    <div class="cats-in">
+      <!-- Mode toggle -->
+      <div class="card-mode-bar">
+        <button class="cm-btn on" id="cm-default" onclick="setCardMode('default')">🌍 Generic View</button>
+        <button class="cm-btn" id="cm-hann" onclick="setCardMode('hann')">👤 Hann's View</button>
+      </div>
+
+      <div class="cats-grid">
+        <!-- LANGUAGES -->
+        <div class="cc rv" id="cc-lang" style="--cc:rgba(100,160,255,.1);--cb:rgba(100,160,255,.35);--ci:rgba(100,160,255,.12);--ct:rgba(140,190,255,.9)">
+          <div class="cc-top"><div class="cc-icon" style="background:rgba(100,160,255,.12)">🌍</div><div><div class="cc-t">Languages</div><div class="cc-c default-variant">Skill Category</div><div class="cc-c hann-variant">2 active · 2 queued</div></div></div>
+          <div class="default-variant"><p class="cc-d">Structural grey matter increase, stronger executive function, delayed cognitive decline. The highest-ROI cognitive investment.</p>
+          <div class="chips"><span class="chip on">Vocabulary acquisition</span><span class="chip on">Phoneme training</span><span class="chip on">Grammar immersion</span><span class="chip off">Advanced fluency</span></div></div>
+          <div class="hann-variant"><p class="cc-d">Language is your bridge to culture, music, and the minds of others. Each new tongue rewires you structurally.</p>
+          <div class="chips"><span class="chip on">🇧🇷 Portuguese B1</span><span class="chip on">🇫🇷 French A1</span><span class="chip on">🇩🇪 German native</span><span class="chip on">🇬🇧 English fluent</span><span class="chip off">🇯🇵 Japanese</span><span class="chip off">🇪🇸 Spanish</span></div></div>
+        </div>
+
+        <!-- SPORTS -->
+        <div class="cc rv d1" id="cc-sport" style="--cc:rgba(74,222,128,.1);--cb:rgba(74,222,128,.35);--ci:rgba(74,222,128,.12);--ct:rgba(134,239,172,.9)">
+          <div class="cc-top"><div class="cc-icon" style="background:rgba(74,222,128,.12)">⚡</div><div><div class="cc-t">Sports & Training</div><div class="cc-c default-variant">Skill Category</div><div class="cc-c hann-variant">2 active · 1 queued</div></div></div>
+          <div class="default-variant"><p class="cc-d">Physical training isn't separate from brain training. BDNF surges after resistance work. Motor learning is neuroplasticity in purest form.</p>
+          <div class="chips"><span class="chip on">Resistance training</span><span class="chip on">Calisthenics</span><span class="chip on">Cardio base</span><span class="chip off">Sport-specific skill</span></div></div>
+          <div class="hann-variant"><p class="cc-d">HIT before a learning session = the highest known BDNF window. Every workout is cognitive infrastructure.</p>
+          <div class="chips"><span class="chip on">🏋️ Mentzer HIT</span><span class="chip on">🤸 Calisthenics</span><span class="chip off">🏊 Swimming</span><span class="chip off">🥊 Boxing</span></div></div>
+        </div>
+
+        <!-- CREATIVE -->
+        <div class="cc rv d2" id="cc-creative" style="--cc:rgba(232,84,26,.08);--cb:rgba(232,84,26,.35);--ci:rgba(232,84,26,.12);--ct:rgba(253,186,116,.9)">
+          <div class="cc-top"><div class="cc-icon" style="background:rgba(232,84,26,.12)">✦</div><div><div class="cc-t">Creative Work</div><div class="cc-c default-variant">Skill Category</div><div class="cc-c hann-variant">5 active</div></div></div>
+          <div class="default-variant"><p class="cc-d">Music and drawing train the most complex neural networks. The creative and analytical brains are the same system running in parallel.</p>
+          <div class="chips"><span class="chip on">Instrument</span><span class="chip on">Visual art</span><span class="chip on">Music production</span><span class="chip off">Composition</span></div></div>
+          <div class="hann-variant"><p class="cc-d">Five active disciplines — each one a different facet of the same creative mind. Sax, piano, guitar, drawing, FL Studio.</p>
+          <div class="chips"><span class="chip on">🎷 Saxophone</span><span class="chip on">🎹 Piano</span><span class="chip on">🎸 Guitar</span><span class="chip on">✏️ Drawing</span><span class="chip on">🎛️ FL Studio</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROTOCOLS ═══ -->
+<section class="proto">
+  <div class="proto-in">
+    <div class="sec-hd rv" style="text-align:center;">
+      <span class="sec-ey">Skill-Specific Stacks</span>
+      <h2 class="sec-t">Protocols</h2>
+      <p class="sec-s" style="max-width:440px;margin:0 auto;">Free foundations + premium acceleration stacks — same model as the Noodrop app.</p>
+    </div>
+    <div class="proto-grid">
+      <div class="pc rv"><span class="pbadge free">✦ Free</span><div class="pc-t">Language Foundation</div><p class="pc-d">Sleep optimization, spaced repetition timing, daily immersion structuring.</p><div class="pc-tags"><span class="pc-tag">Spaced Repetition</span><span class="pc-tag">Sleep Protocol</span><span class="pc-tag">Immersion Design</span></div></div>
+      <div class="pc rv d1"><span class="pbadge free">✦ Free</span><div class="pc-t">Musical Mastery Protocol</div><p class="pc-d">45-min deliberate sessions beat 3h mindless repetition. Motor consolidation via sleep.</p><div class="pc-tags"><span class="pc-tag">Deliberate Practice</span><span class="pc-tag">Session Structure</span><span class="pc-tag">Sleep Consolidation</span></div></div>
+      <div class="pc rv d2"><span class="pbadge free">✦ Free</span><div class="pc-t">Physical Performance + BDNF</div><p class="pc-d">20min HIT triggers the highest known BDNF surge. Study immediately after.</p><div class="pc-tags"><span class="pc-tag">HIT → Study Window</span><span class="pc-tag">BDNF Timing</span><span class="pc-tag">Recovery Protocol</span></div></div>
+      <div class="pc locked rv"><div class="pc-lock"><div class="lock-ico">🔒</div><div class="lock-lbl">Premium Protocol</div><button class="btn-ul" onclick="toast('Premium coming soon.')">Unlock with Premium</button></div><span class="pbadge prem">⚗️ Premium</span><div class="pc-t">Language + Nootropics Stack</div><p class="pc-d">Bacopa for consolidation, Alpha GPC for acetylcholine, Lion's Mane for BDNF.</p><div class="pc-tags"><span class="pc-tag">Bacopa 300mg</span><span class="pc-tag">Alpha GPC 300mg</span><span class="pc-tag">Lion's Mane 500mg</span></div></div>
+      <div class="pc locked rv d1"><div class="pc-lock"><div class="lock-ico">🔒</div><div class="lock-lbl">Premium Protocol</div><button class="btn-ul" onclick="toast('Premium coming soon.')">Unlock with Premium</button></div><span class="pbadge prem">⚗️ Premium</span><div class="pc-t">Deep Work & Coding Stack</div><p class="pc-d">L-Theanine + Caffeine for flow. Phosphatidylserine for executive function.</p><div class="pc-tags"><span class="pc-tag">L-Theanine 200mg</span><span class="pc-tag">Caffeine 100mg</span><span class="pc-tag">Rhodiola 200mg</span></div></div>
+      <div class="pc locked rv d2"><div class="pc-lock"><div class="lock-ico">🔒</div><div class="lock-lbl">Premium Protocol</div><button class="btn-ul" onclick="toast('Premium coming soon.')">Unlock with Premium</button></div><span class="pbadge prem">⚗️ Premium</span><div class="pc-t">Musician's Neuroplasticity Stack</div><p class="pc-d">Aniracetam for creative synthesis. Uridine for synaptic density. Mg Threonate for NMDA.</p><div class="pc-tags"><span class="pc-tag">Aniracetam 750mg</span><span class="pc-tag">Uridine 500mg</span><span class="pc-tag">Mg Threonate 2g</span></div></div>
+    </div>
+    <div class="pstrip rv">
+      <div><h3>🔥 Unlock all premium protocols</h3><p>Full compound stacks, cycling schedules, NooAI recommendations — €9.99/month or one-time from €2.99.</p></div>
+      <div class="pstrip-btns"><button class="btn-prem" onclick="toast('Premium coming soon.')">Get Premium</button><a href="marketplace.html" class="btn-all">See All Stacks →</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta rv">
+  <h2>Ready to build your <strong>Skill Tree?</strong></h2>
+  <p>Map your skills, pick your protocols, and let NooAI guide your path — with or without compounds.</p>
+  <div class="cta-btns">
+    <button class="btn-o" onclick="setView('own');document.getElementById('treeSec').scrollIntoView({behavior:'smooth'})">Build My Tree →</button>
+    <a href="nooai.html" class="btn-g">Ask NooAI →</a>
+    <a href="index.html" class="btn-g">Browse Compounds →</a>
+  </div>
+</section>
+
+<footer class="pg-footer">
+  <div class="soc">
+    <a href="https://x.com/hann_369" target="_blank" rel="noopener" aria-label="X"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+    <a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener" aria-label="YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+  </div>
+  <p style="color:rgba(245,240,232,.26);font-size:12px;">© 2026 Noodrop · <a href="impressum.html" style="color:rgba(245,240,232,.26);text-decoration:none;">Impressum</a></p>
+</footer>
+
+<!-- Modal -->
+<div class="md-ov" id="md-ov" onclick="if(event.target===this)closeMd()">
+  <div class="md-box"><button class="md-x" onclick="closeMd()">✕</button>
+    <h2>Add a Skill</h2>
+    <div class="ff"><label>Skill Name</label><input class="fi" id="sn" placeholder="e.g. Japanese, Boxing, Photography…" maxlength="40"/></div>
+    <div class="ff"><label>Category</label>
+      <div class="cat-grid">
+        <div class="co" data-c="lang" onclick="selC(this)"><span class="co-i">🌍</span>Languages</div>
+        <div class="co" data-c="sport" onclick="selC(this)"><span class="co-i">⚡</span>Sports</div>
+        <div class="co" data-c="creative" onclick="selC(this)"><span class="co-i">✦</span>Creative</div>
+        <div class="co" data-c="mind" onclick="selC(this)"><span class="co-i">🧠</span>Mind</div>
+        <div class="co" data-c="tech" onclick="selC(this)"><span class="co-i">💻</span>Tech</div>
+        <div class="co" data-c="other" onclick="selC(this)"><span class="co-i">✧</span>Other</div>
+      </div>
+    </div>
+    <div class="ff"><label>Level (optional)</label><input class="fi" id="sl" placeholder="e.g. Beginner, B1…" maxlength="20"/></div>
+    <div class="md-acts"><button class="btn-cnc" onclick="closeMd()">Cancel</button><button class="btn-conf" onclick="addSkill()">Add to Tree →</button></div>
+  </div>
+</div>
+
+<div class="tt" id="tt"><div class="tt-t" id="tt-t"></div><div class="tt-b" id="tt-b"></div><span class="tt-s" id="tt-s"></span></div>
+
+<script>
+/* ══════════════════════════════════════════
+   GSAP LOADER
+   Key insight: body is already visible.
+   Loader is position:fixed on top.
+   GSAP is loaded synchronously in <head>.
+   We init paths using getTotalLength() which
+   works because the SVG is rendered in DOM.
+══════════════════════════════════════════ */
+(function initLoader() {
+  // Set all branch paths to invisible (dash = full length offset)
+  var paths = document.querySelectorAll('#lsvg .lbr');
+  paths.forEach(function(p) {
+    var len = p.getTotalLength();
+    gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+  });
+
+  // Helper: draw a path
+  function draw(id, dur, delay) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var len = el.getTotalLength();
+    gsap.to(el, { strokeDashoffset: 0, duration: dur, delay: delay, ease: 'power2.inOut' });
+  }
+
+  // Helper: fade in an element
+  function fadeIn(id, dur, delay, scale) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (scale) {
+      gsap.fromTo(el, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: dur, delay: delay, ease: 'back.out(1.7)', transformOrigin: 'center center' });
+    } else {
+      gsap.to(el, { opacity: 1, duration: dur, delay: delay, ease: 'power2.out' });
+    }
+  }
+
+  // ── Root bursts up from bottom ──
+  gsap.fromTo('#ln-root-glow', {opacity:0,scale:0}, {opacity:1,scale:1,duration:0.7,ease:'power2.out',transformOrigin:'300px 505px'});
+  gsap.fromTo('#ln-root',      {opacity:0,scale:0}, {opacity:1,scale:1,duration:0.55,delay:0.06,ease:'back.out(2.2)',transformOrigin:'300px 505px'});
+
+  // ── Trunk grows in 4 segments, bottom→up ──
+  draw('lb-t1', 0.55, 0.12);
+  draw('lb-t2', 0.50, 0.60);
+  draw('lb-t3', 0.45, 1.02);
+  draw('lb-t4', 0.40, 1.40);
+
+  // ── Roots spread downward ──
+  draw('lb-rd1',0.40,0.28); draw('lb-rd2',0.40,0.28);
+  draw('lb-rd3',0.36,0.62); draw('lb-rd4',0.36,0.62);
+  draw('lb-rd5',0.32,0.92); draw('lb-rd6',0.32,0.92);
+  draw('lb-rd7',0.28,1.18); draw('lb-rd8',0.28,1.18);
+
+  // ── Level 1 main branches ──
+  draw('lb-a1',0.52,0.90); draw('lb-a2',0.52,0.90);
+  draw('lb-a3',0.48,1.15); draw('lb-a4',0.48,1.15);
+  draw('lb-a5',0.44,1.38); draw('lb-a6',0.44,1.38);
+
+  // ── Level 2 branches ──
+  var L2=[
+    ['lb-b1',1.38],['lb-b2',1.44],['lb-b3',1.48],
+    ['lb-b4',1.38],['lb-b5',1.44],['lb-b6',1.48],
+    ['lb-b7',1.52],['lb-b8',1.57],['lb-b9',1.61],
+    ['lb-b10',1.52],['lb-b11',1.57],['lb-b12',1.61],
+    ['lb-b13',1.58],['lb-b14',1.63],
+    ['lb-b15',1.58],['lb-b16',1.63],
+    ['lb-b17',1.50],['lb-b18',1.50],['lb-b19',1.55]
+  ];
+  L2.forEach(function(x){draw(x[0],0.38,x[1]);});
+
+  // ── Level 3 twigs ──
+  var L3=[
+    ['lb-c1',1.74],['lb-c2',1.78],['lb-c3',1.82],['lb-c4',1.85],
+    ['lb-c5',1.88],['lb-c6',1.82],['lb-c7',1.86],['lb-c8',1.90],
+    ['lb-c9',1.74],['lb-c10',1.78],['lb-c11',1.82],['lb-c12',1.86],
+    ['lb-c13',1.88],['lb-c14',1.86],['lb-c15',1.90],
+    ['lb-c16',1.70],['lb-c17',1.70],['lb-c18',1.74]
+  ];
+  L3.forEach(function(x){draw(x[0],0.32,x[1]);});
+
+  // ── Level 4 finest twigs ──
+  var L4=[
+    ['lb-d1',2.05],['lb-d2',2.08],['lb-d3',2.11],['lb-d4',2.14],
+    ['lb-d5',2.08],['lb-d6',2.12],['lb-d7',2.15],
+    ['lb-d8',2.05],['lb-d9',2.08],['lb-d10',2.11],['lb-d11',2.14],
+    ['lb-d12',2.08],['lb-d13',2.12],
+    ['lb-d14',2.00],['lb-d15',2.00],['lb-d16',2.04]
+  ];
+  L4.forEach(function(x){draw(x[0],0.28,x[1]);});
+
+  // ── Terminal buds ──
+  for(var i=1;i<=16;i++){
+    fadeIn('ld-'+i, 0.30, 2.30+i*0.04, true);
+  }
+
+  // Wordmark + hint
+  gsap.to('#lword',{opacity:1,duration:0.5,delay:2.28});
+  gsap.to('#lhint',{opacity:1,duration:0.4,delay:2.85});
+
+  // Auto-dismiss
+  gsap.delayedCall(3.8, dismissLoader);
+
+  // Click to skip
+  document.getElementById('loader').addEventListener('click', dismissLoader);
+
+  // Click to skip
+    // Click to skip
+  document.getElementById('loader').addEventListener('click', dismissLoader);
+  document.addEventListener('keydown', dismissLoader, { once: true });
+})();
+
+var _loaderDone = false;
+function dismissLoader() {
+  if (_loaderDone) return;
+  _loaderDone = true;
+  gsap.to('#loader', { opacity: 0, duration: 0.65, ease: 'power2.inOut', onComplete: function() {
+    document.getElementById('loader').style.display = 'none';
+  }});
+}
+
+/* ════ STARS ════ */
+(function() {
+  var w = document.getElementById('starsWrap');
+  for (var i = 0; i < 140; i++) {
+    var s = document.createElement('div'); s.className = 'star';
+    var z = Math.random() * 2.4 + 0.4;
+    s.style.cssText = 'width:'+z+'px;height:'+z+'px;left:'+(Math.random()*100)+'%;top:'+(Math.random()*72)+'%;--d:'+(Math.random()*4+2)+'s;--dl:-'+(Math.random()*6)+'s;--b:'+(Math.random()*.55+.12);
+    w.appendChild(s);
+  }
+})();
+
+/* ════ HEADER ════ */
+window.addEventListener('scroll', function() {
+  document.getElementById('ndHeader').classList.toggle('scrolled', scrollY > 10);
+}, { passive: true });
+
+/* ════ NAV ════ */
+(function() {
+  var b = document.getElementById('ndBurger'), n = document.getElementById('ndNav');
+  function o() { n.classList.add('is-open'); b.classList.add('is-open'); var bd=document.getElementById('ndNavBackdrop'); if(bd)bd.classList.add('is-open'); b.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  function c() { n.classList.remove('is-open'); b.classList.remove('is-open'); var bd=document.getElementById('ndNavBackdrop'); if(bd)bd.classList.remove('is-open'); b.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+  b.addEventListener('click', function() { n.classList.contains('is-open') ? c() : o(); });
+  var x=document.getElementById('ndNavClose'); if(x)x.addEventListener('click',c);
+  var bk=document.getElementById('ndNavBackdrop'); if(bk)bk.addEventListener('click',c);
+  n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});
+  window.addEventListener('resize',function(){if(window.innerWidth>768)c();});
+})();
+
+/* ════ THEME ════ */
+(function() {
+  var t = document.getElementById('themeToggle'), L = localStorage.getItem('ndTheme') === 'light';
+  function ap(l) { document.body.classList.toggle('light', l); if(t)t.classList.toggle('active', l); }
+  ap(L);
+  if (t) t.addEventListener('click', function() { L=!L; localStorage.setItem('ndTheme',L?'light':''); ap(L); });
+})();
+
+/* ════ SCROLL REVEAL ════ */
+new IntersectionObserver(function(es) {
+  es.forEach(function(e) { if(e.isIntersecting){ e.target.classList.add('in'); } });
+}, { threshold: 0.07 }).observe && (function() {
+  var io = new IntersectionObserver(function(es) {
+    es.forEach(function(e) { if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.rv').forEach(function(el) { io.observe(el); });
+})();
+
+/* ════ VIEW TOGGLE ════ */
+var _hannAnimated = false;
+function setView(v) {
+  var hw = document.getElementById('hann-wrap'), ow = document.getElementById('own-wrap');
+  var ph = document.getElementById('pillH'), po = document.getElementById('pillO');
+  if (v === 'hann') {
+    hw.style.display = 'block'; ow.style.display = 'none';
+    ph.classList.add('on'); po.classList.remove('on');
+    if (!_hannAnimated) { _hannAnimated = true; animateHannTree(); }
+  } else {
+    hw.style.display = 'none'; ow.style.display = 'block';
+    ph.classList.remove('on'); po.classList.add('on');
+  }
+}
+
+function animateHannTree() {
+  // Hann tree is now visible (display:block), getTotalLength works
+  var ids = ['hb-trunk','hb-rl','hb-rr','hb-lang','hb-sport','hb-create',
+             'hb-l1','hb-l2','hb-l3','hb-l4','hb-s1','hb-s2','hb-s3',
+             'hb-c1','hb-c2','hb-c3','hb-c4','hb-c5'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id); if(!el) return;
+    var len = el.getTotalLength();
+    gsap.set(el, { strokeDasharray: len, strokeDashoffset: len });
+  });
+  // Now animate
+  gsap.to('#hb-trunk', { strokeDashoffset:0, duration:0.65, delay:0.05, ease:'power2.inOut' });
+  gsap.to('#hb-rl',    { strokeDashoffset:0, duration:0.4,  delay:0.55, ease:'power2.inOut' });
+  gsap.to('#hb-rr',    { strokeDashoffset:0, duration:0.4,  delay:0.55, ease:'power2.inOut' });
+  gsap.to('#hb-lang',  { strokeDashoffset:0, duration:0.6,  delay:0.65, ease:'power2.inOut' });
+  gsap.to('#hb-sport', { strokeDashoffset:0, duration:0.6,  delay:0.65, ease:'power2.inOut' });
+  gsap.to('#hb-create',{ strokeDashoffset:0, duration:0.55, delay:0.65, ease:'power2.inOut' });
+  ['hn-lang','hn-sport','hn-create'].forEach(function(id,i) {
+    gsap.to('#'+id, { opacity:1, scale:1, duration:0.4, delay:1.2+i*0.05, ease:'back.out(1.7)', transformOrigin:'center center' });
+  });
+  var leaves = [
+    ['hb-l1',1.3],['hb-l2',1.38],['hb-l3',1.44],['hb-l4',1.5],
+    ['hb-s1',1.3],['hb-s2',1.38],['hb-s3',1.44],
+    ['hb-c1',1.3],['hb-c2',1.36],['hb-c3',1.41],['hb-c4',1.46],['hb-c5',1.51]
+  ];
+  leaves.forEach(function(l) { gsap.to('#'+l[0], { strokeDashoffset:0, duration:0.38, delay:l[1], ease:'power2.inOut' }); });
+  var nodeDelays = { 'hn-pt':1.68,'hn-fr':1.74,'hn-de':1.8,'hn-jp':1.86,
+                     'hn-hit':1.68,'hn-cal':1.74,'hn-sw':1.8,
+                     'hn-sax':1.68,'hn-pno':1.74,'hn-gtr':1.8,'hn-drw':1.86,'hn-fl':1.92 };
+  Object.keys(nodeDelays).forEach(function(id) {
+    gsap.fromTo('#'+id, { opacity:0, scale:0.5 }, { opacity:1, scale:1, duration:0.35, delay:nodeDelays[id], ease:'back.out(1.5)', transformOrigin:'center center' });
+  });
+}
+
+function pingCard(id) {
+  var c = document.getElementById('cc-'+id); if(!c) return;
+  c.scrollIntoView({ behavior:'smooth', block:'center' });
+  gsap.to(c, { borderColor:'rgba(232,84,26,0.5)', duration:0.2, yoyo:true, repeat:3 });
+}
+
+/* ════ CARD MODE ════ */
+function setCardMode(mode) {
+  var d = document.getElementById('cm-default'), h = document.getElementById('cm-hann');
+  if (mode === 'hann') {
+    document.body.classList.add('cards-hann');
+    h.classList.add('on'); d.classList.remove('on');
+  } else {
+    document.body.classList.remove('cards-hann');
+    d.classList.add('on'); h.classList.remove('on');
+  }
+}
+
+/* ════ OWN TREE ════ */
+var _skills = [];
+var ICONS = { lang:'🌍', sport:'⚡', creative:'✦', mind:'🧠', tech:'💻', other:'✧' };
+var COLS  = { lang:'rgba(100,160,255', sport:'rgba(74,222,128', creative:'rgba(232,84,26', mind:'rgba(167,139,250', tech:'rgba(56,189,248', other:'rgba(245,240,232' };
+
+function addSkill() {
+  var n = document.getElementById('sn').value.trim();
+  if (!n) { toast('Enter a skill name.'); return; }
+  if (!_selC) { toast('Pick a category.'); return; }
+  if (_skills.length >= 18) { toast('Max 18 skills.'); return; }
+  _skills.push({ name:n, cat:_selC, lvl:document.getElementById('sl').value.trim() });
+  closeMd(); renderTags(); rebuildOwn();
+  toast('🌱 '+n+' added to your tree.');
+}
+function removeSkill(i) { _skills.splice(i,1); renderTags(); rebuildOwn(); }
+function renderTags() {
+  var r = document.getElementById('sk-row');
+  if (!_skills.length) { r.innerHTML = '<span class="empty-hint">No skills yet — add your first above ↑</span>'; return; }
+  r.innerHTML = _skills.map(function(s,i) {
+    return '<span class="sk-tag" data-c="'+s.cat+'">'+ICONS[s.cat]+' '+s.name+(s.lvl?' · '+s.lvl:'')+
+           '<button class="sk-rm" onclick="removeSkill('+i+')">✕</button></span>';
+  }).join('');
+}
+function rebuildOwn() {
+  var bg=document.getElementById('ob'), ng=document.getElementById('on');
+  if (!bg||!ng) return;
+  bg.innerHTML=''; ng.innerHTML='';
+  if (!_skills.length) return;
+  var cats={};
+  _skills.forEach(function(s){if(!cats[s.cat])cats[s.cat]=[];cats[s.cat].push(s);});
+  var ck=Object.keys(cats), cx=200, cy=175, total=ck.length, NS='http://www.w3.org/2000/svg';
+  ck.forEach(function(cat,ci) {
+    var angle=(ci/total)*Math.PI*2-Math.PI/2, r=72, bx=cx+Math.cos(angle)*r, by=cy+Math.sin(angle)*r;
+    var col=COLS[cat]||'rgba(245,240,232';
+    var p=document.createElementNS(NS,'path');
+    p.setAttribute('d','M'+cx+','+cy+' Q'+(cx+Math.cos(angle)*r*.4)+','+(cy+Math.sin(angle)*r*.4)+' '+bx+','+by);
+    p.setAttribute('fill','none'); p.setAttribute('stroke',col+',0.55)'); p.setAttribute('stroke-width','2'); p.setAttribute('stroke-linecap','round');
+    bg.appendChild(p);
+    var len=Math.hypot(bx-cx,by-cy);
+    gsap.fromTo(p, { strokeDasharray:len, strokeDashoffset:len }, { strokeDashoffset:0, duration:0.55, delay:ci*0.11, ease:'power2.inOut' });
+    var gc=document.createElementNS(NS,'g'); gc.style.opacity='0';
+    var cc=document.createElementNS(NS,'circle'); cc.setAttribute('cx',bx); cc.setAttribute('cy',by); cc.setAttribute('r','17');
+    cc.setAttribute('fill',col+',0.08)'); cc.setAttribute('stroke',col+',0.45)'); cc.setAttribute('stroke-width','1.3');
+    var ct=document.createElementNS(NS,'text'); ct.setAttribute('x',bx); ct.setAttribute('y',by+1); ct.setAttribute('text-anchor','middle'); ct.setAttribute('dominant-baseline','middle'); ct.setAttribute('font-size','11'); ct.textContent=ICONS[cat];
+    gc.appendChild(cc); gc.appendChild(ct); ng.appendChild(gc);
+    gsap.to(gc, { opacity:1, duration:0.35, delay:ci*0.11+0.32 });
+    var ss=cats[cat];
+    ss.forEach(function(sk,si) {
+      var la=angle+(si-(ss.length-1)/2)*(0.55/Math.max(ss.length,1));
+      var lr=52, lx=bx+Math.cos(la)*lr, ly=by+Math.sin(la)*lr;
+      var lp=document.createElementNS(NS,'path');
+      lp.setAttribute('d','M'+bx+','+by+' L'+lx+','+ly);
+      lp.setAttribute('fill','none'); lp.setAttribute('stroke',col+',0.3)'); lp.setAttribute('stroke-width','1.2'); lp.setAttribute('stroke-linecap','round');
+      bg.appendChild(lp);
+      gsap.fromTo(lp, { strokeDasharray:lr, strokeDashoffset:lr }, { strokeDashoffset:0, duration:0.42, delay:ci*0.11+si*0.09+0.45, ease:'power2.inOut' });
+      var gl=document.createElementNS(NS,'g'); gl.style.opacity='0';
+      var lc=document.createElementNS(NS,'circle'); lc.setAttribute('cx',lx); lc.setAttribute('cy',ly); lc.setAttribute('r','13');
+      lc.setAttribute('fill',col+',0.07)'); lc.setAttribute('stroke',col+',0.38)'); lc.setAttribute('stroke-width','1');
+      var lt=document.createElementNS(NS,'text'); lt.setAttribute('x',lx); lt.setAttribute('y',ly); lt.setAttribute('text-anchor','middle'); lt.setAttribute('dominant-baseline','middle'); lt.setAttribute('font-family',"'Clash Display',sans-serif"); lt.setAttribute('font-size','6.5'); lt.setAttribute('font-weight','300'); lt.setAttribute('fill',col+',0.78)');
+      lt.textContent=sk.name.length>7?sk.name.slice(0,6)+'…':sk.name;
+      gl.appendChild(lc); gl.appendChild(lt); ng.appendChild(gl);
+      gsap.to(gl, { opacity:1, duration:0.3, delay:ci*0.11+si*0.09+0.65 });
+    });
+  });
+}
+
+/* ════ MODAL ════ */
+var _selC = null;
+function openMd() { document.getElementById('md-ov').classList.add('open'); document.getElementById('sn').focus(); }
+function closeMd() {
+  document.getElementById('md-ov').classList.remove('open');
+  document.getElementById('sn').value=''; document.getElementById('sl').value='';
+  document.querySelectorAll('.co').forEach(function(o){o.classList.remove('sel');}); _selC=null;
+}
+function selC(el) { document.querySelectorAll('.co').forEach(function(o){o.classList.remove('sel');}); el.classList.add('sel'); _selC=el.dataset.c; }
+document.addEventListener('keydown', function(e) {
+  if (e.key==='Escape') closeMd();
+  if (e.key==='Enter' && document.getElementById('md-ov').classList.contains('open')) addSkill();
+});
+
+/* ════ TOOLTIP ════ */
+var _tt = document.getElementById('tt');
+function tip(e, t, b, s) {
+  document.getElementById('tt-t').textContent=t;
+  document.getElementById('tt-b').textContent=b;
+  var ts=document.getElementById('tt-s'); ts.className='tt-s '+(s==='a'?'a':'f');
+  ts.textContent=s==='a'?'● Active':s==='f'?'◌ Future':'';
+  _tt.classList.add('vis'); mv(e);
+}
+function ht() { _tt.classList.remove('vis'); }
+function mv(e) { var x=e.clientX+14,y=e.clientY-10; if(x+240>window.innerWidth)x=e.clientX-248; if(y+110>window.innerHeight)y=e.clientY-110; _tt.style.left=x+'px'; _tt.style.top=y+'px'; }
+document.addEventListener('mousemove', function(e){if(_tt.classList.contains('vis'))mv(e);});
+
+/* ════ TOAST ════ */
+function toast(msg) {
+  var t=document.querySelector('.toast');
+  if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(function(){t.classList.remove('show');},2800);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Noodrop</title>
+<meta name="description" content="Research, protocols, and deep dives on nootropics, neuroplasticity, and skillmaxxing.">
+<link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="global.css">
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="i18n.js"></script>
+<style>
+/* ── BLOG PAGE ── */
+.blog-hero {
+  padding: 120px 5% 72px;
+  max-width: 1200px; margin: 0 auto;
+  position: relative;
+}
+.blog-hero__eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--orange);
+  display: block; margin-bottom: 16px;
+}
+.blog-hero__title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 7vw, 5.5rem);
+  font-weight: 300; letter-spacing: -.05em; line-height: .92;
+  color: #F5F0E8; margin-bottom: 20px;
+}
+.blog-hero__title em { font-style: normal; font-weight: 600; color: var(--orange); }
+.blog-hero__sub {
+  font-size: 15px; font-weight: 300; color: rgba(245,240,232,.5);
+  max-width: 460px; line-height: 1.8;
+}
+
+/* ── CATEGORY TABS ── */
+.blog-cats {
+  display: flex; gap: 8px; padding: 0 5%;
+  max-width: 1200px; margin: 0 auto 48px;
+  flex-wrap: wrap;
+}
+.cat-tab {
+  font-family: var(--font-display); font-size: 12px; font-weight: 400;
+  padding: 7px 18px; border-radius: 100px;
+  border: 1px solid rgba(245,240,232,.1);
+  background: transparent; color: rgba(245,240,232,.45);
+  cursor: pointer; transition: all .2s;
+}
+.cat-tab:hover { border-color: rgba(245,240,232,.3); color: rgba(245,240,232,.8); }
+.cat-tab.active {
+  background: rgba(232,84,26,.1); border-color: rgba(232,84,26,.4);
+  color: var(--orange);
+}
+
+/* ── FEATURED POST ── */
+.featured-wrap {
+  padding: 0 5%; max-width: 1200px; margin: 0 auto 56px;
+}
+.featured-post {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  border: 1px solid rgba(245,240,232,.08); border-radius: 20px;
+  overflow: hidden; cursor: pointer;
+  transition: border-color .3s, transform .25s;
+  text-decoration: none;
+}
+.featured-post:hover {
+  border-color: rgba(232,84,26,.3); transform: translateY(-3px);
+}
+.featured-img {
+  aspect-ratio: 16/10; overflow: hidden;
+  background: rgba(245,240,232,.04);
+  position: relative;
+}
+.featured-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .6s ease;
+}
+.featured-post:hover .featured-img img { transform: scale(1.04); }
+.featured-img-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(232,84,26,.08) 0%, rgba(232,84,26,.03) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+.featured-body {
+  padding: 44px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+  background: rgba(245,240,232,.025);
+}
+.post-cat-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 9px; font-weight: 600; letter-spacing: .14em;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+  background: rgba(232,84,26,.1); color: var(--orange);
+  border: 1px solid rgba(232,84,26,.2);
+  margin-bottom: 16px; align-self: flex-start;
+}
+.featured-body h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+  font-weight: 300; letter-spacing: -.035em; line-height: 1.1;
+  color: #F5F0E8; margin-bottom: 14px;
+}
+.featured-body p {
+  font-size: 14px; font-weight: 300; color: rgba(245,240,232,.52);
+  line-height: 1.75; margin-bottom: 24px;
+}
+.post-meta {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 11px; font-weight: 400; color: rgba(245,240,232,.35);
+}
+.post-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(245,240,232,.25); }
+.read-more {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 12px; font-weight: 500;
+  color: var(--orange); margin-top: 20px; transition: gap .2s;
+}
+.featured-post:hover .read-more { gap: 10px; }
+
+/* ── POSTS GRID ── */
+.posts-section {
+  padding: 0 5%; max-width: 1200px; margin: 0 auto 80px;
+}
+.posts-section h3 {
+  font-family: var(--font-display); font-size: 12px; font-weight: 600;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(245,240,232,.35); margin-bottom: 24px;
+}
+.posts-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.post-card {
+  border: 1px solid rgba(245,240,232,.07);
+  border-radius: 16px; overflow: hidden; cursor: pointer;
+  text-decoration: none;
+  transition: border-color .25s, transform .2s, background .25s;
+  background: rgba(245,240,232,.02);
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.post-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--orange), transparent);
+  transform: scaleX(0); transform-origin: left; transition: transform .35s;
+}
+.post-card:hover { border-color: rgba(245,240,232,.16); transform: translateY(-3px); }
+.post-card:hover::after { transform: scaleX(1); }
+.card-img {
+  aspect-ratio: 16/9; overflow: hidden;
+  background: rgba(245,240,232,.03);
+}
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.post-card:hover .card-img img { transform: scale(1.05); }
+.card-img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+  background: linear-gradient(135deg, rgba(232,84,26,.06), rgba(232,84,26,.02));
+}
+.card-body { padding: 20px; flex: 1; display: flex; flex-direction: column; }
+.card-cat {
+  font-size: 9px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 8px;
+}
+.card-title {
+  font-family: var(--font-display); font-size: 15px; font-weight: 400;
+  letter-spacing: -.02em; color: #F5F0E8; line-height: 1.3;
+  margin-bottom: 8px; flex: 1;
+}
+.card-excerpt {
+  font-size: 12px; font-weight: 300; color: rgba(245,240,232,.44);
+  line-height: 1.65; margin-bottom: 14px;
+}
+.card-meta {
+  font-size: 10px; color: rgba(245,240,232,.3);
+  display: flex; align-items: center; gap: 8px;
+}
+
+/* ── EMPTY / LOADING STATES ── */
+.posts-loading {
+  grid-column: 1/-1; text-align: center; padding: 64px 0;
+  color: rgba(245,240,232,.3); font-size: 13px;
+}
+.skeleton-card {
+  border: 1px solid rgba(245,240,232,.06); border-radius: 16px;
+  overflow: hidden; background: rgba(245,240,232,.02);
+}
+.skeleton-img { aspect-ratio: 16/9; background: rgba(245,240,232,.05); animation: shimmer 1.6s infinite; }
+.skeleton-body { padding: 20px; }
+.skeleton-line { height: 10px; border-radius: 100px; background: rgba(245,240,232,.05); animation: shimmer 1.6s infinite; margin-bottom: 10px; }
+.skeleton-line.w60 { width: 60%; }
+.skeleton-line.w80 { width: 80%; }
+.skeleton-line.w40 { width: 40%; }
+@keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+.no-posts {
+  grid-column: 1/-1; text-align: center; padding: 72px 0;
+  color: rgba(245,240,232,.35); font-size: 14px; font-weight: 300;
+  line-height: 1.8;
+}
+.no-posts strong { display: block; font-family: var(--font-display); font-size: 22px; font-weight: 300; color: rgba(245,240,232,.55); margin-bottom: 8px; }
+
+/* ── NEWSLETTER BAND ── */
+.newsletter-band {
+  margin: 0 5% 80px; max-width: 1100px; position: relative;
+  border: 1px solid rgba(232,84,26,.18); border-radius: 20px;
+  padding: 48px 52px;
+  background: rgba(232,84,26,.04);
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  flex-wrap: wrap;
+  overflow: hidden;
+}
+.newsletter-band::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,84,26,.08), transparent 70%);
+  pointer-events: none;
+}
+.nl-text h2 {
+  font-family: var(--font-display); font-size: clamp(1.6rem, 2.5vw, 2rem);
+  font-weight: 300; letter-spacing: -.035em; color: #F5F0E8; margin-bottom: 6px;
+}
+.nl-text h2 strong { font-weight: 600; color: var(--orange); }
+.nl-text p { font-size: 13px; font-weight: 300; color: rgba(245,240,232,.5); }
+.nl-form { display: flex; gap: 10px; flex-shrink: 0; flex-wrap: wrap; }
+.nl-input {
+  font-family: var(--font-display); font-size: 13px; font-weight: 300;
+  padding: 11px 18px; border-radius: 100px;
+  border: 1px solid rgba(245,240,232,.15); background: rgba(245,240,232,.05);
+  color: #F5F0E8; width: 240px;
+  transition: border-color .2s;
+}
+.nl-input::placeholder { color: rgba(245,240,232,.3); }
+.nl-input:focus { outline: none; border-color: rgba(232,84,26,.45); }
+.nl-btn {
+  font-family: var(--font-display); font-size: 13px; font-weight: 500;
+  padding: 11px 24px; border-radius: 100px;
+  background: var(--orange); color: #fff; border: none; cursor: pointer;
+  transition: opacity .2s, transform .15s; flex-shrink: 0;
+}
+.nl-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+/* light mode */
+body.light .blog-hero__title { color: #141412; }
+body.light .featured-body h2 { color: #141412; }
+body.light .card-title { color: #141412; }
+body.light .nl-text h2 { color: #141412; }
+body.light .nl-input { background: rgba(20,20,18,.04); border-color: rgba(20,20,18,.12); color: #141412; }
+body.light .nl-input::placeholder { color: rgba(20,20,18,.3); }
+body.light .post-card { background: #fff; border-color: rgba(20,20,18,.08); }
+body.light .featured-post { border-color: rgba(20,20,18,.08); }
+
+/* responsive */
+@media(max-width:900px) {
+  .featured-post { grid-template-columns: 1fr; }
+  .featured-img { aspect-ratio: 16/7; }
+  .posts-grid { grid-template-columns: 1fr 1fr; }
+  .newsletter-band { flex-direction: column; align-items: flex-start; padding: 32px; }
+}
+@media(max-width:580px) {
+  .posts-grid { grid-template-columns: 1fr; }
+  .nl-input { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="nd-header" id="ndHeader">
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
+  <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
+    <div class="nd-nav-links">
+      <a href="landing.html"      class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"        class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"        class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
+      <a href="skillmaxxing.html" class="nd-nav__link" data-i18n="nav.skillmaxxing">Skillmaxxing<span class="nav-arrow">›</span></a>
+      <a href="blog.html"         class="nd-nav__link active" data-i18n="nav.blog">Blog<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html"  class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"        class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
+    </div>
+  </nav>
+  <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
+  <div class="nd-header__right">
+    <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="blog-hero">
+  <span class="blog-hero__eyebrow" data-i18n="blog.eyebrow">Noodrop · Research & Insights</span>
+  <h1 class="blog-hero__title">Deep dives.<br>Evidence first.<br><em>No fluff.</em></h1>
+  <p class="blog-hero__sub" data-i18n="blog.sub">Research breakdowns, protocol guides, and skillmaxxing science — written for people who actually want to understand what they're putting in their brain.</p>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="blog-cats" id="blogCats">
+  <button class="cat-tab active" data-cat="all" data-i18n="blog.tabAll">All Posts</button>
+  <button class="cat-tab" data-cat="Nootropics" data-i18n="blog.tabNootropics">Nootropics</button>
+  <button class="cat-tab" data-cat="Skillmaxxing" data-i18n="blog.tabSkillmaxxing">Skillmaxxing</button>
+  <button class="cat-tab" data-cat="Science" data-i18n="blog.tabScience">Science</button>
+  <button class="cat-tab" data-cat="Protocols" data-i18n="blog.tabProtocols">Protocols</button>
+</div>
+
+<!-- FEATURED POST -->
+<div class="featured-wrap" id="featuredWrap" style="display:none;">
+  <a class="featured-post" id="featuredPost" href="#">
+    <div class="featured-img" id="featuredImg">
+      <div class="featured-img-placeholder" id="featuredPlaceholder">🧠</div>
+    </div>
+    <div class="featured-body">
+      <span class="post-cat-badge" id="featuredCat">Science</span>
+      <h2 id="featuredTitle">Loading…</h2>
+      <p id="featuredExcerpt"></p>
+      <div class="post-meta">
+        <span id="featuredDate"></span>
+        <span class="post-meta-dot"></span>
+        <span id="featuredRead"></span>
+      </div>
+      <span class="read-more" data-i18n="blog.readArticle">Read article →</span>
+    </div>
+  </a>
+</div>
+
+<!-- POSTS GRID -->
+<div class="posts-section">
+  <h3 id="postsLabel" data-i18n="blog.latestPosts">Latest Posts</h3>
+  <div class="posts-grid" id="postsGrid">
+    <!-- Skeleton loading -->
+    <div class="skeleton-card">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div>
+    </div>
+    <div class="skeleton-card">
+      <div class="skeleton-img"></div>
+      <div class="skeleton-body"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWSLETTER -->
+<div class="newsletter-band" style="margin-left:auto;margin-right:auto;">
+  <div class="nl-text">
+    <h2>Stay <strong>sharp.</strong></h2>
+    <p>New research, protocol updates, and compound breakdowns — straight to your inbox. No spam.</p>
+  </div>
+  <div class="nl-form">
+    <input type="email" class="nl-input" id="nlEmail" placeholder="your@email.com" data-i18n-placeholder="blog.nlPlaceholder"/>
+    <button class="nl-btn" id="nlBtn" data-i18n="blog.nlBtn">Subscribe →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="padding:28px 5%;border-top:1px solid rgba(245,240,232,.05);text-align:center;">
+  <div style="display:flex;justify-content:center;gap:14px;margin-bottom:10px;">
+    <a href="https://x.com/hann_369" target="_blank" rel="noopener" class="social-link" aria-label="X"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+    <a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener" class="social-link" aria-label="YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+  </div>
+  <p style="color:rgba(245,240,232,.26);font-size:12px;">© 2026 Noodrop · Educational purposes only · <a href="impressum.html" style="color:rgba(245,240,232,.26);text-decoration:none;">Impressum</a></p>
+</footer>
+
+<script>
+/* ════ HEADER / NAV / THEME ════ */
+(function(){
+  var h=document.getElementById('ndHeader');
+  window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});
+  var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav');
+  function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+  function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+  b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});
+  var x=document.getElementById('ndNavClose');if(x)x.addEventListener('click',c);
+  var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);
+  n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});
+  window.addEventListener('resize',function(){if(window.innerWidth>768)c();});
+  var t=document.getElementById('themeToggle'),L=localStorage.getItem('ndTheme')==='light';
+  function ap(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);}
+  ap(L);if(t)t.addEventListener('click',function(){L=!L;localStorage.setItem('ndTheme',L?'light':'');ap(L);});
+})();
+
+/* ════ FIRESTORE BLOG ════ */
+var db = firebase.firestore();
+var currentCat = 'all';
+var allPosts = [];
+
+var CAT_EMOJI = {
+  'Nootropics': '⚗️',
+  'Skillmaxxing': '🧠',
+  'Science': '🔬',
+  'Protocols': '📋',
+  'default': '✦'
+};
+
+function formatDate(ts) {
+  if (!ts) return '';
+  var d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+function renderFeatured(post) {
+  var wrap = document.getElementById('featuredWrap');
+  var link = document.getElementById('featuredPost');
+  var ph   = document.getElementById('featuredPlaceholder');
+  link.href = 'post.html?id=' + post.id;
+  document.getElementById('featuredCat').textContent = post.category || 'Research';
+  document.getElementById('featuredTitle').textContent = post.title;
+  document.getElementById('featuredExcerpt').textContent = post.excerpt || '';
+  document.getElementById('featuredDate').textContent = formatDate(post.publishedAt);
+  document.getElementById('featuredRead').textContent = (post.readTime || 5) + ' min read';
+  if (post.coverImage) {
+    var img = document.createElement('img');
+    img.src = post.coverImage; img.alt = post.title;
+    ph.replaceWith(img);
+  } else {
+    ph.textContent = CAT_EMOJI[post.category] || '✦';
+  }
+  wrap.style.display = 'block';
+}
+
+function renderPosts(posts) {
+  var grid = document.getElementById('postsGrid');
+  var label = document.getElementById('postsLabel');
+  if (!posts.length) {
+    grid.innerHTML = '<div class="no-posts"><strong>No posts yet.</strong>Check back soon — first articles are coming.</div>';
+    return;
+  }
+  label.textContent = currentCat === 'all' ? 'All Posts' : currentCat;
+  grid.innerHTML = posts.map(function(p) {
+    var imgHtml = p.coverImage
+      ? '<img src="'+p.coverImage+'" alt="'+p.title+'" loading="lazy"/>'
+      : '<div class="card-img-placeholder">'+(CAT_EMOJI[p.category]||'✦')+'</div>';
+    return '<a class="post-card" href="post.html?id='+p.id+'">'
+      + '<div class="card-img">'+imgHtml+'</div>'
+      + '<div class="card-body">'
+      + '<div class="card-cat">'+(p.category||'Research')+'</div>'
+      + '<div class="card-title">'+p.title+'</div>'
+      + '<div class="card-excerpt">'+(p.excerpt||'')+'</div>'
+      + '<div class="card-meta"><span>'+formatDate(p.publishedAt)+'</span>'
+      + '<span style="opacity:.4">·</span><span>'+(p.readTime||5)+' min</span></div>'
+      + '</div></a>';
+  }).join('');
+}
+
+function loadPosts(cat) {
+  var grid = document.getElementById('postsGrid');
+  grid.innerHTML = '<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w40"></div><div class="skeleton-line w80"></div><div class="skeleton-line w60"></div></div></div>'.repeat(3);
+
+  var query = db.collection('posts').orderBy('publishedAt', 'desc').limit(50);
+  query.get().then(function(snap) {
+    allPosts = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+    var featured = allPosts.find(function(p){ return p.featured; }) || allPosts[0];
+    if (featured && cat === 'all') renderFeatured(featured);
+
+    var filtered = cat === 'all' ? allPosts : allPosts.filter(function(p){ return p.category === cat; });
+    // Remove featured from grid (only on all view)
+    var gridPosts = cat === 'all' && featured
+      ? filtered.filter(function(p){ return p.id !== featured.id; })
+      : filtered;
+    renderPosts(gridPosts);
+  }).catch(function(err) {
+    console.warn('Firestore:', err);
+    // Show demo posts if Firestore fails / is empty
+    renderDemoPosts(cat);
+  });
+}
+
+function renderDemoPosts(cat) {
+  // Demo posts shown before real content exists
+  var demos = [
+    { id:'demo1', title:'Lion\'s Mane & Neuroplasticity: What the Research Actually Says', category:'Nootropics', excerpt:'NGF, BDNF, and the honest dose-response data — cutting through the supplement marketing.', readTime:8, publishedAt:null, featured:true },
+    { id:'demo2', title:'The BDNF Window: Why You Should Study Immediately After HIT', category:'Science', excerpt:'Timing your hardest mental work to the post-exercise BDNF surge is one of the highest-ROI protocols available.', readTime:6, publishedAt:null },
+    { id:'demo3', title:'Bacopa Monnieri: 12 Weeks to Consolidation or a Waste of Money?', category:'Nootropics', excerpt:'The research is solid. The dosing most people use is wrong. Here\'s what the trials actually show.', readTime:7, publishedAt:null },
+    { id:'demo4', title:'Language Acquisition After 18: The Neuroscience of Adult Learning', category:'Skillmaxxing', excerpt:'Critical periods are real but overstated. Adults have specific advantages — here\'s how to leverage them.', readTime:10, publishedAt:null },
+    { id:'demo5', title:'Deep Work Stack: A Protocol for Sustained Cognitive Load', category:'Protocols', excerpt:'L-Theanine, Rhodiola, and session structure — a research-backed protocol for 4+ hour focus sessions.', readTime:5, publishedAt:null },
+    { id:'demo6', title:'Motor Learning & Music: Why Playing Instruments Rewires Everything', category:'Skillmaxxing', excerpt:'Bimanual coordination, cerebellum adaptation, and the surprising link between music and language acquisition.', readTime:9, publishedAt:null },
+  ];
+  var filtered = cat === 'all' ? demos : demos.filter(function(p){ return p.category === cat; });
+  if (filtered.length && cat === 'all') renderFeatured(filtered[0]);
+  var gridPosts = cat === 'all' ? filtered.slice(1) : filtered;
+  renderPosts(gridPosts.map(function(p){ return Object.assign({publishedAt:{toDate:function(){return new Date('2026-03-01');}}}, p); }));
+}
+
+// Init
+loadPosts('all');
+
+// Category tabs
+document.getElementById('blogCats').addEventListener('click', function(e) {
+  var btn = e.target.closest('.cat-tab'); if (!btn) return;
+  document.querySelectorAll('.cat-tab').forEach(function(t){ t.classList.remove('active'); });
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  if (currentCat !== 'all') document.getElementById('featuredWrap').style.display = 'none';
+  loadPosts(currentCat);
+});
+
+// Newsletter
+document.getElementById('nlBtn').addEventListener('click', function() {
+  var email = document.getElementById('nlEmail').value.trim();
+  if (!email || !email.includes('@')) { showToast('Enter a valid email.'); return; }
+  db.collection('subscribers').add({ email: email, createdAt: firebase.firestore.FieldValue.serverTimestamp() })
+    .then(function(){ showToast('✓ Subscribed! Welcome to the lab.'); document.getElementById('nlEmail').value=''; })
+    .catch(function(){ showToast('✓ Noted — will reach out soon.'); document.getElementById('nlEmail').value=''; });
+});
+
+function showToast(msg) {
+  var t = document.querySelector('.nd-toast');
+  if(!t){t=document.createElement('div');t.className='nd-toast';t.style.cssText='position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(12px);background:#1C1C1A;border:1px solid rgba(232,84,26,.26);color:rgba(245,240,232,.8);font-family:inherit;font-size:13px;font-weight:300;padding:11px 22px;border-radius:100px;z-index:9999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;';document.body.appendChild(t);}
+  t.textContent=msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t); t._t=setTimeout(function(){ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(12px)'; }, 2800);
+}
+</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}
+/* ── i18n init ── */
+document.addEventListener('DOMContentLoaded', function() {
+  i18n.init();
+  // Re-render dynamic content with translated strings on language change
+  document.addEventListener('nd:translated', function() {
+    document.getElementById('postsLabel').textContent = i18n.t(
+      currentCat === 'all' ? 'blog.latestPosts' : 'blog.tab' + currentCat
+    );
+  });
+});
+</script>
+</body>
+</html>

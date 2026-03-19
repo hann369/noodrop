@@ -1,724 +1,1407 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.fontshare.com">
-  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="global.css">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
-  <title>Noodrop - Enhance Your Mind</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Observer.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noodrop — Brain Health Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg:       #F7F4EF;   /* warm off-white */
+  --bg-2:     #EDE9E2;   /* slightly darker surface */
+  --bg-3:     #E4DFD6;   /* card borders / dividers */
+  --ink:      #141412;   /* near-black text */
+  --ink-2:    #4A4844;   /* secondary text */
+  --ink-3:    #8A8680;   /* muted */
+  --orange:   #E8541A;
+  --orange-2: #F0703A;
+  --orange-d: rgba(232,84,26,0.10);
+  --dark:     #141412;   /* dark section bg */
+  --dark-2:   #1E1E1B;
+  --font:     'Clash Display', sans-serif;
+  --ease:     cubic-bezier(0.16,1,0.3,1);
+  --r:        16px;      /* border radius */
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
+body {
+  font-family: var(--font);
+  font-weight: 300;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-  <style>
-    :root {
-      --cream: #e8d8c9;
-      --slate: #4b607f;
-      --orange: #f3701e;
-      --white: #ffffff;
-      --dark-slate: #2c3e50;
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --glass-bg: rgba(255,255,255,0.7);
-    }
+/* ── PARTICLES (hero only) ── */
+#particles-js {
+  position: absolute; inset: 0;
+  z-index: 0; pointer-events: none;
+  border-radius: 0 0 32px 32px;
+  overflow: hidden;
+}
 
-    * { box-sizing: border-box; }
+/* ── NAV ── */
+nav {
+  position: fixed; inset: 0 0 auto; z-index: 900;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 52px; height: 60px;
+  transition: background .35s, border-color .35s, box-shadow .35s;
+}
+nav.scrolled {
+  background: rgba(247,244,239,0.88);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--bg-3);
+  box-shadow: 0 1px 0 var(--bg-3);
+}
+.nav-logo {
+  font-size: 17px; font-weight: 600; letter-spacing: -.02em;
+  color: var(--ink); text-decoration: none;
+  display: flex; align-items: center; gap: 7px;
+}
+.nav-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+.nav-links { display: flex; gap: 4px; list-style: none; }
+.nav-links a {
+  font-size: 13px; font-weight: 400; color: var(--ink-2);
+  text-decoration: none; padding: 6px 12px; border-radius: 8px;
+  transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--ink); background: var(--bg-2); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.nav-login {
+  font-size: 13px; font-weight: 400; color: var(--ink-2);
+  text-decoration: none; transition: color .2s;
+}
+.nav-login:hover { color: var(--ink); }
+.btn {
+  display: inline-block; font-family: var(--font);
+  font-size: 13px; font-weight: 500; letter-spacing: .01em;
+  padding: 9px 22px; border-radius: 100px; border: none;
+  cursor: pointer; text-decoration: none;
+  transition: opacity .2s, transform .18s var(--ease);
+}
+.btn:hover { opacity: .88; transform: translateY(-1px); }
+.btn-orange { background: var(--orange); color: #fff; }
+.btn-outline {
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--bg-3);
+}
+.btn-outline:hover { border-color: var(--ink-3); }
 
-    body {
-      font-family: 'Tabular', sans-serif;
-      background: var(--white);
-      color: var(--dark-slate);
-      margin: 0; padding: 0;
-      height: 100vh;
-      overflow: hidden;
-    }
+/* Mobile nav burger */
+.nav-burger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 6px;
+}
+.nav-burger span { display: block; width: 20px; height: 1.5px; background: var(--ink-2); border-radius: 2px; }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      width: 90%;
-      opacity: 0;
-      visibility: hidden;
-    }
+/* ── HERO ── */
+.hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  background: var(--dark);
+  border-radius: 0 0 32px 32px;
+  overflow: hidden;
+}
+.hero-kicker {
+  font-size: 11px; font-weight: 500; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--orange);
+  margin-bottom: 32px;
+  opacity: 0; animation: fadeUp .8s var(--ease) .05s forwards;
+}
+.hero-h1 {
+  font-size: clamp(52px, 8vw, 108px);
+  font-weight: 300; letter-spacing: -.05em; line-height: .92;
+  color: #F7F4EF; max-width: 860px;
+  margin-bottom: 28px;
+  opacity: 0; animation: fadeUp .95s var(--ease) .15s forwards;
+}
+.hero-h1 em { font-style: normal; font-weight: 600; }
+.hero-h1 .accent { color: var(--orange); }
+.hero-sub {
+  font-size: 16px; font-weight: 300;
+  color: rgba(247,244,239,.45);
+  max-width: 420px; line-height: 1.75;
+  margin-bottom: 48px;
+  opacity: 0; animation: fadeUp .9s var(--ease) .28s forwards;
+}
+.hero-btns {
+  display: flex; gap: 10px; margin-bottom: 72px;
+  opacity: 0; animation: fadeUp .9s var(--ease) .4s forwards;
+}
+.hero-btns .btn { padding: 12px 28px; font-size: 14px; }
+.btn-outline-light {
+  background: transparent; color: rgba(247,244,239,.65);
+  border: 1px solid rgba(247,244,239,.15);
+  font-family: var(--font);
+}
+.btn-outline-light:hover { color: #F7F4EF; border-color: rgba(247,244,239,.35); }
 
-    /* ── Overlay ── */
-    .shape-overlays {
-      width: 100%; height: 100%;
-      position: fixed; top: 0; left: 0;
-      z-index: 1000; cursor: pointer;
-    }
-    .shape-overlays__path { mix-blend-mode: screen; }
+.hero-stats {
+  display: flex; align-items: center;
+  opacity: 0; animation: fadeUp .9s var(--ease) .52s forwards;
+}
+.hstat { padding: 0 32px; text-align: center; }
+.hstat+.hstat { border-left: 1px solid rgba(247,244,239,.08); }
+.hstat-n { font-size: 28px; font-weight: 300; letter-spacing: -.04em; color: #F7F4EF; display: block; }
+.hstat-l { font-size: 10px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(247,244,239,.35); margin-top: 4px; display: block; }
 
-    /* ── Header ── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
-    /* right‑side header controls */
+/* ── INTRO OVERLAY ── */
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+#intro-top, #intro-bottom {
+  position: absolute; left: 0; right: 0; height: 50%;
+  background: #0E0E0C;
+  transition: transform 1.1s cubic-bezier(0.76,0,0.24,1);
+}
+#intro-top    { top: 0;    transform: translateY(0); }
+#intro-bottom { bottom: 0; transform: translateY(0); }
+#intro-overlay.open #intro-top    { transform: translateY(-100%); }
+#intro-overlay.open #intro-bottom { transform: translateY(100%); }
 
-    /* ── GSAP Section base ── */
-    section {
-      height: 100%; width: 100%;
-      position: fixed; top: 0; visibility: hidden;
-    }
-    .outer, .inner {
-      width: 100%; height: 100%;
-      position: relative; overflow: hidden;
-    }
-    .bg {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      padding: 2rem;
-    }
+#intro-wordmark {
+  position: relative; z-index: 1;
+  font-family: var(--font);
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 600; letter-spacing: -.04em;
+  color: #F7F4EF;
+  display: flex; align-items: center; gap: 10px;
+  opacity: 1; transition: opacity .35s ease .25s;
+}
+#intro-overlay.open #intro-wordmark { opacity: 0; }
 
-    /* ══════════════════════════════════════
-       SECTION 1 – HERO
-    ══════════════════════════════════════ */
-    .bg-hero {
-      background: var(--white);
-      flex-direction: column;
-      text-align: center;
-    }
-    .hero-eyebrow {
-      font-size: 0.72rem;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 1.2rem;
-      font-weight: 600;
-    }
-    .hero h1 {
-      font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 700;
-      color: var(--slate);
-      margin-bottom: 1.2rem;
-      line-height: 1.1;
-    }
-    .hero h1 em {
-      font-style: normal;
-      color: var(--orange);
-    }
-    .hero p {
-      font-size: 1.1rem;
-      color: #6a7a8a;
-      max-width: 600px;
-      margin: 0 auto 2.5rem;
-      line-height: 1.75;
-    }
-    .hero-cta {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      background: var(--orange);
-      color: white; border: none;
-      padding: 0.9rem 2rem;
-      border-radius: 50px; font-weight: 600;
-      cursor: pointer; font-size: 1rem;
-      text-decoration: none;
-      transition: all 0.3s;
-      box-shadow: 0 4px 20px rgba(243,112,30,0.35);
-      display: inline-block;
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(243,112,30,0.45);
-    }
-    .btn-ghost {
-      background: transparent;
-      color: var(--slate);
-      border: 1.5px solid var(--cream);
-      padding: 0.9rem 2rem;
-      border-radius: 50px; font-weight: 600;
-      cursor: pointer; font-size: 1rem;
-      text-decoration: none;
-      transition: all 0.3s;
-      display: inline-block;
-    }
-    .btn-ghost:hover {
-      border-color: var(--slate);
-      transform: translateY(-2px);
-    }
-    /* Scroll hint */
-    .scroll-hint {
-      position: absolute;
-      bottom: 2.5rem; left: 50%;
-      transform: translateX(-50%);
-      display: flex; flex-direction: column;
-      align-items: center; gap: 0.5rem;
-      opacity: 0.45;
-      animation: bounceHint 2s ease-in-out infinite;
-    }
-    .scroll-hint span {
-      font-size: 0.65rem;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--slate);
-    }
-    .scroll-arrow {
-      width: 20px; height: 20px;
-      border-right: 1.5px solid var(--slate);
-      border-bottom: 1.5px solid var(--slate);
-      transform: rotate(45deg);
-    }
-    @keyframes bounceHint {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(6px); }
-    }
+#intro-pip {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--orange);
+  animation: pipPulse 1s ease-in-out infinite alternate;
+}
+@keyframes pipPulse {
+  from { transform: scale(1);    opacity: .7; }
+  to   { transform: scale(1.4);  opacity: 1;  }
+}
 
-    /* ══════════════════════════════════════
-       SECTION 2 – AMBIENT VIDEO
-    ══════════════════════════════════════ */
-    .bg-cinema {
-      background: #0d0d0d;
-      flex-direction: column;
-      overflow: hidden;
-    }
+/* freeze hero children while overlay is visible */
+body.intro-active .hero-kicker,
+body.intro-active .hero-h1,
+body.intro-active .hero-sub,
+body.intro-active .hero-btns,
+body.intro-active .hero-stats { animation: none; opacity: 0; }
 
-    /* Radial ambient glow – pulses */
-    .cinema-glow {
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% 55%, rgba(243,112,30,0.13) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 30% 20%, rgba(232,216,201,0.05) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 70% 80%, rgba(243,112,30,0.06) 0%, transparent 60%);
-      animation: glowPulse 5s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes glowPulse {
-      0%, 100% { opacity: 0.8; }
-      50% { opacity: 1; }
-    }
+/* re-trigger staggered once done */
+body.intro-done .hero-kicker { animation: fadeUp .8s var(--ease) .08s  forwards; }
+body.intro-done .hero-h1     { animation: fadeUp .9s var(--ease) .20s  forwards; }
+body.intro-done .hero-sub    { animation: fadeUp .9s var(--ease) .36s  forwards; }
+body.intro-done .hero-btns   { animation: fadeUp .9s var(--ease) .48s  forwards; }
+body.intro-done .hero-stats  { animation: fadeUp .9s var(--ease) .60s  forwards; }
 
-    /* Subtle grain overlay */
-    .cinema-grain {
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      opacity: 0.4;
-    }
+/* ── SHARED ── */
+.section { padding: 100px 52px; max-width: 1160px; margin: 0 auto; position: relative; z-index: 1; }
+.section-sm { padding: 80px 52px; max-width: 1160px; margin: 0 auto; }
+.divider { height: 1px; background: var(--bg-3); max-width: 1160px; margin: 0 auto; }
+.eyebrow { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; display: block; }
+.section-h2 { font-size: clamp(36px, 4vw, 54px); font-weight: 300; letter-spacing: -.04em; line-height: 1.05; color: var(--ink); margin-bottom: 16px; }
+.section-h2 em { font-style: normal; font-weight: 600; }
+.section-sub { font-size: 15px; font-weight: 300; color: var(--ink-2); line-height: 1.75; max-width: 480px; }
 
-    .cinema-content {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 1000px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-    }
+/* reveal */
+.r { opacity: 0; transform: translateY(16px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.r.in { opacity: 1; transform: none; }
+.d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}.d4{transition-delay:.24s}.d5{transition-delay:.30s}
 
-    /* Title above video */
-    .cinema-header {
-      text-align: center;
-    }
-    .cinema-label {
-      font-size: 0.68rem;
-      letter-spacing: 5px;
-      text-transform: uppercase;
-      color: var(--orange);
-      opacity: 0.9;
-      margin-bottom: 0.75rem;
-    }
-    .cinema-title {
-      font-size: clamp(1.6rem, 3.5vw, 2.8rem);
-      font-weight: 700;
-      color: #f0ebe5;
-      line-height: 1.15;
-    }
-    .cinema-title em {
-      font-style: normal;
-      color: var(--orange);
-    }
+/* ── BENTO GRID — brain visual + intro ── */
+.bento { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bento-card {
+  background: var(--bg-2);
+  border: 1px solid var(--bg-3);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.bento-card.dark {
+  background: var(--dark);
+  border-color: transparent;
+}
+.bento-card.span2 { grid-column: span 2; }
+.bento-pad { padding: 36px; }
 
-    /* The video frame */
-    .video-frame-wrap {
-      width: 100%;
-      position: relative;
-    }
+/* brain canvas card */
+.brain-canvas-box {
+  position: relative; height: 380px;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+}
+#brain-canvas { display: block; }
+.brain-label {
+  position: absolute;
+  font-size: 11px; font-weight: 400; letter-spacing: .02em;
+  color: rgba(247,244,239,.35); line-height: 1.5;
+}
+.brain-label span { display: block; font-size: 13px; font-weight: 400; color: rgba(247,244,239,.7); margin-bottom: 2px; }
+.bl-tl { top: 24px; left: 28px; }
+.bl-tr { top: 24px; right: 28px; text-align: right; }
+.bl-bl { bottom: 24px; left: 28px; }
+.bl-br { bottom: 24px; right: 28px; text-align: right; }
 
-    /* Orange glow ring around video */
-    .video-glow-ring {
-      position: absolute;
-      inset: -18px;
-      border-radius: 28px;
-      background: transparent;
-      box-shadow:
-        0 0 60px 8px rgba(243,112,30,0.18),
-        0 0 120px 20px rgba(243,112,30,0.08),
-        inset 0 0 40px rgba(243,112,30,0.04);
-      animation: ringPulse 4s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 0;
-    }
-    @keyframes ringPulse {
-      0%, 100% { box-shadow: 0 0 60px 8px rgba(243,112,30,0.18), 0 0 120px 20px rgba(243,112,30,0.08); }
-      50% { box-shadow: 0 0 80px 14px rgba(243,112,30,0.28), 0 0 160px 30px rgba(243,112,30,0.12); }
-    }
+/* stat bento cards */
+.bento-stat-n { font-size: 48px; font-weight: 300; letter-spacing: -.04em; color: var(--ink); line-height: 1; margin-bottom: 8px; }
+.bento-stat-l { font-size: 12px; font-weight: 400; color: var(--ink-3); letter-spacing: .02em; }
 
-    .video-frame {
-      position: relative;
-      z-index: 1;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(243,112,30,0.2);
-      box-shadow:
-        0 30px 80px rgba(0,0,0,0.6),
-        0 0 0 1px rgba(255,255,255,0.04);
-    }
-    .video-aspect {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-    }
-    .video-aspect iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: none;
-    }
+/* ── PILLARS ── */
+.pillars-grid { display: grid; grid-template-columns: repeat(5,1fr); border-top: 1px solid var(--bg-3); margin-top: 56px; }
+.pillar {
+  padding: 36px 24px 36px 0;
+  border-right: 1px solid var(--bg-3);
+}
+.pillar:first-child { padding-left: 0; }
+.pillar:not(:first-child) { padding-left: 24px; }
+.pillar:last-child { border-right: none; }
+.pillar-n { font-size: 10px; font-weight: 600; font-style: italic; color: var(--orange); letter-spacing: .06em; margin-bottom: 20px; display: block; }
+.pillar-t { font-size: 17px; font-weight: 500; letter-spacing: -.02em; color: var(--ink); margin-bottom: 10px; line-height: 1.2; }
+.pillar-d { font-size: 12px; font-weight: 300; color: var(--ink-2); line-height: 1.65; margin-bottom: 20px; }
+.pillar-tag { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
 
-    /* Caption below video */
-    .cinema-caption {
-      text-align: center;
-      color: rgba(240,235,229,0.45);
-      font-size: 0.82rem;
-      letter-spacing: 1px;
-    }
-    .cinema-caption a {
-      color: var(--orange);
-      text-decoration: none;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-    }
-    .cinema-caption a:hover { opacity: 1; }
+/* ── THREATS SECTION — dark bg ── */
+.threats-section {
+  background: var(--dark);
+  border-radius: 24px;
+  margin: 0 52px;
+  padding: 72px 56px;
+  position: relative; z-index: 1;
+}
+.threats-h2 { font-size: clamp(32px, 3.5vw, 48px); font-weight: 300; letter-spacing: -.04em; line-height: 1.05; color: #F7F4EF; margin-bottom: 8px; }
+.threats-h2 em { font-style: normal; font-weight: 600; }
+.threats-sub { font-size: 14px; font-weight: 300; color: rgba(247,244,239,.4); max-width: 440px; line-height: 1.7; margin-bottom: 56px; }
+.threats-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border-top: 1px solid rgba(247,244,239,.07);
+  border-left: 1px solid rgba(247,244,239,.07);
+}
+.threat-card {
+  padding: 32px 28px;
+  border-right: 1px solid rgba(247,244,239,.07);
+  border-bottom: 1px solid rgba(247,244,239,.07);
+}
+.threat-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(232,84,26,.12); border: 1px solid rgba(232,84,26,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; margin-bottom: 18px; color: var(--orange);
+}
+.threat-t { font-size: 16px; font-weight: 500; letter-spacing: -.02em; color: #F7F4EF; margin-bottom: 8px; }
+.threat-d { font-size: 13px; font-weight: 300; color: rgba(247,244,239,.4); line-height: 1.7; }
+.threat-badge {
+  display: inline-block; margin-top: 16px;
+  font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--orange); border: 1px solid rgba(232,84,26,.2);
+  padding: 3px 9px; border-radius: 100px;
+}
 
-    /* ══════════════════════════════════════
-       SECTION 3 – REVIEWS
-    ══════════════════════════════════════ */
-    .bg-reviews {
-      background: #fdfaf7;
-      flex-direction: column;
-    }
-    .section-title {
-      font-size: clamp(1.6rem, 3vw, 2.2rem);
-      font-weight: 700;
-      color: var(--slate);
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .reviews-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-      max-width: 1000px;
-    }
-    .review-card {
-      background: var(--glass-bg);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid var(--cream);
-      box-shadow: var(--shadow);
-      text-align: center;
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .review-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-    }
-    .reviewer-avatar {
-      width: 72px; height: 72px; border-radius: 50%;
-      margin: 0 auto 1rem;
-      background: var(--cream);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem;
-    }
-    .reviewer-name { font-weight: 700; color: var(--slate); margin-bottom: 0.25rem; }
-    .review-date { font-size: 0.78rem; color: #999; margin-bottom: 0.75rem; }
-    .review-stars { color: #f59e0b; margin-bottom: 0.75rem; letter-spacing: 2px; }
-    .review-content { font-style: italic; color: #5a6a7a; line-height: 1.65; font-size: 0.92rem; }
+/* ── COMPOUND STRIP ── */
+.compound-strip {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border-top: 1px solid var(--bg-3);
+}
+.c-cell {
+  padding: 32px 28px 32px 0;
+  border-right: 1px solid var(--bg-3);
+  border-bottom: 1px solid var(--bg-3);
+  text-decoration: none; color: inherit; display: block;
+  transition: background .2s;
+}
+.c-cell:hover { background: var(--bg-2); }
+.c-cell:nth-child(3n) { border-right: none; padding-right: 0; }
+.c-cell:nth-child(n+4) { border-bottom: none; }
+.c-tag { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; display: block; }
+.c-name { font-size: 20px; font-weight: 500; letter-spacing: -.025em; color: var(--ink); margin-bottom: 4px; }
+.c-aka { font-size: 11px; font-weight: 300; color: var(--ink-3); font-style: italic; margin-bottom: 12px; }
+.c-desc { font-size: 13px; font-weight: 300; color: var(--ink-2); line-height: 1.65; margin-bottom: 18px; }
+.c-meta { display: flex; align-items: center; gap: 10px; }
+.c-bar { display: flex; gap: 3px; }
+.c-bar span { width: 14px; height: 2px; border-radius: 2px; background: var(--bg-3); display: block; }
+.c-bar span.on { background: var(--orange); }
+.c-bar span.h { background: rgba(232,84,26,.4); }
+.c-ev { font-size: 11px; font-weight: 300; color: var(--ink-3); }
+.see-all-link {
+  font-size: 12px; font-weight: 400; color: var(--ink-3);
+  text-decoration: none; letter-spacing: .03em;
+  border-bottom: 1px solid var(--bg-3); padding-bottom: 1px;
+  transition: color .2s, border-color .2s; white-space: nowrap;
+}
+.see-all-link:hover { color: var(--ink); border-color: var(--ink-3); }
 
-    /* ══════════════════════════════════════
-       SECTION 4 – CTA + FOOTER
-    ══════════════════════════════════════ */
-    .bg-cta {
-      background: var(--white);
-      flex-direction: column;
-      justify-content: center;
-    }
-    .cta-box {
-      text-align: center;
-      background: linear-gradient(135deg, #fff, #fdf7f2);
-      border-radius: 22px;
-      padding: 3.5rem 3rem;
-      border: 1px solid var(--cream);
-      box-shadow: var(--shadow);
-      max-width: 650px;
-      width: 100%;
-    }
-    .cta-box h2 {
-      font-size: 2rem; font-weight: 700;
-      color: var(--slate); margin-bottom: 0.75rem;
-    }
-    .cta-box p { color: #6a7a8a; margin-bottom: 2rem; line-height: 1.7; }
-    .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+/* ── STACK BUILDER SECTION ── */
+.stack-section {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+}
+.stack-widget {
+  background: #fff;
+  border: 1px solid var(--bg-3);
+  border-radius: var(--r); overflow: hidden;
+  box-shadow: 0 8px 40px rgba(20,20,18,.06);
+}
+.sw-head {
+  padding: 14px 18px; border-bottom: 1px solid var(--bg-3);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg);
+}
+.sw-title { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.sw-badge { font-size: 10px; font-weight: 600; color: var(--orange); background: var(--orange-d); padding: 3px 9px; border-radius: 100px; }
+.sw-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 18px; border-bottom: 1px solid var(--bg-3);
+  transition: background .15s;
+}
+.sw-row:last-of-type { border-bottom: none; }
+.sw-row:hover { background: var(--bg); }
+.sw-left { display: flex; align-items: center; gap: 9px; }
+.sw-pip { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.pa { background: var(--orange); } .pb { background: #6EA8E8; } .pc { background: #72C88C; } .pd { background: #C8A860; }
+.sw-name { font-size: 13px; font-weight: 400; color: var(--ink); }
+.sw-dose { font-size: 11px; font-weight: 300; color: var(--ink-3); }
+.sw-foot {
+  padding: 13px 18px; background: var(--bg);
+  border-top: 1px solid var(--bg-3);
+  font-size: 11px; font-weight: 400; color: var(--ink-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.sw-foot::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #72C88C; flex-shrink: 0; }
 
-    footer {
-      margin-top: 3rem;
-      text-align: center;
-      padding-top: 2rem;
-      border-top: 1px solid var(--cream);
-      color: var(--slate);
-      width: 100%;
-    }
-    .social-links {
-      display: flex; justify-content: center;
-      gap: 1.5rem; margin-bottom: 1rem;
-    }
-    .social-link {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--cream); color: var(--slate);
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; transition: all 0.3s;
-    }
-    .social-link:hover {
-      background: var(--orange); color: white;
-      transform: translateY(-3px);
-    }
+/* ── TESTIMONIALS ── */
+.tgrid { display: grid; grid-template-columns: repeat(3,1fr); border-top: 1px solid var(--bg-3); margin-top: 48px; }
+.tcard { padding: 36px 28px 36px 0; border-right: 1px solid var(--bg-3); }
+.tcard:last-child { border-right: none; padding-right: 0; }
+.tq { font-size: 14px; font-weight: 300; font-style: italic; color: var(--ink-2); line-height: 1.75; margin-bottom: 24px; }
+.tauthor { display: flex; align-items: center; gap: 10px; }
+.tav {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--orange-d); border: 1px solid rgba(232,84,26,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 600; color: var(--orange); flex-shrink: 0;
+}
+.tan { font-size: 13px; font-weight: 500; color: var(--ink); }
+.tar { font-size: 11px; font-weight: 300; color: var(--ink-3); }
 
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--slate);
-    }
+/* ── CLOSING ── */
+.closing-section {
+  background: var(--dark); border-radius: 24px;
+  margin: 0 52px 80px; padding: 96px 56px;
+  text-align: center; position: relative; z-index: 1; overflow: hidden;
+}
+.closing-section::before {
+  content: ''; position: absolute;
+  top: -120px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(232,84,26,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.closing-h2 { font-size: clamp(40px, 5.5vw, 72px); font-weight: 300; letter-spacing: -.045em; line-height: .94; color: #F7F4EF; margin-bottom: 20px; position: relative; }
+.closing-h2 em { font-style: normal; font-weight: 600; }
+.closing-p { font-size: 15px; font-weight: 300; color: rgba(247,244,239,.4); line-height: 1.75; max-width: 400px; margin: 0 auto 40px; }
+.closing-note { font-size: 11px; font-weight: 300; color: rgba(247,244,239,.25); letter-spacing: .04em; margin-top: 16px; }
 
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0; right: 0;
-        background: var(--bg);
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
-      }
-      nav.open { display: flex; }
-      .hero h1 { font-size: 2rem; }
-      .cinema-title { font-size: 1.4rem; }
-      .reviews-grid { grid-template-columns: 1fr; }
-    }
-  
-    
+/* ── FOOTER ── */
+footer {
+  padding: 28px 52px; display: flex;
+  align-items: center; justify-content: space-between;
+  border-top: 1px solid var(--bg-3);
+}
+.footer-logo { font-size: 14px; font-weight: 600; letter-spacing: -.01em; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.fcopy { font-size: 12px; font-weight: 300; color: var(--ink-3); }
+.flinks { display: flex; gap: 20px; list-style: none; }
+.flinks a { font-size: 12px; font-weight: 300; color: var(--ink-3); text-decoration: none; transition: color .2s; }
+.flinks a:hover { color: var(--ink); }
 
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .nav-burger { display: flex; }
+  .section, .section-sm { padding-left: 20px; padding-right: 20px; }
+  .threats-section, .closing-section { margin-left: 16px; margin-right: 16px; padding: 48px 24px; }
+  .bento { grid-template-columns: 1fr; }
+  .bento-card.span2 { grid-column: span 1; }
+  .pillars-grid { grid-template-columns: 1fr 1fr; }
+  .pillar { padding-left: 0 !important; padding-right: 0 !important; border-right: none; border-bottom: 1px solid var(--bg-3); }
+  .pillar:last-child { border-bottom: none; }
+  .threats-grid, .compound-strip, .tgrid { grid-template-columns: 1fr; }
+  .threat-card, .c-cell, .tcard { border-right: none !important; padding-right: 0; }
+  .stack-section { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 16px; padding: 24px 20px; }
+  .brain-canvas-box { height: 240px; }
+  .bl-tr, .bl-br { display: none; }
+}
+
+/* ── CUSTOM CURSOR ── */
+*, *::before, *::after { cursor: none !important; }
+#cursor-dot {
+  position: fixed; z-index: 9999; pointer-events: none;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--orange);
+  transform: translate(-50%, -50%);
+  transition: transform .08s, opacity .2s;
+  mix-blend-mode: normal;
+}
+#cursor-ring {
+  position: fixed; z-index: 9998; pointer-events: none;
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1.5px solid rgba(232,84,26, .5);
+  transform: translate(-50%, -50%);
+  transition: width .22s, height .22s, border-color .22s, opacity .2s;
+}
+#cursor-dot.is-hover  { transform: translate(-50%,-50%) scale(2.2); opacity: .7; }
+#cursor-ring.is-hover { width: 52px; height: 52px; border-color: rgba(232,84,26,.85); }
+#cursor-dot.is-click  { transform: translate(-50%,-50%) scale(.4); }
+@media (hover: none) { #cursor-dot, #cursor-ring { display: none; } }
+
+/* ── LANGUAGE SWITCHER ── */
+#nd-lang-switcher {
+  display: flex; align-items: center; gap: 2px;
+  margin-right: 6px;
+}
+#nd-lang-switcher button {
+  background: none; border: none; cursor: none !important;
+  font-size: 12px; font-weight: 400; letter-spacing: .04em;
+  padding: 4px 7px; border-radius: 6px;
+  color: var(--ink-3);
+  transition: color .15s, background .15s;
+  font-family: var(--font); line-height: 1;
+}
+#nd-lang-switcher button:hover { color: var(--ink); background: var(--bg-2); }
+#nd-lang-switcher button.nd-lang-active {
+  color: var(--orange); background: rgba(232,84,26,.08);
+}
 </style>
 </head>
 <body>
 
-  <!-- Loading overlay -->
-  <svg class="shape-overlays" viewBox="0 0 100 100" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#ff8709"/>
-        <stop offset="100%" stop-color="#f7bdf8"/>
-      </linearGradient>
-      <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#ffd9b0"/>
-        <stop offset="100%" stop-color="#ff8709"/>
-      </linearGradient>
-    </defs>
-    <path class="shape-overlays__path" fill="url(#gradient2)"></path>
-    <path class="shape-overlays__path" fill="url(#gradient1)"></path>
-  </svg>
+<!-- INTRO OVERLAY -->
+<div id="intro-overlay">
+  <div id="intro-top"></div>
+  <div id="intro-bottom"></div>
+  <div id="intro-wordmark">
+    <div id="intro-pip"></div>noodrop
+  </div>
+</div>
 
+<!-- NAV -->
+<nav id="nav">
+  <a href="landing.html" class="nav-logo"><span class="nav-pip"></span>noodrop</a>
+  <ul class="nav-links">
+    <li><a href="index.html" data-i18n="nav.library">Library</a></li>
+    <li><a href="stack.html" data-i18n="nav.stacks">Stacks</a></li>
+    <li><a href="skillmaxxing.html" data-i18n="nav.skillmaxxing">Skillmaxxing</a></li>
+    <li><a href="blog.html" data-i18n="nav.blog">Blog</a></li>
+    <li><a href="marketplace.html" data-i18n="nav.marketplace">Marketplace</a></li>
+    <li><a href="nooai.html" data-i18n="nav.nooai">NooAI</a></li>
+  </ul>
+  <div class="nav-right" id="navRight">
+    <!-- Language switcher injected here by i18n.js -->
+    <a href="index.html" class="nav-login" data-i18n="nav.login">Log in</a>
+    <a href="index.html" class="btn btn-orange" data-i18n="nav.getStarted">Get started</a>
+  </div>
+  <button class="nav-burger" id="navBurger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
+<!-- HERO (dark, particles) -->
+<section class="hero" id="hero">
+  <div id="particles-js"></div>
+  <div class="hero-kicker" style="position:relative;z-index:1">Brain health &amp; optimization</div>
+  <h1 class="hero-h1" style="position:relative;z-index:1">
+    Your brain.<br>
+    <em>Understood. <span class="accent">Protected.</span></em>
+  </h1>
+  <p class="hero-sub" style="position:relative;z-index:1">
+    Research-backed tools for people serious about what goes in — and what stays out — of their brain.
+  </p>
+  <div class="hero-btns" style="position:relative;z-index:1">
+    <a href="index.html" class="btn btn-orange">Explore the library</a>
+    <a href="stack.html" class="btn btn-outline-light">Build a stack</a>
+  </div>
+  <div class="hero-stats" style="position:relative;z-index:1">
+    <div class="hstat"><span class="hstat-n">50+</span><span class="hstat-l">Compounds</span></div>
+    <div class="hstat"><span class="hstat-n">200+</span><span class="hstat-l">Studies cited</span></div>
+    <div class="hstat"><span class="hstat-n">Beta</span><span class="hstat-l">Early access</span></div>
+  </div>
+</section>
 
-  <!-- ── SECTION 1: HERO ── -->
-  <section class="first">
-    <div class="outer"><div class="inner">
-      <div class="bg bg-hero">
-        <div class="container hero">
-          <div class="hero-eyebrow">by hann369</div>
-          <h1>Your mind.<br><em>Optimized.</em></h1>
-          <p>A research-backed library, a personal stack builder, and a marketplace — all built by someone who actually uses this stuff.</p>
-          <div class="hero-cta">
-            <a href="index.html" class="btn-primary">Explore the Library</a>
-            <a href="about.html" class="btn-ghost">Meet hann369 →</a>
-          </div>
-        </div>
-        <div class="scroll-hint">
-          <span>Scroll</span>
-          <div class="scroll-arrow"></div>
-        </div>
+<!-- BRAIN VISUAL + STATS BENTO -->
+<div class="section r" style="padding-top:80px;padding-bottom:0">
+  <div class="bento">
+    <!-- Brain canvas -->
+    <div class="bento-card dark span2">
+      <div class="brain-canvas-box">
+        <canvas id="brain-canvas"></canvas>
+        <div class="brain-label bl-tl"><span>Prefrontal Cortex</span>Executive function · Focus</div>
+        <div class="brain-label bl-tr"><span>Hippocampus</span>Memory · Learning</div>
+        <div class="brain-label bl-bl"><span>Amygdala</span>Stress · Emotion</div>
+        <div class="brain-label bl-br"><span>Cerebellum</span>Motor · Balance</div>
       </div>
-    </div></div>
-  </section>
+    </div>
+    <!-- Stats -->
+    <div class="bento-card bento-pad r d1" style="display:flex;flex-direction:column;justify-content:space-between;min-height:180px">
+      <div class="eyebrow" style="margin-bottom:0">The mission</div>
+      <p style="font-size:15px;font-weight:300;color:var(--ink-2);line-height:1.7">Most people never question what enters their brain. We do. Evidence-graded research for serious optimizers.</p>
+    </div>
+    <div class="bento-card bento-pad r d2" style="display:flex;flex-direction:column;justify-content:flex-end;">
+      <div class="bento-stat-n">50+</div>
+      <div class="bento-stat-l">Research-graded compounds in the library</div>
+    </div>
+  </div>
+</div>
 
-  <!-- ── SECTION 2: AMBIENT CINEMA VIDEO ── -->
-  <section class="second">
-    <div class="outer"><div class="inner">
-      <div class="bg bg-cinema">
+<!-- 5 PILLARS -->
+<div class="section">
+  <div class="r">
+    <span class="eyebrow">What we cover</span>
+    <h2 class="section-h2">Five pillars of <em>brain health.</em></h2>
+    <p class="section-sub">From what you take to what you avoid — every variable that shapes how your brain performs over time.</p>
+  </div>
+  <div class="pillars-grid">
+    <div class="pillar r d1">
+      <span class="pillar-n">01</span>
+      <div class="pillar-t">Nootropics</div>
+      <p class="pillar-d">Evidence-graded compounds for cognition, memory, focus, and neuroprotection.</p>
+      <span class="pillar-tag"><a href="index.html" style="color:inherit;text-decoration:none">Compound library →</a></span>
+    </div>
+    <div class="pillar r d2">
+      <span class="pillar-n">02</span>
+      <div class="pillar-t">Neurotoxins</div>
+      <p class="pillar-d">Heavy metals, solvents, pesticides. What damages neural tissue and how to reduce exposure.</p>
+      <span class="pillar-tag">Threat index</span>
+    </div>
+    <div class="pillar r d3">
+      <span class="pillar-n">03</span>
+      <div class="pillar-t">Microplastics</div>
+      <p class="pillar-d">Emerging evidence on BBB penetration, neuroinflammation, and long-term accumulation.</p>
+      <span class="pillar-tag">Exposure guide</span>
+    </div>
+    <div class="pillar r d4">
+      <span class="pillar-n">04</span>
+      <div class="pillar-t">Lifestyle</div>
+      <p class="pillar-d">Sleep, stress, exercise, nutrition. The foundations no supplement can replace.</p>
+      <span class="pillar-tag">Protocols</span>
+    </div>
+    <div class="pillar r d5">
+      <span class="pillar-n">05</span>
+      <div class="pillar-t">Stacking</div>
+      <p class="pillar-d">Synergies, interactions, timing. Build protocols that work together, not against each other.</p>
+      <span class="pillar-tag"><a href="stack.html" style="color:inherit;text-decoration:none">Stack builder →</a></span>
+    </div>
+  </div>
+</div>
 
-        <!-- Atmosphere layers -->
-        <div class="cinema-glow"></div>
-        <div class="cinema-grain"></div>
+<!-- THREATS — dark panel -->
+<div class="threats-section r">
+  <span class="eyebrow" style="color:var(--orange)">What to avoid</span>
+  <h2 class="threats-h2">Optimization starts<br>with <em>subtraction.</em></h2>
+  <p class="threats-sub">The biggest gains often come from removing threats, not adding supplements.</p>
+  <div class="threats-grid">
+    <div class="threat-card r d1">
+      <div class="threat-icon">⬡</div>
+      <div class="threat-t">Microplastics</div>
+      <p class="threat-d">Nanoplastics have been detected in human brain tissue. Research on neuroinflammation and cognitive impact is still emerging — but accumulation is real.</p>
+      <span class="threat-badge">Emerging research</span>
+    </div>
+    <div class="threat-card r d2">
+      <div class="threat-icon">◈</div>
+      <div class="threat-t">Heavy Metals</div>
+      <p class="threat-d">Lead, mercury, arsenic, and cadmium accumulate in neural tissue over time. Sources range from contaminated water to certain supplement products.</p>
+      <span class="threat-badge">Well-documented</span>
+    </div>
+    <div class="threat-card r d3">
+      <div class="threat-icon">◎</div>
+      <div class="threat-t">Neurotoxic Pesticides</div>
+      <p class="threat-d">Organophosphates have demonstrated neurotoxic effects. Dietary and environmental exposure pathways vary widely by region and diet.</p>
+      <span class="threat-badge">Ongoing review</span>
+    </div>
+    <div class="threat-card r d1">
+      <div class="threat-icon">◇</div>
+      <div class="threat-t">Chronic Stress</div>
+      <p class="threat-d">Sustained cortisol elevation shrinks hippocampal volume and impairs neuroplasticity. Stress isn't just mental — it's structural brain damage over time.</p>
+      <span class="threat-badge">Strong evidence</span>
+    </div>
+    <div class="threat-card r d2">
+      <div class="threat-icon">○</div>
+      <div class="threat-t">Sleep Deprivation</div>
+      <p class="threat-d">The glymphatic system clears amyloid and metabolic waste during deep sleep. Chronic deficit is one of the highest-impact brain threats there is.</p>
+      <span class="threat-badge">Strong evidence</span>
+    </div>
+    <div class="threat-card r d3">
+      <div class="threat-icon">△</div>
+      <div class="threat-t">Supplement Contamination</div>
+      <p class="threat-d">Third-party testing reveals heavy metal contamination in a significant share of supplement products. Not all nootropics are what they claim to be.</p>
+      <span class="threat-badge">Consumer risk</span>
+    </div>
+  </div>
+</div>
 
-        <div class="container cinema-content">
+<!-- COMPOUNDS -->
+<div class="section">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:48px" class="r">
+    <div>
+      <span class="eyebrow">Compound library</span>
+      <h2 class="section-h2" style="margin-bottom:0">What actually works.</h2>
+    </div>
+    <a href="index.html" class="see-all-link">View full library →</a>
+  </div>
+  <div class="compound-strip">
+    <a href="compound.html?cid=119032" class="c-cell r d1">
+      <span class="c-tag">Adaptogen</span>
+      <div class="c-name">Lion's Mane</div>
+      <div class="c-aka">Hericium erinaceus</div>
+      <p class="c-desc">Stimulates NGF synthesis. Strong evidence for neuroplasticity and long-term cognitive improvement.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="h"></span></div><span class="c-ev">Evidence: strong</span></div>
+    </a>
+    <a href="compound.html?cid=228398" class="c-cell r d2">
+      <span class="c-tag">Adaptogen · Synergy</span>
+      <div class="c-name">L-Theanine</div>
+      <div class="c-aka">γ-glutamylethylamide</div>
+      <p class="c-desc">Alpha-wave promoter. Attenuates caffeine jitteriness. The canonical synergy compound.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div><span class="c-ev">Evidence: robust</span></div>
+    </a>
+    <a href="compound.html?cid=4843" class="c-cell r d3">
+      <span class="c-tag">Racetam</span>
+      <div class="c-name">Piracetam</div>
+      <div class="c-aka">2-Oxo-1-pyrrolidineacetamide</div>
+      <p class="c-desc">The original racetam. Modulates membrane fluidity, enhances synaptic plasticity and cerebral blood flow.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div><span class="c-ev">Evidence: moderate–strong</span></div>
+    </a>
+    <a href="compound.html?cid=71920" class="c-cell r d1">
+      <span class="c-tag">Cholinergic</span>
+      <div class="c-name">Alpha-GPC</div>
+      <div class="c-aka">L-alpha-Glycerylphosphorylcholine</div>
+      <p class="c-desc">Highly bioavailable choline source that boosts acetylcholine levels. Choline backbone for most cognitive stacks.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="h"></span></div><span class="c-ev">Evidence: strong</span></div>
+    </a>
+    <a href="compound.html?cid=119032" class="c-cell r d2">
+      <span class="c-tag">Neuroprotective</span>
+      <div class="c-name">Bacopa</div>
+      <div class="c-aka">Bacopa monnieri · CDRI-08</div>
+      <p class="c-desc">Synaptic density and memory consolidation. Effects typically emerge after 8–12 weeks consistent use.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div><span class="c-ev">Evidence: moderate–strong</span></div>
+    </a>
+    <a href="compound.html?cid=2519" class="c-cell r d3">
+      <span class="c-tag">Stimulant</span>
+      <div class="c-name">Caffeine</div>
+      <div class="c-aka">1,3,7-Trimethylxanthine</div>
+      <p class="c-desc">Adenosine antagonist. The most studied cognitive compound in existence. Robust short-term alertness and focus.</p>
+      <div class="c-meta"><div class="c-bar"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div><span class="c-ev">Evidence: robust</span></div>
+    </a>
+  </div>
+</div>
 
-          <div class="cinema-header">
-            <div class="cinema-label">hann369 presents</div>
-            <h2 class="cinema-title">This is <em>Noodrop.</em><br>Watch the full intro.</h2>
-          </div>
-
-          <div class="video-frame-wrap">
-            <div class="video-glow-ring"></div>
-            <div class="video-frame">
-              <div class="video-aspect">
-                <!-- Replace YOUR_VIDEO_ID with your actual YouTube video ID -->
-                <iframe
-                  src="https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&modestbranding=1&color=white"
-                  title="Noodrop – Introduced by hann369"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowfullscreen>
-                </iframe>
-              </div>
-            </div>
-          </div>
-
-          <div class="cinema-caption">
-            More content on <a href="https://www.youtube.com/@hann.369" target="_blank">@hann.369</a> &nbsp;·&nbsp; Follow on <a href="https://x.com/hann_369" target="_blank">X @hann_369</a>
-          </div>
-
-        </div>
+<!-- STACK BUILDER -->
+<div class="divider" style="margin:0 52px"></div>
+<div class="section">
+  <div class="stack-section r">
+    <div>
+      <span class="eyebrow">Stack builder</span>
+      <h2 class="section-h2">Your stack.<br><em>Your protocol.</em></h2>
+      <p class="section-sub">Build compound stacks based on your goals, check interactions, and get dosing windows — everything in one place.</p>
+      <a href="stack.html" class="btn btn-orange" style="margin-top:32px">Build your stack</a>
+    </div>
+    <div class="stack-widget">
+      <div class="sw-head">
+        <span class="sw-title">Morning Stack</span>
+        <span class="sw-badge">No interactions</span>
       </div>
-    </div></div>
-  </section>
+      <div class="sw-row"><div class="sw-left"><div class="sw-pip pa"></div><span class="sw-name">Lion's Mane</span></div><span class="sw-dose">500 mg · with food</span></div>
+      <div class="sw-row"><div class="sw-left"><div class="sw-pip pa"></div><span class="sw-name">L-Theanine</span></div><span class="sw-dose">200 mg</span></div>
+      <div class="sw-row"><div class="sw-left"><div class="sw-pip pb"></div><span class="sw-name">Bacopa Monnieri</span></div><span class="sw-dose">300 mg · CDRI-08</span></div>
+      <div class="sw-row"><div class="sw-left"><div class="sw-pip pc"></div><span class="sw-name">Alpha-GPC</span></div><span class="sw-dose">600 mg</span></div>
+      <div class="sw-row"><div class="sw-left"><div class="sw-pip pd"></div><span class="sw-name">Rhodiola Rosea</span></div><span class="sw-dose">250 mg · SHR-5</span></div>
+      <div class="sw-foot">No interactions detected · 5 compounds</div>
+    </div>
+  </div>
+</div>
 
-  <!-- ── SECTION 3: REVIEWS ── -->
-  <section class="third">
-    <div class="outer"><div class="inner">
-      <div class="bg bg-reviews">
-        <div class="container" style="display:flex;flex-direction:column;align-items:center">
-          <h2 class="section-title">What the community says.</h2>
-          <div class="reviews-grid">
-            <div class="review-card">
-              <div class="reviewer-avatar">👤</div>
-              <h3 class="reviewer-name">Alex Johnson</h3>
-              <div class="review-date">October 15, 2025</div>
-              <div class="review-stars">★★★★★</div>
-              <p class="review-content">"Noodrop transformed my productivity. The stack builder helped me find the perfect combination for sustained focus without jitters."</p>
-            </div>
-            <div class="review-card">
-              <div class="reviewer-avatar">👤</div>
-              <h3 class="reviewer-name">Maria Rodriguez</h3>
-              <div class="review-date">November 3, 2025</div>
-              <div class="review-stars">★★★★★</div>
-              <p class="review-content">"The beginner's guide was exactly what I needed. Clear explanations and practical advice made starting with nootropics easy."</p>
-            </div>
-            <div class="review-card">
-              <div class="reviewer-avatar">👤</div>
-              <h3 class="reviewer-name">David Chen</h3>
-              <div class="review-date">December 22, 2025</div>
-              <div class="review-stars">★★★★☆</div>
-              <p class="review-content">"Great resource for understanding nootropics. The scientific approach gives me confidence in what I'm taking."</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div></div>
-  </section>
+<!-- TESTIMONIALS -->
+<div class="divider" style="margin:0 52px"></div>
+<div class="section">
+  <div class="r">
+    <span class="eyebrow">What people say</span>
+    <h2 class="section-h2">Real users. Real protocols.</h2>
+  </div>
+  <div class="tgrid">
+    <div class="tcard r d1">
+      <p class="tq">"Finally a platform that treats supplementation like a science, not a sales pitch. The evidence grading alone is worth it."</p>
+      <div class="tauthor"><div class="tav">M</div><div><div class="tan">Marcus D.</div><div class="tar">Neuroscience researcher</div></div></div>
+    </div>
+    <div class="tcard r d2" style="padding-left:28px">
+      <p class="tq">"The threats section changed how I think about optimization. Removing the bad matters as much as adding the good."</p>
+      <div class="tauthor"><div class="tav">S</div><div><div class="tan">Sophie R.</div><div class="tar">Biohacker · Berlin</div></div></div>
+    </div>
+    <div class="tcard r d3" style="padding-left:28px">
+      <p class="tq">"The compound pages are insanely detailed. Not just what it does — but why, how, and what quality markers to look for when buying."</p>
+      <div class="tauthor"><div class="tav">T</div><div><div class="tan">Thomas K.</div><div class="tar">Performance coach</div></div></div>
+    </div>
+  </div>
+</div>
 
-  <!-- ── SECTION 4: CTA + FOOTER ── -->
-  <section class="fourth">
-    <div class="outer"><div class="inner">
-      <div class="bg bg-cta" style="flex-direction:column">
-        <div class="container" style="display:flex;flex-direction:column;align-items:center">
-          <div class="cta-box">
-            <h2>Ready to optimize?</h2>
-            <p>Start with the library, build your stack, and follow the journey on YouTube and X.</p>
-            <div class="cta-buttons">
-              <a href="index.html" class="btn-primary">Explore Library</a>
-              <a href="stack.html" class="btn-ghost">Build Your Stack</a>
-            </div>
-          </div>
-          <footer>
-            <div class="social-links">
-              <a href="https://x.com/hann_369" target="_blank" class="social-link" aria-label="Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
-                </svg>
-              </a>
-              <a href="https://www.youtube.com/@hann.369" target="_blank" class="social-link" aria-label="YouTube">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
-                  <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
-                </svg>
-              </a>
-            </div>
-            <p>© 2026 Noodrop. For educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></p>
-          </footer>
-        </div>
-      </div>
-    </div></div>
-  </section>
+<!-- CLOSING — dark panel -->
+<div class="closing-section r">
+  <span class="eyebrow" style="display:block;margin-bottom:20px;justify-content:center">A note on who this is for</span>
+  <h2 class="closing-h2">This isn't<br>for <em>everyone.</em></h2>
+  <p class="closing-p">Most people never question what they put in or around their brain. The ones who actually improve treat evidence as the baseline — and commit to the process.</p>
+  <a href="index.html" class="btn btn-orange" style="font-size:14px;padding:13px 32px">Start researching</a>
+  <div class="closing-note">No account required to browse · Free forever for the library</div>
+</div>
 
-  <script>
-    const isMobile = () => window.innerWidth <= 768;
+<!-- FOOTER -->
+<footer>
+  <a href="landing.html" class="footer-logo"><span class="nav-pip"></span>noodrop</a>
+  <span class="fcopy">© 2026 Noodrop</span>
+  <ul class="flinks">
+    <li><a href="impressum.html">Impressum</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+</footer>
 
-    // ── Mobile: skip overlay, show everything immediately ──
-    if (isMobile()) {
-      document.addEventListener('DOMContentLoaded', function () {
-        var overlay = document.querySelector('.shape-overlays');
-        if (overlay) overlay.style.display = 'none';
+<!-- INTRO ANIMATION -->
+<script>
+(function(){
+  // Add intro-active immediately so hero elements stay hidden
+  document.body.classList.add('intro-active');
 
-        document.querySelectorAll('section').forEach(s => {
-          s.style.position = 'relative';
-          s.style.height = 'auto';
-          s.style.visibility = 'visible';
-        });
-        document.querySelectorAll('.outer,.inner').forEach(el => {
-          el.style.height = 'auto';
-          el.style.overflow = 'visible';
-        });
-        document.querySelectorAll('.bg').forEach(el => {
-          el.style.position = 'relative';
-          el.style.minHeight = '100svh';
-        });
-        document.querySelectorAll('.container').forEach(c => {
-          c.style.opacity = '1';
-          c.style.visibility = 'visible';
-        });
-        document.body.style.overflow = '';
-        document.body.style.height = 'auto';
-      });
+  function runIntro(){
+    var overlay = document.getElementById('intro-overlay');
+    // Small hold so wordmark is visible for a beat
+    setTimeout(function(){
+      overlay.classList.add('open'); // panels slide apart
+      // After slide completes, switch classes
+      setTimeout(function(){
+        document.body.classList.remove('intro-active');
+        document.body.classList.add('intro-done');
+        // Remove overlay from DOM after fully gone
+        setTimeout(function(){
+          overlay.style.display = 'none';
+        }, 400);
+      }, 900); // matches transition duration (1.1s - slight early for hero start)
+    }, 700); // hold time before split
+  }
 
-    } else {
-      // ── Desktop: loading animation + GSAP scroll ──
-      window.addEventListener('load', function () {
-        const overlay  = document.querySelector('.shape-overlays');
-        const paths    = document.querySelectorAll('.shape-overlays__path');
-        const numPoints = 10, numPaths = paths.length;
-        const delayPointsMax = 0.6, delayPerPath = 0.5, duration = 1.5;
-        const pointsDelay = [], allPoints = [];
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', runIntro);
+  } else {
+    runIntro();
+  }
+})();
+</script>
 
-        // Initialise all points at 100 (fully covering the screen)
-        for (let i = 0; i < numPaths; i++) {
-          const pts = [];
-          allPoints.push(pts);
-          for (let j = 0; j < numPoints; j++) pts.push(100);
-        }
+<!-- PARTICLES (hero only) -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+particlesJS('particles-js',{
+  particles:{
+    number:{value:42,density:{enable:true,value_area:1000}},
+    color:{value:'#E8541A'},
+    shape:{type:'circle'},
+    opacity:{value:.12,random:true,anim:{enable:true,speed:.3,opacity_min:.03,sync:false}},
+    size:{value:1.5,random:true},
+    line_linked:{enable:true,distance:150,color:'#E8541A',opacity:.05,width:.6},
+    move:{enable:true,speed:.35,direction:'none',random:true,straight:false,out_mode:'out',bounce:false}
+  },
+  interactivity:{
+    detect_on:'canvas',
+    events:{onhover:{enable:true,mode:'grab'},resize:true},
+    modes:{grab:{distance:180,line_linked:{opacity:.14}}}
+  },
+  retina_detect:true
+});
 
-        function render() {
-          for (let i = 0; i < numPaths; i++) {
-            const path = paths[i], pts = allPoints[i];
-            let d = `M 0 0 V ${pts[0]} C`;
-            for (let j = 0; j < numPoints - 1; j++) {
-              const p  = (j + 1) / (numPoints - 1) * 100;
-              const cp = p - (1 / (numPoints - 1) * 100) / 2;
-              d += ` ${cp} ${pts[j]} ${cp} ${pts[j+1]} ${p} ${pts[j+1]}`;
-            }
-            d += ` V 100 H 0`;
-            path.setAttribute('d', d);
-          }
-        }
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>16),{passive:true});
 
-        // Render the initial covered state immediately
-        render();
+// Reveal
+const io=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('in')}),{threshold:.08});
+document.querySelectorAll('.r').forEach(el=>io.observe(el));
 
-        // Build the open (reveal) timeline
-        const tl = gsap.timeline({
-          onUpdate: render,
-          defaults: { ease: 'power2.inOut', duration }
-        });
+// ── BRAIN CANVAS v2 — neural signal propagation ──
+(function(){
+  const canvas = document.getElementById('brain-canvas');
+  const wrap   = canvas.parentElement;
+  let W, H, ctx, nodes, edges, pulses, scanY, scanDir, raf;
 
-        for (let i = 0; i < numPoints; i++) pointsDelay[i] = Math.random() * delayPointsMax;
-        for (let i = 0; i < numPaths; i++) {
-          const pts = allPoints[i];
-          const pathDelay = delayPerPath * i;
-          for (let j = 0; j < numPoints; j++) {
-            tl.to(pts, { [j]: 0 }, pointsDelay[j] + pathDelay);
-          }
-        }
+  // Higher-resolution brain silhouette with lobe hints
+  const SHAPE = [
+    // Frontal lobe bump top-left
+    [.500,.072],[.540,.060],[.578,.055],[.618,.058],[.654,.065],
+    [.688,.078],[.718,.098],[.745,.122],[.768,.150],[.786,.182],
+    // Parietal / right
+    [.802,.218],[.820,.260],[.832,.308],[.836,.358],[.830,.406],
+    [.818,.450],[.800,.490],[.778,.526],[.752,.558],[.724,.584],
+    // Temporal / occipital right
+    [.694,.604],[.664,.620],[.636,.628],[.612,.626],[.590,.616],
+    // Bottom / cerebellum hint
+    [.574,.610],[.562,.622],[.548,.638],[.532,.648],[.514,.650],
+    [.498,.648],[.480,.644],[.462,.632],[.448,.616],[.432,.602],
+    // Temporal left
+    [.410,.616],[.386,.622],[.360,.614],[.334,.592],[.312,.564],
+    [.292,.530],[.276,.492],[.266,.450],[.260,.404],[.262,.356],
+    // Parietal / frontal left
+    [.268,.308],[.280,.264],[.298,.224],[.320,.188],[.346,.158],
+    [.374,.132],[.404,.108],[.436,.088],[.468,.072],[.500,.072]
+  ];
 
-        tl.eventCallback('onComplete', function () {
-          // Fade out overlay, then init scroll sections
-          gsap.to(overlay, {
-            opacity: 0, duration: 0.5,
-            onComplete: () => {
-              overlay.style.display = 'none';
-              document.body.style.overflow = '';
-              initGSAPScroll();
-            }
-          });
-        });
+  function ptIn(x, y) {
+    const pts = SHAPE.map(p => [p[0]*W, p[1]*H]);
+    let inside = false;
+    for (let i = 0, j = pts.length-1; i < pts.length; j = i++) {
+      const xi=pts[i][0], yi=pts[i][1], xj=pts[j][0], yj=pts[j][1];
+      if (((yi>y) !== (yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) inside = !inside;
+    }
+    return inside;
+  }
 
-        function initGSAPScroll() {
-          gsap.registerPlugin(Observer);
-          const sections     = document.querySelectorAll('section');
-          const bgs          = document.querySelectorAll('.bg');
-          const outerWrappers = gsap.utils.toArray('.outer');
-          const innerWrappers = gsap.utils.toArray('.inner');
-
-          let currentIndex = -1, animating = false;
-          const wrap = gsap.utils.wrap(0, sections.length);
-
-          gsap.set(outerWrappers, { yPercent: 100 });
-          gsap.set(innerWrappers, { yPercent: -100 });
-
-          // Reveal all containers
-          gsap.set('.container', { opacity: 1, visibility: 'visible' });
-
-          function gotoSection(index, direction) {
-            index = wrap(index);
-            if (index === currentIndex || animating) return;
-            animating = true;
-            const dFactor = direction === -1 ? -1 : 1;
-            const stl = gsap.timeline({
-              defaults: { duration: 1.35, ease: 'power2.inOut' },
-              onComplete: () => animating = false
-            });
-            if (currentIndex >= 0) {
-              gsap.set(sections[currentIndex], { zIndex: 0 });
-              stl.to(bgs[currentIndex], { yPercent: -20 * dFactor }, 0)
-                 .set(sections[currentIndex], { autoAlpha: 0 }, 0.6);
-            }
-            gsap.set(sections[index], { autoAlpha: 1, zIndex: 1 });
-            stl.fromTo([outerWrappers[index], innerWrappers[index]], {
-              yPercent: i => i ? -100 * dFactor : 100 * dFactor
-            }, { yPercent: 0 }, 0)
-            .fromTo(bgs[index], { yPercent: 25 * dFactor }, { yPercent: 0 }, 0);
-            currentIndex = index;
-          }
-
-          Observer.create({
-            type: 'wheel,touch,pointer', wheelSpeed: -1,
-            onDown: () => !animating && gotoSection(currentIndex - 1, -1),
-            onUp:   () => !animating && gotoSection(currentIndex + 1,  1),
-            tolerance: 25, preventDefault: true
-          });
-
-          gotoSection(0, 1);
-        }
+  function init() {
+    // ── Nodes ──
+    nodes = [];
+    const target = Math.min(90, Math.round(55 + W/28));
+    let tries = 0;
+    while (nodes.length < target && tries < 8000) {
+      tries++;
+      const x = W*.22 + Math.random()*W*.56;
+      const y = H*.05 + Math.random()*H*.70;
+      if (!ptIn(x, y)) continue;
+      // depth 0=back, 1=front — affects size + opacity
+      const depth = Math.random();
+      const baseR  = 0.5 + depth * 1.6;
+      nodes.push({
+        x, y,
+        ox: x, oy: y,             // origin for gentle drift
+        vx: (Math.random()-.5)*.14,
+        vy: (Math.random()-.5)*.14,
+        r: baseR,
+        depth,
+        phase: Math.random()*Math.PI*2,
+        phaseSpeed: .004 + Math.random()*.010,
+        // firing state
+        fireT: 0,      // 0=resting, 1=peak
+        firing: false,
+        refractory: 0, // cooldown counter
+        // signal reception queue
+        incoming: 0,
       });
     }
-  </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
+
+    // ── Edges — connect nearby nodes ──
+    edges = [];
+    const maxD = W * .16;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i+1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < maxD) edges.push({ a:i, b:j, d, maxD });
+      }
+    }
+
+    // ── Travelling pulses along edges ──
+    pulses = [];
+
+    // Scan line
+    scanY   = 0;
+    scanDir = 1;
+  }
+
+  // Spawn a signal pulse along an edge from node a→b
+  function spawnPulse(a, b, edgeRef) {
+    pulses.push({ a, b, t: 0, edge: edgeRef });
+  }
+
+  function fireCascade(nodeIdx) {
+    const n = nodes[nodeIdx];
+    if (n.firing || n.refractory > 0) return;
+    n.firing    = true;
+    n.fireT     = 0;
+    n.refractory = 120 + Math.random()*80;
+    // propagate to connected neighbours with delay
+    edges.forEach(e => {
+      if (e.a === nodeIdx || e.b === nodeIdx) {
+        const target = e.a === nodeIdx ? e.b : e.a;
+        const delay  = 18 + Math.round(e.d / maxD_global * 40);
+        setTimeout(() => {
+          nodes[target].incoming++;
+        }, delay * (1000/60));
+      }
     });
   }
+  let maxD_global = 0;
+  function updateMaxD() { maxD_global = W * .16; }
+
+  function drawBrainOutline() {
+    const pts = SHAPE.map(p => [p[0]*W, p[1]*H]);
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length-1; i++) {
+      const cx = (pts[i][0]+pts[i+1][0])/2;
+      const cy = (pts[i][1]+pts[i+1][1])/2;
+      ctx.quadraticCurveTo(pts[i][0], pts[i][1], cx, cy);
+    }
+    ctx.quadraticCurveTo(pts[pts.length-1][0], pts[pts.length-1][1], pts[0][0], pts[0][1]);
+    ctx.closePath();
+
+    // faint fill
+    ctx.fillStyle = 'rgba(247,244,239,.018)';
+    ctx.fill();
+    // outline
+    ctx.strokeStyle = 'rgba(247,244,239,.10)';
+    ctx.lineWidth   = .8;
+    ctx.stroke();
+
+    // inner sulci hint — a few faint arcs suggesting gyri
+    ctx.strokeStyle = 'rgba(247,244,239,.04)';
+    ctx.lineWidth   = .6;
+    // frontal sulcus
+    ctx.beginPath(); ctx.moveTo(W*.38,H*.14); ctx.quadraticCurveTo(W*.50,H*.08,W*.62,H*.14); ctx.stroke();
+    // central sulcus
+    ctx.beginPath(); ctx.moveTo(W*.30,H*.35); ctx.quadraticCurveTo(W*.50,H*.25,W*.72,H*.30); ctx.stroke();
+    // lateral fissure
+    ctx.beginPath(); ctx.moveTo(W*.32,H*.58); ctx.quadraticCurveTo(W*.50,H*.50,W*.70,H*.54); ctx.stroke();
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // ── Scan line (slow horizontal sweep) ──
+    scanY += scanDir * .4;
+    if (scanY > H*.85) scanDir = -1;
+    if (scanY < H*.10) scanDir =  1;
+    const scanAlpha = .045;
+    const sg = ctx.createLinearGradient(0, scanY-18, 0, scanY+18);
+    sg.addColorStop(0,   'rgba(232,84,26,0)');
+    sg.addColorStop(.45, `rgba(232,84,26,${scanAlpha})`);
+    sg.addColorStop(.5,  `rgba(232,84,26,${scanAlpha*2})`);
+    sg.addColorStop(.55, `rgba(232,84,26,${scanAlpha})`);
+    sg.addColorStop(1,   'rgba(232,84,26,0)');
+    ctx.fillStyle = sg;
+    ctx.fillRect(W*.22, scanY-18, W*.56, 36);
+
+    drawBrainOutline();
+
+    // ── Edges ──
+    for (const e of edges) {
+      const ni = nodes[e.a], nj = nodes[e.b];
+      const t  = Math.max(0, 1 - e.d / e.maxD);
+      const active = ni.firing || nj.firing;
+      const baseA  = t * .055 * (0.4 + ni.depth*.3 + nj.depth*.3);
+      ctx.beginPath();
+      ctx.moveTo(ni.x, ni.y);
+      ctx.lineTo(nj.x, nj.y);
+      ctx.strokeStyle = active
+        ? `rgba(232,84,26,${baseA * 4})`
+        : `rgba(247,244,239,${baseA})`;
+      ctx.lineWidth = active ? .6 : .25;
+      ctx.stroke();
+    }
+
+    // ── Travelling pulses ──
+    for (let i = pulses.length-1; i >= 0; i--) {
+      const p  = pulses[i];
+      p.t     += .028 + .01*Math.random();
+      if (p.t >= 1) { pulses.splice(i,1); continue; }
+      const na = nodes[p.a], nb = nodes[p.b];
+      const px = na.x + (nb.x - na.x) * p.t;
+      const py = na.y + (nb.y - na.y) * p.t;
+      const ease = Math.sin(p.t * Math.PI); // bell curve fade
+      // glow
+      ctx.beginPath(); ctx.arc(px, py, 4*ease, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(232,84,26,${.12*ease})`; ctx.fill();
+      // core
+      ctx.beginPath(); ctx.arc(px, py, 1.5*ease+.5, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(255,180,120,${.9*ease})`; ctx.fill();
+    }
+
+    // ── Nodes ──
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      n.phase += n.phaseSpeed;
+      const breathe = .5 + .5*Math.sin(n.phase);
+
+      // incoming signal → trigger if threshold met
+      if (n.incoming > 0 && n.refractory === 0) {
+        n.incoming = 0;
+        fireCascade(i);
+      } else {
+        n.incoming = 0;
+      }
+
+      // advance fire
+      if (n.firing) {
+        n.fireT += .06;
+        if (n.fireT >= 1) {
+          n.firing  = false;
+          n.fireT   = 0;
+          // spawn pulses outward when fire peaks
+          edges.forEach(e => {
+            if ((e.a === i || e.b === i) && Math.random() < .55) {
+              spawnPulse(i, e.a === i ? e.b : e.a, e);
+            }
+          });
+        }
+      }
+      if (n.refractory > 0) n.refractory--;
+
+      // spontaneous firing
+      if (!n.firing && n.refractory === 0 && Math.random() < .00022) {
+        fireCascade(i);
+      }
+
+      const fireGlow = n.firing ? Math.sin(n.fireT * Math.PI) : 0;
+      const alpha    = .15 + n.depth*.22 + breathe*.06;
+
+      // outer glow when firing
+      if (fireGlow > .05) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * (2.5 + fireGlow*3), 0, Math.PI*2);
+        ctx.fillStyle = `rgba(232,84,26,${fireGlow*.18})`;
+        ctx.fill();
+        // extra sharp ring
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r * (1.4 + fireGlow*1.8), 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,160,80,${fireGlow*.25})`;
+        ctx.fill();
+      }
+
+      // core dot
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + breathe*.3, 0, Math.PI*2);
+      if (n.firing) {
+        ctx.fillStyle = `rgba(255,${120+Math.round(fireGlow*80)},60,${alpha + fireGlow*.5})`;
+      } else {
+        ctx.fillStyle = `rgba(247,244,239,${alpha})`;
+      }
+      ctx.fill();
+
+      // drift
+      n.x += n.vx; n.y += n.vy;
+      if (!ptIn(n.x, n.y)) {
+        n.vx *= -1; n.vy *= -1;
+        n.x  += n.vx * 3; n.y += n.vy * 3;
+      }
+    }
+
+    raf = requestAnimationFrame(draw);
+  }
+
+  function start() {
+    if (ctx) return;
+    W = wrap.clientWidth; H = wrap.clientHeight;
+    canvas.width  = W * devicePixelRatio;
+    canvas.height = H * devicePixelRatio;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx = canvas.getContext('2d');
+    ctx.scale(devicePixelRatio, devicePixelRatio);
+    updateMaxD();
+    init();
+    draw();
+  }
+
+  function stop() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = null; ctx = null;
+  }
+
+  new IntersectionObserver(
+    entries => entries.forEach(e => e.isIntersecting ? start() : stop()),
+    { threshold: .1 }
+  ).observe(wrap);
+
+  window.addEventListener('resize', () => { if (ctx) { stop(); start(); } });
+})();
+</script>
+
+<!-- Cursor elements -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<script>
+/* ════════════════════════════════════════
+   CUSTOM CURSOR
+════════════════════════════════════════ */
+(function(){
+  var dot  = document.getElementById('cursor-dot');
+  var ring = document.getElementById('cursor-ring');
+  if (!dot || !ring) return;
+
+  var mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', function(e) {
+    mx = e.clientX; my = e.clientY;
+    dot.style.left = mx + 'px';
+    dot.style.top  = my + 'px';
+  }, { passive: true });
+
+  // Ring follows with smooth lag
+  (function tick() {
+    rx += (mx - rx) * .13;
+    ry += (my - ry) * .13;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(tick);
+  })();
+
+  // Click pulse
+  document.addEventListener('mousedown', function() {
+    dot.classList.add('is-click');
+  });
+  document.addEventListener('mouseup', function() {
+    dot.classList.remove('is-click');
+  });
+
+  // Hover expand on interactive elements
+  var hoverSels = 'a, button, .btn, .c-cell, .nav-links a, .pillar, .threat-card, .compound-card, .sw-compound, [role="button"]';
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.closest(hoverSels)) {
+      dot.classList.add('is-hover');
+      ring.classList.add('is-hover');
+    }
+  });
+  document.addEventListener('mouseout', function(e) {
+    if (e.target.closest(hoverSels)) {
+      dot.classList.remove('is-hover');
+      ring.classList.remove('is-hover');
+    }
+  });
+
+  // Hide when mouse leaves window
+  document.addEventListener('mouseleave', function() {
+    dot.style.opacity  = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', function() {
+    dot.style.opacity  = '1';
+    ring.style.opacity = '1';
+  });
+})();
+
+/* ════════════════════════════════════════
+   i18n — INLINE LOCALES
+   (no fetch needed — works on file://)
+   Extend LOCALES object to add more strings.
+════════════════════════════════════════ */
+(function(){
+  var STORAGE_KEY = 'nd_lang';
+  var DEFAULT     = 'en';
+  var SUPPORTED   = ['en', 'de', 'pt'];
+
+  /* Country → language */
+  var COUNTRY_LANG = {
+    DE:'de', AT:'de', CH:'de', LI:'de', LU:'de',
+    PT:'pt', BR:'pt', AO:'pt', MZ:'pt', CV:'pt',
+    GW:'pt', ST:'pt', TL:'pt'
+  };
+
+  /* ── Inline locales (no fetch required) ── */
+  var LOCALES = {
+    en: {
+      nav: { library:'Library', stacks:'Stacks', skillmaxxing:'Skillmaxxing',
+             blog:'Blog', marketplace:'Marketplace', nooai:'NooAI',
+             login:'Log in', getStarted:'Get started' },
+      landing: {
+        heroKicker: 'Brain health & optimization',
+        heroSub: 'Research-backed tools for people serious about what goes in — and what stays out — of their brain.',
+        heroCta1: 'Explore the library', heroCta2: 'Build a stack',
+        pillarsEyebrow: 'What we cover',
+        pillarsH2: 'Five pillars of brain health.',
+        threatsEyebrow: 'What to avoid',
+        threatsH2: 'Optimization starts with subtraction.',
+        threatsSub: 'The biggest gains often come from removing threats, not adding supplements.',
+        compoundsEyebrow: 'Compound library',
+        compoundsH2: 'What actually works.',
+        viewAll: 'View full library →',
+        stackEyebrow: 'Stack builder',
+        stackH2: 'Your stack. Your protocol.',
+        stackSub: 'Build compound stacks based on your goals, check interactions, and get dosing windows.',
+        stackCta: 'Build your stack',
+        reviewsH2: 'Real users. Real protocols.',
+        closingEyebrow: 'A note on who this is for',
+        closingH2: "This isn't for everyone.",
+        closingCta: 'Start researching'
+      }
+    },
+    de: {
+      nav: { library:'Bibliothek', stacks:'Stacks', skillmaxxing:'Skillmaxxing',
+             blog:'Blog', marketplace:'Marktplatz', nooai:'NooAI',
+             login:'Anmelden', getStarted:'Loslegen' },
+      landing: {
+        heroKicker: 'Gehirngesundheit & Optimierung',
+        heroSub: 'Evidenzbasierte Tools für Menschen, die es genau nehmen — was ins Gehirn kommt und was draußen bleibt.',
+        heroCta1: 'Bibliothek erkunden', heroCta2: 'Stack aufbauen',
+        pillarsEyebrow: 'Was wir abdecken',
+        pillarsH2: 'Fünf Säulen der Gehirngesundheit.',
+        threatsEyebrow: 'Was zu vermeiden ist',
+        threatsH2: 'Optimierung beginnt mit Weglassen.',
+        threatsSub: 'Die größten Gewinne entstehen oft durch das Entfernen von Bedrohungen, nicht durch das Hinzufügen von Supplements.',
+        compoundsEyebrow: 'Substanzbibliothek',
+        compoundsH2: 'Was wirklich funktioniert.',
+        viewAll: 'Gesamte Bibliothek →',
+        stackEyebrow: 'Stack Builder',
+        stackH2: 'Dein Stack. Dein Protokoll.',
+        stackSub: 'Substanz-Stacks nach deinen Zielen aufbauen, Interaktionen prüfen und Dosierungsfenster erhalten.',
+        stackCta: 'Stack aufbauen',
+        reviewsH2: 'Echte Nutzer. Echte Protokolle.',
+        closingEyebrow: 'Ein Hinweis: für wen das ist',
+        closingH2: 'Das ist nicht für jeden.',
+        closingCta: 'Recherche starten'
+      }
+    },
+    pt: {
+      nav: { library:'Biblioteca', stacks:'Stacks', skillmaxxing:'Skillmaxxing',
+             blog:'Blog', marketplace:'Marketplace', nooai:'NooAI',
+             login:'Entrar', getStarted:'Começar' },
+      landing: {
+        heroKicker: 'Saúde cerebral e otimização',
+        heroSub: 'Ferramentas baseadas em evidências para pessoas sérias sobre o que entra — e o que fica de fora — do cérebro.',
+        heroCta1: 'Explorar a biblioteca', heroCta2: 'Criar stack',
+        pillarsEyebrow: 'O que cobrimos',
+        pillarsH2: 'Cinco pilares da saúde cerebral.',
+        threatsEyebrow: 'O que evitar',
+        threatsH2: 'A otimização começa pela subtração.',
+        threatsSub: 'Os maiores ganhos muitas vezes vêm de remover ameaças, não de adicionar suplementos.',
+        compoundsEyebrow: 'Biblioteca de compostos',
+        compoundsH2: 'O que realmente funciona.',
+        viewAll: 'Ver biblioteca completa →',
+        stackEyebrow: 'Stack Builder',
+        stackH2: 'Seu stack. Seu protocolo.',
+        stackSub: 'Monte stacks com base nos seus objetivos, verifique interações e obtenha janelas de dosagem.',
+        stackCta: 'Criar meu stack',
+        reviewsH2: 'Usuários reais. Protocolos reais.',
+        closingEyebrow: 'Uma nota sobre para quem isso é',
+        closingH2: 'Isso não é para todos.',
+        closingCta: 'Começar a pesquisar'
+      }
+    }
+  };
+
+  /* ── Get nested key ── */
+  function t(lang, key) {
+    var parts = key.split('.');
+    var val = LOCALES[lang] || LOCALES[DEFAULT];
+    for (var i = 0; i < parts.length; i++) {
+      if (val == null) return key;
+      val = val[parts[i]];
+    }
+    return val != null ? String(val) : key;
+  }
+
+  /* ── Apply translations to DOM ── */
+  function applyLang(lang) {
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var val = t(lang, el.getAttribute('data-i18n'));
+      if (val) el.textContent = val;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var val = t(lang, el.getAttribute('data-i18n-placeholder'));
+      if (val) el.placeholder = val;
+    });
+    // Update switcher active state
+    document.querySelectorAll('#nd-lang-switcher button').forEach(function(btn) {
+      btn.classList.toggle('nd-lang-active', btn.getAttribute('data-lang') === lang);
+    });
+  }
+
+  /* ── Build language switcher ── */
+  function buildSwitcher(currentLang) {
+    if (document.getElementById('nd-lang-switcher')) return;
+    var anchor = document.getElementById('navRight');
+    if (!anchor) return;
+
+    var flags = { en: '🇬🇧', de: '🇩🇪', pt: '🇧🇷' };
+    var wrap = document.createElement('div');
+    wrap.id = 'nd-lang-switcher';
+
+    SUPPORTED.forEach(function(lang) {
+      var btn = document.createElement('button');
+      btn.setAttribute('data-lang', lang);
+      btn.setAttribute('aria-label', lang.toUpperCase());
+      btn.textContent = flags[lang] + '\u00A0' + lang.toUpperCase();
+      if (lang === currentLang) btn.classList.add('nd-lang-active');
+      btn.addEventListener('click', function() {
+        localStorage.setItem(STORAGE_KEY, lang);
+        applyLang(lang);
+      });
+      wrap.appendChild(btn);
+    });
+
+    anchor.insertBefore(wrap, anchor.firstChild);
+  }
+
+  /* ── Detect language ── */
+  function detect(cb) {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored && SUPPORTED.indexOf(stored) !== -1) return cb(stored);
+
+    var browser = (navigator.language || 'en').split('-')[0].toLowerCase();
+    var browserLang = SUPPORTED.indexOf(browser) !== -1 ? browser : DEFAULT;
+
+    // Try IP detection — timeout after 1.4s, fall back to browser lang
+    var done = false;
+    var timer = setTimeout(function() {
+      if (!done) { done = true; cb(browserLang); }
+    }, 1400);
+
+    fetch('https://ipapi.co/json/')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (done) return; done = true; clearTimeout(timer);
+        var c = (data.country_code || '').toUpperCase();
+        cb(COUNTRY_LANG[c] || browserLang);
+      })
+      .catch(function() {
+        if (done) return; done = true; clearTimeout(timer);
+        cb(browserLang);
+      });
+  }
+
+  /* ── Init ── */
+  detect(function(lang) {
+    applyLang(lang);
+    buildSwitcher(lang);
+  });
+
+})();
+
+/* ════ SCROLL REVEAL ════ */
+(function(){
+  if (!window.IntersectionObserver) return;
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('.r, .pillar, .threat-card, .c-cell, .review-card').forEach(function(el) {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'opacity .6s ease, transform .6s ease';
+    io.observe(el);
+  });
+  document.addEventListener('nd:translated', function() {
+    document.querySelectorAll('.r.in, .pillar.in').forEach(function(el) {
+      el.style.opacity = '1'; el.style.transform = 'none';
+    });
+  });
+  // Also trigger .in style via CSS
+  var style = document.createElement('style');
+  style.textContent = '.r.in,.pillar.in,.threat-card.in,.c-cell.in,.review-card.in{opacity:1!important;transform:none!important}';
+  document.head.appendChild(style);
+})();
 </script>
 </body>
 </html>

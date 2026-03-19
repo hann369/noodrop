@@ -5,1760 +5,331 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="global.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
+  <meta name="theme-color" content="#E8541A">
   <title>Stack Builder – Noodrop</title>
-
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
   <style>
-    :root {
-      --cream: #e8d8c9;
-      --slate: #4b607f;
-      --orange: #f3701e;
-      --white: #ffffff;
-      --dark-slate: #2c3e50;
-      --shadow: 0 8px 28px rgba(0,0,0,0.07);
-      --bg: #fafaf8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Tabular', sans-serif;
-      background: var(--bg);
-      color: var(--dark-slate);
-      min-height: 100vh;
-    }
-
-    /* ── Header ── */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 5%;
-      border-bottom: 1px solid var(--cream);
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(250,250,248,0.92);
-      backdrop-filter: blur(14px);
-    }
-    nav a {
-      text-decoration: none; color: var(--slate);
-      margin: 0 0.9rem; font-weight: 500; font-size: 0.9rem;
-      position: relative; transition: color 0.2s;
-    }
-    nav a::after {
-      content: ""; position: absolute;
-      width: 0; height: 2px; background: var(--orange);
-      left: 0; bottom: -4px; transition: 0.3s;
-    }
-    nav a:hover::after, nav a.active::after { width: 100%; }
-    nav a:hover, nav a.active { color: var(--orange); }
-    .auth-btn {
-      background: var(--orange); color: white; border: none;
-      padding: 0.45rem 1.1rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600;
-      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
-    }
-    .auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(243,112,30,0.35); }
-    .modal-overlay.open { display: flex; }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-label {
-      display: block; margin-bottom: 0.5rem;
-      font-weight: 600; font-size: 0.85rem; color: var(--slate);
-    }
-    .form-input {
-      width: 100%; padding: 0.85rem 1rem;
-      border: 1.5px solid var(--cream); border-radius: 10px;
-      font-family: 'Tabular', sans-serif; font-size: 0.95rem;
-      color: var(--dark-slate); transition: border-color 0.2s;
-    }
-    .form-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(243,112,30,0.1); }
-    .form-error { color: #ef4444; font-size: 0.8rem; margin-top: 0.4rem; min-height: 1rem; }
-    .btn-full {
-      width: 100%; padding: 0.9rem;
-      background: var(--orange); color: white; border: none;
-      border-radius: 50px; font-family: 'Tabular', sans-serif;
-      font-weight: 700; cursor: pointer; transition: all 0.3s;
-      margin-top: 0.5rem;
-    }
-    .btn-full:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(243,112,30,0.35); }
-    .switch-auth {
-      text-align: center; margin-top: 1.2rem;
-      font-size: 0.88rem; color: var(--slate);
-    }
-
-    /* ── Page Hero ── */
-    .page-hero {
-      padding-top: 64px;
-      padding: 4rem 5% 3rem;
-      max-width: 1400px; margin: 0 auto;
-      display: flex; justify-content: space-between; align-items: flex-end;
-      border-bottom: 1px solid var(--cream);
-    }
-    .hero-left .eyebrow {
-      font-size: 0.68rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--orange); margin-bottom: 0.8rem;
-    }
-    .hero-left h1 {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: clamp(2.2rem, 4vw, 3.5rem);
-      font-weight: 600; color: var(--slate);
-      letter-spacing: -1.5px; line-height: 1.05;
-    }
-    .hero-left h1 em { font-style: normal; color: var(--orange); }
-    .hero-right {
-      font-size: 0.85rem; color: #8a9ab0;
-      text-align: right; max-width: 260px; line-height: 1.6;
-    }
-
-    /* ── Container ── */
-    .container {
-      max-width: 1400px; margin: 0 auto;
-      padding: 2.5rem 5%;
-    }
-
-    /* ── Loading ── */
-    .loading-indicator {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 5rem 0; color: #8a9ab0;
-    }
-    .spinner {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2.5px solid rgba(243,112,30,0.2);
-      border-top-color: var(--orange);
-      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Layout ── */
-    .layout {
-      display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 2.5rem;
-      align-items: start;
-    }
-    @media (max-width: 1100px) {
-      .layout { grid-template-columns: 1fr; }
-    }
-
-    /* ── Left column ── */
-
-    /* Search */
-    .search-wrap {
-      position: relative; margin-bottom: 2rem;
-    }
-    .search-wrap::before {
-      content: "⌕"; position: absolute;
-      left: 1.2rem; top: 50%; transform: translateY(-50%);
-      color: #aab0bc; font-size: 1.1rem; pointer-events: none;
-    }
-    #stackSearch {
-      width: 100%; padding: 0.9rem 1.2rem 0.9rem 3rem;
-      border: 1.5px solid var(--cream); border-radius: 50px;
-      background: white; font-family: 'Tabular', sans-serif;
-      font-size: 0.95rem; color: var(--dark-slate);
-      transition: all 0.25s; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    }
-    #stackSearch:focus {
-      outline: none; border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(243,112,30,0.1);
-    }
-    #stackSearch::placeholder { color: #aab0bc; }
-
-    /* Available grid */
-    .available-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 1.2rem;
-    }
-
-    /* Compound card */
-    .compound-card {
-      background: white; border-radius: 16px;
-      border: 1px solid var(--cream);
-      overflow: hidden; cursor: grab;
-      box-shadow: var(--shadow);
-      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-      display: flex; flex-direction: column;
-    }
-    .compound-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 18px 45px rgba(0,0,0,0.1);
-      border-color: rgba(243,112,30,0.35);
-    }
-    .compound-card:active { cursor: grabbing; }
-
-    .compound-card .card-img {
-      height: 130px; overflow: hidden;
-      background: #f0ece8; position: relative;
-    }
-    .compound-card .card-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.35s;
-    }
-    .compound-card:hover .card-img img { transform: scale(1.05); }
-    .cat-badge {
-      position: absolute; top: 0.6rem; left: 0.6rem;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
-      color: white; font-size: 0.6rem; letter-spacing: 2px;
-      text-transform: uppercase; padding: 0.2rem 0.6rem;
-      border-radius: 20px; font-weight: 600;
-    }
-
-    .card-body { padding: 1rem; flex: 1; display: flex; flex-direction: column; }
-    .card-name {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 0.95rem; font-weight: 600; color: var(--slate);
-      margin-bottom: 0.4rem;
-    }
-    .card-desc {
-      font-size: 0.78rem; color: #8a9ab0; line-height: 1.55;
-      margin-bottom: 0.9rem; flex: 1;
-      display: -webkit-box; -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical; overflow: hidden;
-    }
-    .add-btn {
-      width: 100%; background: var(--orange); color: white;
-      border: none; padding: 0.5rem 0.75rem;
-      border-radius: 50px; font-family: 'Tabular', sans-serif;
-      font-weight: 700; font-size: 0.78rem;
-      cursor: pointer; transition: all 0.2s;
-      box-shadow: 0 3px 10px rgba(243,112,30,0.25);
-    }
-    .add-btn:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(243,112,30,0.35);
-    }
-    .add-btn:disabled {
-      background: #e0e8f0; color: #8a9ab0;
-      box-shadow: none; cursor: not-allowed;
-    }
-
-    /* ── Right column – Stack Panel ── */
-    .stack-panel {
-      background: white; border-radius: 20px;
-      border: 1px solid var(--cream);
-      box-shadow: var(--shadow);
-      position: sticky; top: 90px;
-      overflow: hidden;
-    }
-
-    .stack-panel-header {
-      padding: 1.4rem 1.6rem 1.2rem;
-      border-bottom: 1px solid var(--cream);
-      display: flex; align-items: center;
-      justify-content: space-between;
-    }
-    .stack-panel-title {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1rem; font-weight: 600; color: var(--slate);
-    }
-    .stack-count-badge {
-      background: rgba(243,112,30,0.1); color: var(--orange);
-      padding: 0.25rem 0.8rem; border-radius: 50px;
-      font-size: 0.78rem; font-weight: 700;
-    }
-
-    /* Drop zone */
-    .stack-dropzone {
-      min-height: 280px; padding: 0.8rem;
-      transition: background 0.2s, border-color 0.2s;
-      border: 2px dashed transparent;
-      margin: 0.8rem;
-      border-radius: 14px;
-    }
-    .stack-dropzone.drag-over {
-      border-color: var(--orange);
-      background: rgba(243,112,30,0.04);
-    }
-
-    /* Empty state */
-    .empty-state {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 240px; color: #aab0bc; text-align: center;
-      gap: 0.75rem;
-    }
-    .empty-icon {
-      width: 52px; height: 52px; border-radius: 50%;
-      background: #f4f0ec;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-    }
-    .empty-state p { font-size: 0.85rem; line-height: 1.55; max-width: 180px; }
-
-    /* Stack item */
-    .stack-item {
-      background: var(--bg); border: 1px solid var(--cream);
-      border-radius: 12px; padding: 0.75rem 1rem;
-      margin-bottom: 0.6rem; display: flex;
-      align-items: center; gap: 0.85rem;
-      cursor: move; transition: box-shadow 0.2s, border-color 0.2s;
-    }
-    .stack-item:hover { border-color: rgba(243,112,30,0.3); box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
-    .stack-item:last-child { margin-bottom: 0; }
-
-    .item-thumb {
-      width: 40px; height: 40px; border-radius: 8px;
-      object-fit: cover; flex-shrink: 0;
-      background: var(--cream);
-    }
-    .drag-handle {
-      color: #c8d0d8; font-size: 1rem; cursor: grab;
-      flex-shrink: 0; user-select: none;
-    }
-    .item-info { flex: 1; min-width: 0; }
-    .item-name {
-      font-weight: 700; font-size: 0.85rem;
-      color: var(--slate); margin-bottom: 0.15rem;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .item-dosage { font-size: 0.72rem; color: #8a9ab0; }
-    .remove-btn {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: none; border: none; color: #c8d0d8;
-      font-size: 1.1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; flex-shrink: 0; line-height: 1;
-    }
-    .remove-btn:hover { background: rgba(239,68,68,0.1); color: #ef4444; }
-
-    /* Safety / Interaction panel */
-    .safety-panel {
-      margin: 0 0.8rem 0.8rem;
-      border-radius: 14px;
-      overflow: hidden;
-    }
-    .safety-header {
-      padding: 0.85rem 1.1rem;
-      background: var(--bg);
-      border: 1px solid var(--cream);
-      border-bottom: none;
-      border-radius: 14px 14px 0 0;
-      font-size: 0.68rem; letter-spacing: 3px;
-      text-transform: uppercase; color: #8a9ab0; font-weight: 600;
-    }
-    .safety-content {
-      display: flex; flex-direction: column; gap: 0;
-      border: 1px solid var(--cream); border-radius: 0 0 14px 14px;
-      overflow: hidden;
-    }
-
-    /* Interaction cards */
-    .inter-card {
-      padding: 0.9rem 1.1rem;
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-    }
-    .inter-card:last-child { border-bottom: none; }
-
-    .inter-synergy { background: rgba(16,185,129,0.06); }
-    .inter-safe    { background: rgba(59,130,246,0.05); }
-    .inter-warning { background: rgba(245,158,11,0.07); }
-    .inter-danger  { background: rgba(239,68,68,0.07);  }
-    .inter-unknown { background: rgba(160,160,160,0.06); }
-
-    .inter-top {
-      display: flex; align-items: center;
-      gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap;
-    }
-    .inter-icon {
-      width: 22px; height: 22px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
-    }
-    .inter-synergy .inter-icon { background: rgba(16,185,129,0.15); color: #059669; }
-    .inter-safe    .inter-icon { background: rgba(59,130,246,0.15); color: #2563eb; }
-    .inter-warning .inter-icon { background: rgba(245,158,11,0.15); color: #d97706; }
-    .inter-danger  .inter-icon { background: rgba(239,68,68,0.15);  color: #dc2626; }
-    .inter-unknown .inter-icon { background: rgba(160,160,160,0.15); color: #6b7280; }
-
-    .inter-title {
-      font-weight: 700; font-size: 0.82rem; color: var(--dark-slate);
-      flex: 1;
-    }
-    .inter-tag {
-      font-size: 0.62rem; letter-spacing: 1px;
-      text-transform: uppercase; font-weight: 700;
-      padding: 0.15rem 0.55rem; border-radius: 20px;
-    }
-    .tag-synergy { background: rgba(16,185,129,0.15); color: #059669; }
-    .tag-safe    { background: rgba(59,130,246,0.12); color: #2563eb; }
-    .tag-warning { background: rgba(245,158,11,0.15); color: #d97706; }
-    .tag-danger  { background: rgba(239,68,68,0.12);  color: #dc2626; }
-    .tag-unknown { background: rgba(160,160,160,0.12); color: #6b7280; }
-
-    .inter-stars {
-      font-size: 0.7rem; letter-spacing: 1px;
-      color: var(--orange); flex-shrink: 0;
-    }
-    .inter-msg {
-      font-size: 0.78rem; line-height: 1.6;
-      color: #5a6a7a;
-    }
-
-    /* Action buttons */
-    .stack-actions {
-      padding: 1rem 1.2rem 1.4rem;
-      display: flex; gap: 0.75rem;
-      border-top: 1px solid var(--cream);
-    }
-    .btn-reset {
-      flex: 1; padding: 0.75rem;
-      background: white; color: var(--slate);
-      border: 1.5px solid var(--cream); border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 700;
-      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
-    }
-    .btn-reset:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.05); }
-    .btn-save {
-      flex: 2; padding: 0.75rem;
-      background: var(--orange); color: white;
-      border: none; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 700;
-      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
-      box-shadow: 0 4px 16px rgba(243,112,30,0.3);
-    }
-    .btn-save:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 24px rgba(243,112,30,0.4);
-    }
-    .btn-save:disabled {
-      background: #d0d8e0; box-shadow: none; cursor: not-allowed;
-    }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 2rem 0;
-      border-top: 1px solid var(--cream);
-      margin-top: 4rem; color: #8a9ab0; font-size: 0.85rem;
-    }
-
-    /* ── Cookie ── */
-    #cookieConsent {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-      background: var(--slate); color: white;
-      padding: 1rem 5%; display: none;
-      align-items: center; justify-content: center; gap: 1.5rem;
-      font-size: 0.88rem; flex-wrap: wrap;
-    }
-    #cookieConsent button {
-      background: var(--orange); color: white; border: none;
-      padding: 0.4rem 1.2rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600; cursor: pointer;
-    }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--slate);
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0; right: 0;
-        background: var(--bg);
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
-      }
-      nav.open { display: flex; }
-      nav a { margin: 0.8rem 0; }
-      .page-hero {
-      padding-top: 64px; flex-direction: column; gap: 1.5rem; align-items: flex-start; }
-      .stack-panel { position: static; }
-    }
-
-    /* Load Saved Stack */
-    .load-stack-wrap{padding:0 1.2rem 1.2rem;}
-    .btn-load{width:100%;padding:.7rem;background:white;color:var(--slate);border:1.5px dashed var(--cream);border-radius:50px;font-family:'Tabular',sans-serif;font-weight:600;font-size:.82rem;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.5rem;}
-    .btn-load:hover{border-color:var(--orange);color:var(--orange);background:rgba(243,112,30,.04);}
-    .btn-load:disabled{opacity:.45;cursor:not-allowed;}
-    .modal-overlay{position:fixed;inset:0;z-index:9000;background:rgba(31,42,54,.55);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:1rem;}
-    .modal-box{background:white;border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.18);width:100%;max-width:480px;overflow:hidden;}
-    .modal-header{padding:1.4rem 1.6rem;border-bottom:1px solid var(--cream);display:flex;align-items:center;justify-content:space-between;}
-    .modal-title{font-family:'Clash Display','Tabular',sans-serif;font-size:1rem;font-weight:600;color:var(--slate);}
-    .modal-close{background:none;border:none;font-size:1.4rem;color:#aab0bc;cursor:pointer;line-height:1;transition:color .2s;}
-    .modal-close:hover{color:var(--dark-slate);}
-    .modal-body{padding:1rem 1.2rem;max-height:60vh;overflow-y:auto;}
-    .saved-stack-item{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 1rem;border-radius:12px;margin-bottom:.6rem;border:1px solid var(--cream);background:var(--bg);transition:all .2s;}
-    .saved-stack-item:hover{border-color:rgba(243,112,30,.4);background:rgba(243,112,30,.04);}
-    .saved-stack-meta{flex:1;min-width:0;}
-    .saved-stack-name{font-weight:700;font-size:.9rem;color:var(--slate);margin-bottom:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .saved-stack-info{font-size:.74rem;color:#8a9ab0;}
-    .load-this-btn{background:var(--orange);color:white;border:none;padding:.4rem 1rem;border-radius:50px;font-family:'Tabular',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
-    .load-this-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(243,112,30,.3);}
-    .modal-empty{text-align:center;padding:2.5rem 1rem;color:#8a9ab0;font-size:.88rem;}
-  
-    
-
-    /* Prevent text from ever overflowing horizontally */
-    html { overflow-x: hidden; }
-    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-    /* Make images responsive by default */
-    img { max-width: 100%; height: auto; }
-
-    /* Buttons / links: comfortable touch targets */
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ── Hamburger nav shared base ──────── */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: var(--slate, #4b607f);
-      padding: 0.25rem 0.4rem;
-      line-height: 1;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-
-      /* Slide-down nav overlay */
-      nav {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(255,255,255,0.97) !important;
-        backdrop-filter: blur(16px) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 0.25rem !important;
-        padding: 2rem 1rem !important;
-        z-index: 500 !important;
-      }
-      nav.open { display: flex !important; }
-
-      /* Big tap targets for nav items on mobile */
-      nav a {
-        margin: 0 !important;
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        padding: 0.9rem 1.5rem !important;
-        width: 100% !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        transition: background 0.2s !important;
-      }
-      nav a:hover, nav a.active {
-        background: rgba(243,112,30,0.08) !important;
-      }
-
-      /* Close button inside open menu – now a real element for better touch handling */
-      .nav-close {
-        display: none;
-      }
-      @media (max-width: 768px) {
-        .nav-close {
-          display: block;
-          position: fixed;
-          top: 1.2rem; right: 1.4rem;
-          font-size: 1.4rem;
-          color: var(--slate, #4b607f);
-          background: none;
-          border: none;
-          cursor: pointer;
-          z-index: 600;
-        }
-      }
-
-      /* General layout helpers for mobile */
-      .container, [class*="container"] {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-      }
-
-      /* Typography scale */
-      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
-
-      /* Full-width CTAs */
-      .hero-cta, .cta-buttons, .quick-links {
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
-        width: 100% !important;
-        text-align: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Stack panels / grids → single column */
-      .grid, .reviews-grid, .products-grid, .purchased-grid,
-      .available-grid, .layout, .product-layout, .content-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      /* Auth banner wrap */
-      .auth-banner {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        text-align: center !important;
-      }
-      .auth-banner .btn-orange { width: 100% !important; }
-
-      /* Auth/saved-stack modals – full-screen on small screens */
-      .modal-box {
-        max-width: 100% !important;
-        margin: 0 1rem !important;
-        padding: 1.8rem 1.4rem !important;
-        border-radius: 16px !important;
-      }
-
-      /* Purchased cards wrap */
-      .purchased-card {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-      }
-      .download-btn { width: 100% !important; justify-content: center !important; }
-
-      /* Stack panel: no sticky on mobile */
-      .stack-panel { position: static !important; }
-
-      /* Stack actions vertical */
-      .stack-actions { flex-direction: column !important; }
-      .stack-actions .btn-reset,
-      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
-
-      /* Profile card */
-      .profile-header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-      }
-      .logout-btn { width: 100% !important; }
-
-      /* Card actions */
-      .card-actions { flex-direction: column !important; }
-      .card-actions .btn { width: 100% !important; }
-
-      /* Footer */
-      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
-
-      /* Page heroes */
-      .page-hero {
-      padding-top: 64px;
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        align-items: flex-start !important;
-        padding: 2rem 1.1rem !important;
-      }
-      .hero-right { align-items: flex-start !important; width: 100% !important; }
-
-      /* Cookie banner */
-      #cookieConsent {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        text-align: center !important;
-        padding: 1rem !important;
-      }
-    }
-
-    /* ── Extra-small phones ──────────────── */
-    @media (max-width: 375px) {
-      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
-      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
-      .purchase-box { padding: 1.2rem !important; }
-      .cta-box { padding: 1.8rem 1rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-    @media (max-width: 768px) {
-      .layout { display: flex !important; flex-direction: column !important; }
-      .available-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.8rem !important; }
-      .compound-card .card-img { height: 100px !important; }
-      .stack-dropzone { min-height: 160px !important; }
-      .load-stack-wrap { padding: 0 0.8rem 0.8rem !important; }
-    }
-    @media (max-width: 480px) {
-      .available-grid { grid-template-columns: 1fr !important; }
-    }
-
-
-
-    /* Prevent text from ever overflowing horizontally */
-    html { overflow-x: hidden; }
-    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-    /* Make images responsive by default */
-    img { max-width: 100%; height: auto; }
-
-    /* Buttons / links: comfortable touch targets */
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ── Hamburger nav shared base ──────── */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: var(--slate, #4b607f);
-      padding: 0.25rem 0.4rem;
-      line-height: 1;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-
-      /* Slide-down nav overlay */
-      nav {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(255,255,255,0.97) !important;
-        backdrop-filter: blur(16px) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 0.25rem !important;
-        padding: 2rem 1rem !important;
-        z-index: 500 !important;
-      }
-      nav.open { display: flex !important; }
-      nav {
-        overflow-y: auto !important;
-        max-height: 100vh !important;
-        -webkit-overflow-scrolling: touch !important;
-      }
-
-      /* Big tap targets for nav items on mobile */
-      nav a {
-        margin: 0 !important;
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        padding: 0.9rem 1.5rem !important;
-        width: 100% !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        transition: background 0.2s !important;
-      }
-      nav a:hover, nav a.active {
-        background: rgba(243,112,30,0.08) !important;
-      }
-
-      /* Close button inside open menu – real button so it can be tapped */
-      .nav-close { display: none; }
-      @media (max-width: 768px) {
-        .nav-close {
-          display: block;
-          position: fixed;
-          top: 1.2rem; right: 1.4rem;
-          font-size: 1.4rem;
-          color: var(--slate, #4b607f);
-          background: none;
-          border: none;
-          cursor: pointer;
-          z-index: 600;
-        }
-      }
-
-      /* General layout helpers for mobile */
-      .container, [class*="container"] {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-      }
-
-      /* Typography scale */
-      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
-
-      /* Full-width CTAs */
-      .hero-cta, .cta-buttons, .quick-links {
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
-        width: 100% !important;
-        text-align: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Stack panels / grids → single column */
-      .grid, .reviews-grid, .products-grid, .purchased-grid,
-      .available-grid, .layout, .product-layout, .content-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      /* Auth banner wrap */
-      .auth-banner {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        text-align: center !important;
-      }
-      .auth-banner .btn-orange { width: 100% !important; }
-
-      /* Auth/saved-stack modals – full-screen on small screens */
-      .modal-box {
-        max-width: 100% !important;
-        margin: 0 1rem !important;
-        padding: 1.8rem 1.4rem !important;
-        border-radius: 16px !important;
-      }
-
-      /* Purchased cards wrap */
-      .purchased-card {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-      }
-      .download-btn { width: 100% !important; justify-content: center !important; }
-
-      /* Stack panel: no sticky on mobile */
-      .stack-panel { position: static !important; }
-
-      /* Stack actions vertical */
-      .stack-actions { flex-direction: column !important; }
-      .stack-actions .btn-reset,
-      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
-
-      /* Profile card */
-      .profile-header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-      }
-      .logout-btn { width: 100% !important; }
-
-      /* Card actions */
-      .card-actions { flex-direction: column !important; }
-      .card-actions .btn { width: 100% !important; }
-
-      /* Footer */
-      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
-
-      /* Page heroes */
-      .page-hero {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        align-items: flex-start !important;
-        padding: 2rem 1.1rem !important;
-      }
-      .hero-right { align-items: flex-start !important; width: 100% !important; }
-
-      /* Cookie banner */
-      #cookieConsent {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        text-align: center !important;
-        padding: 1rem !important;
-      }
-    }
-
-    /* ── Extra-small phones ──────────────── */
-    @media (max-width: 375px) {
-      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
-      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
-      .purchase-box { padding: 1.2rem !important; }
-      .cta-box { padding: 1.8rem 1rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-
-
-
-
-/* ── Transition foundation ── */
-a, button, [class*="btn"], [class*="card"],
-[class*="chip"], [class*="pill"], [class*="link"],
-.category-btn, .compound-card, .product-card,
-.review-card, .highlight-card, .philosophy-card,
-.stack-item, .faq-item, .social-link, .social-pill,
-.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
-.suggest-chip, .research-link {
-  transition-property: color, background, border-color,
-                        box-shadow, transform, opacity;
-  transition-duration: 0.22s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ── Primary buttons ── */
-.btn-primary:hover,
-.btn-orange:hover,
-.buy-button:hover:not(:disabled),
-.add-btn:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
-              0 2px 8px  rgba(243,112,30,0.18) !important;
-  filter: brightness(1.06);
-}
-
-/* ── Ghost / secondary buttons ── */
-.btn-ghost:hover,
-.btn-secondary:hover,
-.btn-load:hover,
-.btn-save:hover:not(:disabled) {
-  border-color: rgba(243,112,30,0.55) !important;
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.06) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
-}
-
-/* ── Auth button ── */
-.auth-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
-  filter: brightness(1.05);
-}
-
-/* ── Cards – lift + orange accent border glow ── */
-.card:hover,
-.compound-card:hover,
-.product-card:hover,
-.review-card:hover,
-.highlight-card:hover,
-.philosophy-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(243,112,30,0.28) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
-              0 0  0 1.5px rgba(243,112,30,0.14) !important;
-}
-
-/* ── Stack items ── */
-.stack-item:hover {
-  border-color: rgba(243,112,30,0.35) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
-}
-
-/* ── FAQ items ── */
-.faq-item:hover {
-  border-color: rgba(243,112,30,0.3) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
-}
-
-/* ── Social links (circle icons) ── */
-.social-link:hover {
-  background: #f3701e !important;
-  color: white !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
-}
-
-/* ── Social pills ── */
-.social-pill:hover {
-  background: rgba(243,112,30,0.09) !important;
-  border-color: rgba(243,112,30,0.4) !important;
-  color: #f3701e !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Suggest chips / category chips ── */
-.suggest-chip:hover,
-.category-btn:hover,
-.category-btn.active {
-  background: rgba(243,112,30,0.08) !important;
-  border-color: rgba(243,112,30,0.40) !important;
-  color: #f3701e !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ── Back / nav text links ── */
-.back-link:hover,
-.nd-back-btn:hover {
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.07) !important;
-  border-color: rgba(243,112,30,0.3) !important;
-}
-
-/* ── Bookmark & ctrl buttons ── */
-.bookmark-btn:hover,
-.ctrl-btn:hover {
-  background: #f3701e !important;
-  color: white !important;
-  border-color: #f3701e !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Research / external links ── */
-.research-link:hover {
-  color: #f3701e !important;
-  border-color: rgba(243,112,30,0.5) !important;
-  background: rgba(243,112,30,0.05) !important;
-}
-
-/* ── Download / load stack btn ── */
-.download-btn:hover,
-.load-this-btn:hover {
-  background: #3a4a63 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
-}
-
-/* ── Dark mode card hover ── */
-body.dark .card:hover,
-body.dark .compound-card:hover {
-  border-color: rgba(243,112,30,0.45) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
-              0 0 0 1.5px rgba(243,112,30,0.22) !important;
-}
-
-/* ── Cookie consent button ── */
-#cookieConsent button:hover {
-  background: #e2661a !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Remove / reset (red) – keep red, just smooth it ── */
-.remove-btn:hover {
-  background: rgba(239,68,68,0.10) !important;
-  color: #ef4444 !important;
-  border-color: rgba(239,68,68,0.3) !important;
-}
-.btn-reset:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444 !important;
-  background: rgba(239,68,68,0.05) !important;
-}
-
-
-
-
-  /* Backdrop */
-  
-  
-
-  /* Modal panel slides up from bottom */
-  
-  body.dark 
-  
-
-  /* Drag handle */
-  
-  body.dark 
-
-  /* Modal header row */
-  
-  body.dark 
-  
-  body.dark 
-  
-  body.dark 
-  
-
-  /* Nav links */
-  
-  
-  body.dark 
-  
-  
-  
-  
-  
-
-  /* Bottom padding for safe area */
-  
-}
-
-</style>
+  /* ── layout ── */
+  #particles-js{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:24px;align-items:start;position:relative;z-index:1}
+
+  /* ── search ── */
+  .search-wrap{position:relative;margin-bottom:20px}
+  .search-wrap::before{content:"⌕";position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--m2);font-size:1rem;pointer-events:none;z-index:1}
+  #stackSearch{width:100%;padding:.8rem 1rem .8rem 2.8rem;border:1px solid var(--m3);border-radius:100px;background:var(--bg-2);font-family:var(--font-body);font-size:14px;color:var(--cream);font-weight:300;transition:border-color .2s,box-shadow .2s}
+  #stackSearch:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-dim)}
+  #stackSearch::placeholder{color:var(--m2)}
+  body.light #stackSearch{background:#fff;color:#1C1C1A}
+
+  /* ── compound card grid ── */
+  .available-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--m4);border:1px solid var(--m4);border-radius:12px;overflow:hidden}
+
+  .compound-card{
+    background:var(--bg-2);cursor:grab;
+    display:flex;flex-direction:column;
+    transition:background .18s;
+  }
+  .compound-card:hover{background:var(--bg-3)}
+  .compound-card:active{cursor:grabbing;background:var(--bg-3)}
+  .card-img{height:120px;overflow:hidden;background:var(--bg-3);position:relative;flex-shrink:0}
+  .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .35s var(--ease-out);opacity:.9}
+  .compound-card:hover .card-img img{transform:scale(1.04)}
+  .cat-badge{position:absolute;top:8px;left:8px;background:rgba(17,17,16,.6);backdrop-filter:blur(6px);color:var(--m1);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:100px;font-weight:500;border:1px solid var(--m4)}
+  .card-body{padding:14px 16px;flex:1;display:flex;flex-direction:column}
+  .card-name{font-family:var(--font-display);font-size:14px;font-weight:400;color:var(--cream);margin-bottom:4px;letter-spacing:-.01em}
+  .card-desc{font-size:11px;font-weight:300;color:var(--m2);line-height:1.55;margin-bottom:12px;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .add-btn{background:var(--m4);color:var(--m2);border:1px solid var(--m3);padding:6px 14px;border-radius:100px;font-family:var(--font-body);font-size:11px;font-weight:500;cursor:pointer;transition:background .2s,color .2s,border-color .2s;align-self:flex-start}
+  .add-btn:hover:not(:disabled){background:var(--orange);color:white;border-color:var(--orange)}
+  .add-btn:disabled{opacity:.5;cursor:not-allowed}
+  body.light .compound-card{background:#fff}
+  body.light .compound-card:hover{background:#f7f4ef}
+  body.light .card-img{background:#f0ece8}
+  body.light .card-name{color:#141412}
+  body.light .cat-badge{background:rgba(247,244,239,.85);color:#4A4844}
+
+  /* ── stack panel ── */
+  .stack-panel{
+    background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;
+    position:sticky;top:80px;overflow:hidden;
+  }
+  .stack-panel-header{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--m4)}
+  .stack-panel-title{font-family:var(--font-display);font-size:14px;font-weight:500;color:var(--cream);letter-spacing:-.01em}
+  .stack-count-badge{font-size:11px;font-weight:500;color:var(--orange);background:var(--orange-dim);padding:3px 10px;border-radius:100px;border:1px solid rgba(232,84,26,.15)}
+  body.light .stack-panel{background:#fff;border-color:rgba(200,180,160,.25)}
+  body.light .stack-panel-header{border-bottom-color:rgba(200,180,160,.25)}
+  body.light .stack-panel-title{color:#141412}
+
+  /* dropzone */
+  .stack-dropzone{
+    min-height:160px;padding:12px;
+    transition:background .2s;
+  }
+  .stack-dropzone.drag-over{background:var(--orange-dim)}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 16px;gap:10px;text-align:center}
+  .empty-icon{font-size:28px;opacity:.4}
+  .empty-state p{font-size:13px;font-weight:300;color:var(--m2);line-height:1.55}
+
+  /* stack items */
+  .stack-item{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:var(--bg-3);border:1px solid var(--m4);border-radius:8px;
+    margin-bottom:6px;transition:border-color .2s,background .2s;
+    cursor:default;
+  }
+  .stack-item:last-child{margin-bottom:0}
+  .stack-item:hover{border-color:var(--m3)}
+  .drag-handle{color:var(--m2);cursor:grab;font-size:14px;flex-shrink:0;opacity:.6}
+  .drag-handle:active{cursor:grabbing}
+  .item-thumb{width:32px;height:32px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--bg-2)}
+  .item-info{flex:1;min-width:0}
+  .item-name{font-size:13px;font-weight:500;color:var(--cream);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .item-dosage{font-size:11px;font-weight:300;color:var(--m2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .remove-btn{background:none;border:none;color:var(--m2);cursor:pointer;font-size:16px;line-height:1;padding:4px;flex-shrink:0;border-radius:4px;transition:color .2s,background .2s}
+  .remove-btn:hover{color:#ef4444;background:rgba(239,68,68,.08)}
+  body.light .stack-item{background:#f7f4ef;border-color:rgba(200,180,160,.25)}
+  body.light .item-name{color:#141412}
+
+  /* safety panel */
+  .safety-panel{padding:0 12px 12px}
+  .safety-header{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);padding:14px 0 10px}
+  .safety-content{display:flex;flex-direction:column;gap:8px}
+  .inter-card{padding:12px 14px;border-radius:8px;border:1px solid var(--m4);background:var(--bg-3)}
+  .inter-top{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+  .inter-icon{font-size:13px;flex-shrink:0}
+  .inter-title{font-size:12px;font-weight:500;color:var(--cream);flex:1}
+  .inter-tag{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:100px}
+  .inter-stars{font-size:11px;color:var(--orange)}
+  .inter-msg{font-size:12px;font-weight:300;color:var(--m2);line-height:1.6}
+  .inter-synergy{border-color:rgba(114,200,140,.2)} .inter-synergy .inter-tag{background:rgba(114,200,140,.12);color:#72C88C}
+  .inter-safe .inter-tag{background:rgba(110,168,232,.12);color:#6EA8E8}
+  .inter-warning{border-color:rgba(240,160,80,.2)} .inter-warning .inter-tag{background:rgba(240,160,80,.12);color:#F0A050}
+  .inter-danger{border-color:rgba(239,68,68,.25)} .inter-danger .inter-tag{background:rgba(239,68,68,.12);color:#ef4444}
+  .inter-unknown .inter-tag{background:var(--m4);color:var(--m2)}
+  body.light .inter-card{background:#f5f2ef}
+  body.light .inter-title{color:#141412}
+
+  /* actions */
+  .stack-actions{display:flex;gap:8px;padding:12px;border-top:1px solid var(--m4)}
+  .btn-reset{flex:1;background:transparent;color:var(--m2);border:1px solid var(--m3);padding:9px;border-radius:100px;font-family:var(--font-body);font-size:12px;font-weight:400;cursor:pointer;transition:border-color .2s,color .2s}
+  .btn-reset:hover{border-color:#ef4444;color:#ef4444}
+  .btn-save{flex:2;background:var(--orange);color:white;border:none;padding:9px;border-radius:100px;font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .2s,transform .15s}
+  .btn-save:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+  .btn-save:disabled{opacity:.35;cursor:not-allowed}
+  .load-stack-wrap{padding:0 12px 12px}
+  .btn-load{width:100%;padding:9px;background:transparent;color:var(--m2);border:1px dashed var(--m3);border-radius:100px;font-family:var(--font-body);font-weight:400;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:border-color .2s,color .2s}
+  .btn-load:hover:not(:disabled){border-color:var(--orange);color:var(--orange)}
+  .btn-load:disabled{opacity:.35;cursor:not-allowed}
+
+  /* saved stacks modal */
+  .saved-stack-item{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.9rem 1rem;border-radius:8px;margin-bottom:6px;border:1px solid var(--m4);background:var(--bg-3);transition:border-color .2s}
+  .saved-stack-item:hover{border-color:rgba(232,84,26,.3)}
+  .saved-stack-meta{flex:1;min-width:0}
+  .saved-stack-name{font-weight:500;font-size:13px;color:var(--cream);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .saved-stack-info{font-size:11px;font-weight:300;color:var(--m2)}
+  .load-this-btn{background:var(--orange);color:white;border:none;padding:5px 14px;border-radius:100px;font-family:var(--font-body);font-weight:500;font-size:12px;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+  .load-this-btn:hover{opacity:.88}
+  .modal-empty{text-align:center;padding:2.5rem 1rem;color:var(--m2);font-size:14px;font-weight:300;line-height:1.7}
+  body.light .saved-stack-item{background:#f5f2ef;border-color:rgba(200,180,160,.25)}
+  body.light .saved-stack-name{color:#141412}
+
+  /* FAB */
+  #viewStackFab{display:none;position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:840;align-items:center;gap:.5rem;background:var(--orange);color:white;border:none;border-radius:100px;padding:.85rem 1.8rem;font-family:var(--font-body);font-weight:500;font-size:13px;cursor:pointer;box-shadow:0 8px 28px rgba(232,84,26,.45);white-space:nowrap;transition:transform .2s,box-shadow .2s}
+  #viewStackFab:hover{transform:translateX(-50%) translateY(-2px);box-shadow:0 12px 36px rgba(232,84,26,.5)}
+  .fab-count{background:rgba(255,255,255,.22);border-radius:100px;padding:.1rem .55rem;font-size:11px}
+
+  @media(max-width:768px){
+    .layout{grid-template-columns:1fr!important;gap:0!important}
+    #viewStackFab{display:flex}
+    .available-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+    .stack-panel{position:fixed!important;bottom:0;left:0;right:0;top:auto!important;border-radius:20px 20px 0 0!important;border-bottom:none!important;max-height:88svh;overflow-y:auto;transform:translateY(100%);transition:transform .36s cubic-bezier(.32,.72,0,1);z-index:850;pointer-events:none}
+    .stack-panel::before{content:'';display:block;width:36px;height:3px;background:var(--m3);border-radius:2px;margin:14px auto 0}
+    .stack-panel.sheet-open{transform:translateY(0);pointer-events:all}
+    .stack-sheet-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:849;opacity:0;transition:opacity .3s}
+    .stack-sheet-backdrop.is-open{display:block;opacity:1}
+    .stack-panel-mobile-wrap.is-open{pointer-events:all}
+  }
+  </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header class="nd-header" id="ndHeader">
-  <a href="landing.html" class="nd-logo">Noodrop</a>
+<div id="particles-js"></div>
+
+<header class="nd-header" id="ndHeader">
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-    <div class="nd-nav-header">
-      <span class="nd-nav-title">Noodrop</span>
-      <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
-    </div>
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
     <div class="nd-nav-links">
-    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-    <a href="index.html" class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
-    <a href="stack.html" class="nd-nav__link active">Stacks<span class="nav-arrow">›</span></a>
-    <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
-    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-    <a href="faq.html" class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-      <a href="nooai.html" class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link active">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
     <button class="auth-btn" id="authBtn">Login</button>
-    <div class="theme-toggle" id="themeToggle"><div class="toggle-knob"></div></div>
-    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
-  <!-- Page Hero -->
-  <div class="page-hero">
-    <div class="hero-left">
-      <div class="eyebrow">Noodrop · Stack Builder</div>
-      <h1>Build your<br><em>Stack.</em></h1>
-    </div>
-    <div class="hero-right">
-      Drag compounds into your stack or click "+ Add". The safety panel checks interactions automatically.
-    </div>
+<div class="page-hero">
+  <div class="hero-left">
+    <div class="eyebrow">Noodrop · Stack Builder</div>
+    <h1>Build your<br><em>Stack.</em></h1>
   </div>
+  <div class="hero-right" style="font-size:13px;font-weight:300;color:var(--m2);max-width:260px;text-align:right;line-height:1.65">
+    Drag compounds into your stack or click "+ Add". Interactions are checked automatically.
+  </div>
+</div>
 
-  <div class="container">
+<div class="container">
+  <button id="viewStackFab" aria-label="View stack">📋 View Stack <span class="fab-count" id="fabCount">0</span></button>
+  <div class="stack-sheet-backdrop" id="stackBackdrop"></div>
 
-    <!-- Mobile FAB: view stack -->
-    <button id="viewStackFab" aria-label="View your stack">
-      📋 View Stack <span class="fab-count" id="fabCount">0</span>
-    </button>
-    <div class="stack-sheet-backdrop" id="stackBackdrop"></div>
+  <div class="loading-indicator" id="loadingIndicator"><div class="spinner"></div><span>Loading compounds…</span></div>
 
-    <!-- Loading -->
-    <div class="loading-indicator" id="loadingIndicator">
-      <div class="spinner"></div>
-      <span style="font-size:0.85rem;">Loading compounds...</span>
+  <div class="layout" id="mainLayout" style="display:none;">
+
+    <!-- Left: compounds -->
+    <div>
+      <div class="search-wrap">
+        <input type="text" id="stackSearch" placeholder="Search compounds…" autocomplete="off">
+      </div>
+      <div class="available-grid" id="availableGrid"></div>
     </div>
 
-    <!-- Main layout -->
-    <div class="layout" id="mainLayout" style="display:none;">
-
-      <!-- Left: Available compounds -->
-      <div>
-        <div class="search-wrap">
-          <input type="text" id="stackSearch" placeholder="Search compounds..." autocomplete="off">
-        </div>
-        <div class="available-grid" id="availableGrid"></div>
-      </div>
-
-      <!-- Right: Stack panel -->
-      <div>
-        <div class="stack-panel-mobile-wrap" id="stackPanelWrap"><div class="stack-panel">
-
+    <!-- Right: stack panel -->
+    <div>
+      <div class="stack-panel-mobile-wrap" id="stackPanelWrap">
+        <div class="stack-panel">
           <div class="stack-panel-header">
             <div class="stack-panel-title">Your Stack</div>
             <span class="stack-count-badge" id="stackCount">0 compounds</span>
           </div>
-
-          <!-- Drop zone -->
           <div class="stack-dropzone" id="currentStack">
             <div class="empty-state" id="emptyState">
               <div class="empty-icon">📋</div>
-              <p>Drag here or click "+ Add to Stack"</p>
+              <p>Drag here or click<br>"+ Add to Stack"</p>
             </div>
           </div>
-
-          <!-- Safety panel -->
           <div class="safety-panel" id="safetyPanel" style="display:none;">
             <div class="safety-header">Safety Analysis</div>
             <div class="safety-content" id="safetyContent"></div>
           </div>
-
-          <!-- Actions -->
           <div class="stack-actions">
             <button class="btn-reset" id="resetBtn">Reset</button>
-            <button class="btn-save" id="saveBtn">Save Stack</button>
+            <button class="btn-save" id="saveBtn" disabled>Login to Save</button>
           </div>
-
-          <!-- Load Saved Stack -->
           <div class="load-stack-wrap">
-            <button class="btn-load" id="loadBtn" disabled>&#128190; Load Saved Stack</button>
+            <button class="btn-load" id="loadBtn" disabled>💾 Load Saved Stack</button>
           </div>
-
         </div>
       </div>
-
     </div>
 
-    <footer>© 2026 Noodrop · For educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></footer>
   </div>
 
-  <!-- Cookie -->
-  <!-- Saved Stacks Modal -->
-  <div class="modal-overlay" id="savedStacksModal" style="display:none;">
-    <div class="modal-box">
-      <div class="modal-header">
-        <div class="modal-title">Your Saved Stacks</div>
-        <button class="modal-close" id="modalClose">&#x2715;</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
+  <footer style="margin-top:48px">© 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a></footer>
+</div>
+
+<!-- Saved Stacks Modal -->
+<div class="modal-overlay" id="savedStacksModal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header"><div class="modal-title">Your Saved Stacks</div><button class="modal-close" id="modalClose">✕</button></div>
+    <div class="modal-body" id="modalBody"></div>
   </div>
+</div>
 
-  <!-- Auth modal (login/signup) -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="authTitle">Login</h2>
-        <button class="modal-close" onclick="closeAuthModal()">×</button>
-      </div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="loginEmail" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="loginPassword" required minlength="6">
-        </div>
-        <div class="form-error" id="loginError"></div>
-        <button type="submit" class="btn-full">Login</button>
-      </form>
-      <form id="signupForm" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="signupEmail" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="signupPassword" required minlength="6">
-        </div>
-        <div class="form-error" id="signupError"></div>
-        <button type="submit" class="btn-full">Create Account</button>
-      </form>
-      <div class="switch-auth">
-        <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
-      </div>
-    </div>
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header"><h2 id="authTitle">Login</h2><button class="modal-close" onclick="closeAuthModal()">×</button></div>
+    <form id="loginForm">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="loginEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" required minlength="6"></div>
+      <div class="form-error" id="loginError"></div>
+      <button type="submit" class="btn-full">Login</button>
+    </form>
+    <form id="signupForm" style="display:none;">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="signupEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="signupPassword" required minlength="6"></div>
+      <div class="form-error" id="signupError"></div>
+      <button type="submit" class="btn-full">Create Account</button>
+    </form>
+    <div class="switch-auth"><span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span></div>
   </div>
+</div>
 
-  <div id="cookieConsent">
-    <span>This website uses cookies to improve your experience.</span>
-    <button onclick="acceptCookies()">Accept</button>
-  </div>
+<div id="cookieConsent" style="display:none;"><span>We use cookies to improve your experience.</span><button onclick="acceptCookies()">Accept</button></div>
 
-  <script>
-    // Firebase config loaded from firebase-config.js (single source of truth)
-
-    let currentStack = [];
-
-    // Interactions loaded from data.js → window.interactions
-    // Fallback for safety in case data.js loads late
-    function getInteraction(cidA, cidB) {
-      const db = window.interactions || {};
-      return db[`${cidA}_${cidB}`] || db[`${cidB}_${cidA}`] || null;
-    }
-
-    function initApp() {
-      const authBtn = document.getElementById('authBtn');
-      firebase.auth().onAuthStateChanged(user => {
-        updateSaveButton(user);
-        if (authBtn) authBtn.textContent = user ? 'Profile' : 'Login';
-      });
-      if (authBtn) {
-        authBtn.addEventListener('click', () => {
-          firebase.auth().currentUser ? window.location.href = 'profile.html' : openAuthModal();
-        });
-      }
-      loadDataAndInitialize();
-    }
-
-    function loadDataAndInitialize() {
-      if (typeof window.compounds !== 'undefined') { finishInitialization(); return; }
-      const s = document.createElement('script');
-      s.src = 'data.js';
-      s.onload = finishInitialization;
-      s.onerror = () => { document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Error loading compounds.</p>'; };
-      document.head.appendChild(s);
-    }
-
-    function finishInitialization() {
-      document.getElementById('loadingIndicator').style.display = 'none';
-      document.getElementById('mainLayout').style.display = 'grid';
-      if (!window.compounds || !Array.isArray(window.compounds)) {
-        document.getElementById('availableGrid').innerHTML = '<p style="color:#8a9ab0">Error loading compounds.</p>';
-        return;
-      }
-      renderAvailable(window.compounds);
-      document.getElementById('stackSearch').addEventListener('input', e => {
-        const t = e.target.value.toLowerCase();
-        renderAvailable(t
-          ? window.compounds.filter(c =>
-              c.name.toLowerCase().includes(t) ||
-              (c.description && c.description.toLowerCase().includes(t)) ||
-              (c.category && c.category.toLowerCase().includes(t)) ||
-              (c.benefits && c.benefits.some(b => b.toLowerCase().includes(t)))
-            )
-          : window.compounds
-        );
-      });
-      document.getElementById('resetBtn').addEventListener('click', clearStack);
-      document.getElementById('saveBtn').addEventListener('click', saveStack);
-      makeDroppable();
-      restoreFromSession();
-
-      // ── Extension: auto-load compounds from Noodrop browser extension ──
-      (function loadFromExtension() {
-        const hash = window.location.hash;
-        if (!hash.startsWith('#load=')) return;
-
-        // Clean up URL immediately so refreshing doesn't re-add
-        history.replaceState(null, '', window.location.pathname + window.location.search);
-
-        const cidList = decodeURIComponent(hash.slice(6))
-          .split(',').map(s => s.trim()).filter(Boolean);
-        if (!cidList.length) return;
-
-        cidList.forEach(rawCid => {
-          // Match by numeric cid OR by name slug (for placeholder compounds)
-          const comp = window.compounds?.find(c =>
-            String(c.cid) === String(rawCid) ||
-            c.name.toLowerCase().replace(/[^a-z0-9]/g, '') === String(rawCid).toLowerCase().replace(/[^a-z0-9]/g, '')
-          );
-          if (comp && !currentStack.some(s => String(s.cid) === String(comp.cid))) {
-            addToStack(String(comp.cid));
-          }
-        });
-      })();
-    }
-
-    function renderAvailable(list = window.compounds || []) {
-      const grid = document.getElementById('availableGrid');
-      grid.innerHTML = '';
-      if (!list.length) {
-        grid.innerHTML = '<p style="color:#8a9ab0;font-size:0.88rem;">No compounds found.</p>';
-        return;
-      }
-      list.forEach(comp => {
-        const inStack = currentStack.some(c => String(c.cid) === String(comp.cid));
-        const card = document.createElement('div');
-        card.className = 'compound-card';
-        card.draggable = true;
-        card.dataset.cid = comp.cid;
-        card.innerHTML = `
-          <div class="card-img">
-            <img src="${comp.image}" alt="${comp.name}" onerror="this.parentElement.style.background='#f0ece8';this.style.display='none'">
-            <div class="cat-badge">${comp.category || 'Nootropic'}</div>
-          </div>
-          <div class="card-body">
-            <div class="card-name">${comp.name}</div>
-            <div class="card-desc">${comp.description}</div>
-            <button class="add-btn" data-cid="${comp.cid}" ${inStack ? 'disabled' : ''}>
-              ${inStack ? '✓ Added' : '+ Add to Stack'}
-            </button>
-          </div>
-        `;
-        card.addEventListener('dragstart', e => {
-          e.dataTransfer.setData('text/plain', comp.cid);
-          card.style.opacity = '0.45';
-        });
-        card.addEventListener('dragend', () => { card.style.opacity = '1'; });
-        grid.appendChild(card);
-      });
-      document.querySelectorAll('.add-btn').forEach(btn => {
-        btn.addEventListener('click', e => addToStack(e.target.dataset.cid));
-      });
-    }
-
-    function renderCurrentStack() {
-      const container = document.getElementById('currentStack');
-      document.getElementById('stackCount').textContent = `${currentStack.length} compound${currentStack.length !== 1 ? 's' : ''}`;
-
-      if (currentStack.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state" id="emptyState">
-            <div class="empty-icon">📋</div>
-            <p>Drag here or click "+ Add to Stack"</p>
-          </div>`;
-        document.getElementById('safetyPanel').style.display = 'none';
-        return;
-      }
-
-      container.innerHTML = '';
-      currentStack.forEach((comp, i) => {
-        const item = document.createElement('div');
-        item.className = 'stack-item';
-        item.draggable = true;
-        item.dataset.index = i;
-        item.innerHTML = `
-          <span class="drag-handle">⠿</span>
-          <img class="item-thumb" src="${comp.image}" alt="${comp.name}" onerror="this.style.background='#e8d8c9';this.src=''">
-          <div class="item-info">
-            <div class="item-name">${comp.name}</div>
-            <div class="item-dosage">${comp.dosage ? comp.dosage.split('\n')[0] : 'No dosage info'}</div>
-          </div>
-          <button class="remove-btn" data-cid="${comp.cid}" aria-label="Remove from stack" title="Remove">×</button>
-        `;
-        item.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', i); item.style.opacity = '0.45'; });
-        item.addEventListener('dragend', () => { item.style.opacity = '1'; });
-        container.appendChild(item);
-      });
-
-      new Sortable(container, {
-        animation: 150,
-        handle: '.drag-handle',
-        onEnd: evt => {
-          if (evt.oldIndex !== evt.newIndex) {
-            const moved = currentStack.splice(evt.oldIndex, 1)[0];
-            currentStack.splice(evt.newIndex, 0, moved);
-            renderCurrentStack();
-          }
-        }
-      });
-
-      document.querySelectorAll('.remove-btn').forEach(btn => {
-        btn.addEventListener('click', function(e) { var cid = e.currentTarget.dataset.cid; removeFromStack(cid); });
-      });
-
-      analyzeStack();
-    }
-
-    function addToStack(cid) {
-      const comp = window.compounds.find(c => String(c.cid) === String(cid));
-      if (!comp || currentStack.some(c => String(c.cid) === String(cid))) return;
-      currentStack.push(comp);
-      renderCurrentStack();
-      renderAvailable(getFiltered());
-    }
-
-    function removeFromStack(cid) {
-      currentStack = currentStack.filter(c => String(c.cid) !== String(cid));
-      renderCurrentStack();
-      renderAvailable(getFiltered());
-    }
-
-    function clearStack() {
-      if (confirm('Reset your stack?')) {
-        currentStack = [];
-        renderCurrentStack();
-        renderAvailable(getFiltered());
-      }
-    }
-
-    function getFiltered() {
-      const t = document.getElementById('stackSearch').value.toLowerCase();
-      if (!t) return window.compounds || [];
-      return (window.compounds || []).filter(c =>
-        c.name.toLowerCase().includes(t) ||
-        (c.description && c.description.toLowerCase().includes(t)) ||
-        (c.category && c.category.toLowerCase().includes(t)) ||
-        (c.benefits && c.benefits.some(b => b.toLowerCase().includes(t)))
-      );
-    }
-
-    function analyzeStack() {
-      const panel = document.getElementById('safetyPanel');
-      const content = document.getElementById('safetyContent');
-      content.innerHTML = '';
-      if (currentStack.length < 2) { panel.style.display = 'none'; return; }
-      panel.style.display = 'block';
-
-      const results = [];
-      for (let i = 0; i < currentStack.length; i++) {
-        for (let j = i + 1; j < currentStack.length; j++) {
-          const inter = getInteraction(currentStack[i].cid, currentStack[j].cid);
-          if (inter) results.push(inter);
-        }
-      }
-
-      // Sort: danger first, then warning, then synergy, then safe
-      const order = { danger: 0, warning: 1, synergy: 2, safe: 3 };
-      results.sort((a, b) => (order[a.safety] ?? 9) - (order[b.safety] ?? 9));
-
-      if (results.length === 0) {
-        content.innerHTML = `<div class="inter-card inter-unknown">
-          <div class="inter-top">
-            <span class="inter-tag tag-unknown">No Data</span>
-          </div>
-          <div class="inter-msg">No known interactions found for this combination. This does not necessarily mean it's safe — always do your own research.</div>
-        </div>`;
-        return;
-      }
-
-      results.forEach(inter => {
-        const iconMap = { synergy: '⚡', safe: '✓', warning: '⚠', danger: '✕' };
-        const stars = inter.score ? '★'.repeat(inter.score) + '☆'.repeat(5 - inter.score) : '';
-        const card = document.createElement('div');
-        card.className = `inter-card inter-${inter.safety}`;
-        card.innerHTML = `
-          <div class="inter-top">
-            <span class="inter-icon">${iconMap[inter.safety]}</span>
-            <span class="inter-title">${inter.title || ''}</span>
-            ${inter.tag ? `<span class="inter-tag tag-${inter.safety}">${inter.tag}</span>` : ''}
-            ${stars ? `<span class="inter-stars">${stars}</span>` : ''}
-          </div>
-          <div class="inter-msg">${inter.message}</div>
-        `;
-        content.appendChild(card);
-      });
-    }
-
-    async function saveStack() {
-      const user = firebase.auth().currentUser;
-      if (!user) { alert('Please log in first.'); window.location.href = 'index.html'; return; }
-      if (currentStack.length === 0) { alert('Stack is empty.'); return; }
-      const defaultName = `Stack ${new Date().toLocaleDateString('en-US')}`;
-      const name = prompt('Name your stack:', defaultName);
-      if (name === null) return;
-      const clean = name.replace(/[^a-zA-Z0-9 _\-]/g, '').substring(0, 50);
-      try {
-        await firebase.firestore().collection('users').doc(user.uid).collection('stacks').add({
-          name: clean.trim() || defaultName,
-          compounds: currentStack.map(c => ({ cid: c.cid, name: c.name, category: c.category, description: c.description })),
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert('✅ Stack saved!');
-      } catch (e) { alert('Error saving stack. Please try again.'); }
-    }
-
-    function updateSaveButton(user) {
-      const btn = document.getElementById('saveBtn');
-      btn.disabled = !user;
-      btn.textContent = user ? 'Save Stack' : 'Login to Save';
-    }
-
-    // ── Auth helpers ──
-    const authBtn = document.getElementById('authBtn');
-    if (authBtn) {
-      authBtn.addEventListener('click', () => {
-        firebase.auth().currentUser ? window.location.href = 'profile.html' : openAuthModal();
-      });
-    }
-    function openAuthModal() { document.getElementById('authModal').classList.add('open'); }
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('open');
-      document.getElementById('loginError').textContent = '';
-      document.getElementById('signupError').textContent = '';
-    }
-    function switchAuthMode() {
-      const isLogin = document.getElementById('loginForm').style.display !== 'none';
-      document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
-      document.getElementById('switchText').innerHTML = isLogin
-        ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
-        : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
-    }
-    document.getElementById('loginForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-        closeAuthModal();
-      } catch (err) { document.getElementById('loginError').textContent = err.message; }
-    });
-    document.getElementById('signupForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        const cred = await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
-        await firebase.firestore().collection('users').doc(cred.user.uid).set({ email: cred.user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        closeAuthModal();
-      } catch (err) { document.getElementById('signupError').textContent = err.message; }
-    });
-    document.getElementById('authModal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) closeAuthModal();
-    });
-
-    function makeDroppable() {
-      const zone = document.getElementById('currentStack');
-      zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-      zone.addEventListener('drop', e => {
-        e.preventDefault(); zone.classList.remove('drag-over');
-        const cid = e.dataTransfer.getData('text/plain');
-        if (cid) addToStack(cid);
-      });
-    }
-
-    function restoreFromSession() {
-      try {
-        const stored = sessionStorage.getItem('loadedStack');
-        if (stored) {
-          const compounds = JSON.parse(stored);
-          currentStack = compounds.map(c => window.compounds.find(x => String(x.cid) === String(c.cid)) || c);
-          renderCurrentStack();
-          sessionStorage.removeItem('loadedStack');
-        }
-      } catch (e) { console.error(e); }
-    }
-
-    function acceptCookies() {
-      localStorage.setItem('cookiesAccepted', 'yes');
-      document.getElementById('cookieConsent').style.display = 'none';
-    }
-    window.addEventListener('load', () => {
-      if (!localStorage.getItem('cookiesAccepted'))
-        document.getElementById('cookieConsent').style.display = 'flex';
-    });
-
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initApp) : initApp();
-
-    // ── Load Saved Stack ──────────────────────────────────────────────────
-    firebase.auth().onAuthStateChanged(function(user) {
-      const lb = document.getElementById('loadBtn');
-      if (lb) lb.disabled = !user;
-    });
-
-    document.getElementById('loadBtn').addEventListener('click', function() {
-      const user = firebase.auth().currentUser;
-      if (!user) { alert('Please log in first.'); window.location.href = 'index.html'; return; }
-      document.getElementById('savedStacksModal').style.display = 'flex';
-      document.getElementById('modalBody').innerHTML = '<div style="text-align:center;padding:2.5rem 1rem;color:#8a9ab0"><div class="spinner" style="margin:0 auto .75rem"></div>Loading...</div>';
-      firebase.firestore().collection('users').doc(user.uid).collection('stacks')
-        .orderBy('createdAt', 'desc').limit(20).get()
-        .then(snap => {
-          const body = document.getElementById('modalBody');
-          if (snap.empty) { body.innerHTML = '<div class="modal-empty">No saved stacks yet.<br>Build one and hit <strong>Save Stack</strong>!</div>'; return; }
-          body.innerHTML = '';
-          snap.forEach(doc => {
-            const d = doc.data();
-            const count = d.compounds ? d.compounds.length : 0;
-            const dateStr = d.createdAt ? d.createdAt.toDate().toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) : '';
-            const el = document.createElement('div');
-            el.className = 'saved-stack-item';
-            el.innerHTML = '<div class="saved-stack-meta"><div class="saved-stack-name">' + escHtml(d.name || 'Unnamed Stack') + '</div>'
-              + '<div class="saved-stack-info">' + count + ' compound' + (count !== 1 ? 's' : '') + (dateStr ? ' &middot; ' + dateStr : '') + '</div></div>'
-              + '<button class="load-this-btn">Load</button>';
-            el.querySelector('.load-this-btn').addEventListener('click', () => {
-              if (!d.compounds || !d.compounds.length) return;
-              if (currentStack.length > 0 && !confirm('Replace your current stack with this saved stack?')) return;
-              currentStack = d.compounds.map(c => window.compounds.find(x => x.cid === c.cid) || c).filter(Boolean);
-              renderCurrentStack(); renderAvailable(getFiltered());
-              document.getElementById('savedStacksModal').style.display = 'none';
-            });
-            body.appendChild(el);
-          });
-        })
-        .catch(() => { document.getElementById('modalBody').innerHTML = '<div class="modal-empty">Error loading stacks. Please try again.</div>'; });
-    });
-
-    document.getElementById('modalClose').addEventListener('click', () => document.getElementById('savedStacksModal').style.display = 'none');
-    document.getElementById('savedStacksModal').addEventListener('click', e => { if (e.target === e.currentTarget) e.target.style.display = 'none'; });
-
-    function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    // ─────────────────────────────────────────────────────────────────────
-  </script>
-  
-
-
-
-
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 <script>
-/* ── Noodrop unified header JS ── */
-(function () {
-  var burger = document.getElementById('ndBurger');
-  var nav    = document.getElementById('ndNav');
-  var header = document.getElementById('ndHeader');
-  if (!burger || !nav) return;
-
-  function openMenu() {
-    nav.classList.add('is-open');
-    burger.classList.add('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.add('is-open');
-    burger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu() {
-    nav.classList.remove('is-open');
-    burger.classList.remove('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
-
-  burger.addEventListener('click', function () {
-    nav.classList.contains('is-open') ? closeMenu() : openMenu();
-  });
-  var closeBtn = document.getElementById('ndNavClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  var backdrop = document.getElementById('ndNavBackdrop');
-  if (backdrop) backdrop.addEventListener('click', closeMenu);
-  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
-    a.addEventListener('click', closeMenu);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeMenu();
-  });
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) closeMenu();
-  });
-  if (header) {
-    window.addEventListener('scroll', function () {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
-  }
+// ── Theme ──
+(function(){
+  var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';
+  function apply(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);}
+  apply(isLight);
+  if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);isLight?initLightParticles():initDarkParticles();});
+  window.addEventListener('DOMContentLoaded',function(){isLight?initLightParticles():initDarkParticles();});
 })();
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
-    });
-  }
-</script>
-<script>
-  // ── Dark mode ──
-  (function() {
-    var toggle = document.getElementById('themeToggle');
-    var isDark = localStorage.getItem('darkMode') === 'true';
-    function applyTheme(dark) {
-      document.body.classList.toggle('dark', dark);
-      if (toggle) toggle.classList.toggle('active', dark);
-    }
-    applyTheme(isDark);
-    if (toggle) {
-      toggle.addEventListener('click', function() {
-        isDark = !isDark;
-        localStorage.setItem('darkMode', isDark);
-        applyTheme(isDark);
-        if (window.reinitParticles) window.reinitParticles(isDark);
-      });
-    }
-  })();
-</script>
-<script>
-  // ── Mobile stack FAB ──
-  (function() {
-    var fab = document.getElementById('viewStackFab');
-    var panel = document.querySelector('.stack-panel');
-    var backdrop = document.getElementById('stackBackdrop');
-    var wrap = document.getElementById('stackPanelWrap');
-    if (!fab || !panel) return;
-    function isMobile() { return window.innerWidth <= 768; }
-    function openSheet() { panel.classList.add('sheet-open'); if (backdrop) backdrop.classList.add('is-open'); if (wrap) wrap.classList.add('is-open'); document.body.style.overflow='hidden'; }
-    function closeSheet() { panel.classList.remove('sheet-open'); if (backdrop) backdrop.classList.remove('is-open'); if (wrap) wrap.classList.remove('is-open'); document.body.style.overflow=''; }
-    fab.addEventListener('click', function() { isMobile() && (panel.classList.contains('sheet-open') ? closeSheet() : openSheet()); });
-    if (backdrop) backdrop.addEventListener('click', closeSheet);
-    function hookFab() {
-      var count = (window.currentStack || []).length;
-      var badge = document.getElementById('fabCount');
-      if (badge) badge.textContent = count;
-      fab.style.display = (isMobile() && count > 0) ? 'flex' : 'none';
-      if (count === 0) closeSheet();
-    }
-    var interval = setInterval(function() {
-      if (typeof window.currentStack !== 'undefined') {
-        ['addToStack','removeFromStack','clearStack'].forEach(function(fn) {
-          var orig = window[fn];
-          if (orig && !orig._fabHooked) {
-            window[fn] = function() { orig.apply(this, arguments); hookFab(); };
-            window[fn]._fabHooked = true;
-          }
-        });
-        hookFab();
-        clearInterval(interval);
-      }
-    }, 200);
-    window.addEventListener('resize', hookFab);
-  })();
 
+function initDarkParticles(){if(window.pJSDom&&window.pJSDom.length){window.pJSDom.forEach(function(p){p.pJS.fn.vendors.destroypJS();});window.pJSDom=[];}particlesJS('particles-js',{particles:{number:{value:40,density:{enable:true,value_area:1000}},color:{value:'#E8541A'},shape:{type:'circle'},opacity:{value:.10,random:true,anim:{enable:true,speed:.3,opacity_min:.02,sync:false}},size:{value:1.4,random:true},line_linked:{enable:true,distance:155,color:'#E8541A',opacity:.04,width:.6},move:{enable:true,speed:.32,direction:'none',random:true,straight:false,out_mode:'out',bounce:false}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'grab'},resize:true},modes:{grab:{distance:180,line_linked:{opacity:.12}}}},retina_detect:true});}
+function initLightParticles(){if(window.pJSDom&&window.pJSDom.length){window.pJSDom.forEach(function(p){p.pJS.fn.vendors.destroypJS();});window.pJSDom=[];}particlesJS('particles-js',{particles:{number:{value:80,density:{enable:true,value_area:900}},color:{value:['#1a1a2e','#2c3e50','#4b607f']},shape:{type:'star',polygon:{nb_sides:5}},opacity:{value:.4,random:true,anim:{enable:true,speed:.4,opacity_min:.06,sync:false}},size:{value:2,random:true},line_linked:{enable:false},move:{enable:true,speed:.3,direction:'none',random:true,straight:false,out_mode:'out'}},interactivity:{detect_on:'canvas',events:{onhover:{enable:true,mode:'bubble'},resize:true},modes:{bubble:{distance:120,size:3.5,duration:.4,opacity:.65}}},retina_detect:true});}
 
-  </script>
+// ── Stack Logic (100% preserved from original) ──
+let currentStack=[];
+function getInteraction(cidA,cidB){var db=window.interactions||{};return db[`${cidA}_${cidB}`]||db[`${cidB}_${cidA}`]||null;}
+function initApp(){const authBtn=document.getElementById('authBtn');firebase.auth().onAuthStateChanged(user=>{updateSaveButton(user);if(authBtn)authBtn.textContent=user?'Profile':'Login';});if(authBtn)authBtn.addEventListener('click',()=>{firebase.auth().currentUser?window.location.href='profile.html':openAuthModal();});loadDataAndInitialize();}
+function loadDataAndInitialize(){if(typeof window.compounds!=='undefined'){finishInitialization();return;}const s=document.createElement('script');s.src='data.js';s.onload=finishInitialization;s.onerror=()=>{document.getElementById('loadingIndicator').innerHTML='<p style="color:var(--m2)">Error loading compounds.</p>';};document.head.appendChild(s);}
+function finishInitialization(){document.getElementById('loadingIndicator').style.display='none';document.getElementById('mainLayout').style.display='grid';if(!window.compounds||!Array.isArray(window.compounds)){document.getElementById('availableGrid').innerHTML='<p style="color:var(--m2)">Error loading compounds.</p>';return;}renderAvailable(window.compounds);document.getElementById('stackSearch').addEventListener('input',e=>{const t=e.target.value.toLowerCase();renderAvailable(t?window.compounds.filter(c=>c.name.toLowerCase().includes(t)||(c.description&&c.description.toLowerCase().includes(t))||(c.category&&c.category.toLowerCase().includes(t))||(c.benefits&&c.benefits.some(b=>b.toLowerCase().includes(t)))):window.compounds);});document.getElementById('resetBtn').addEventListener('click',clearStack);document.getElementById('saveBtn').addEventListener('click',saveStack);makeDroppable();restoreFromSession();(function loadFromExtension(){const hash=window.location.hash;if(!hash.startsWith('#load='))return;history.replaceState(null,'',window.location.pathname+window.location.search);const cidList=decodeURIComponent(hash.slice(6)).split(',').map(s=>s.trim()).filter(Boolean);if(!cidList.length)return;cidList.forEach(rawCid=>{const comp=window.compounds?.find(c=>String(c.cid)===String(rawCid)||c.name.toLowerCase().replace(/[^a-z0-9]/g,'')===String(rawCid).toLowerCase().replace(/[^a-z0-9]/g,''));if(comp&&!currentStack.some(s=>String(s.cid)===String(comp.cid)))addToStack(String(comp.cid));});})();}
+function renderAvailable(list=window.compounds||[]){const grid=document.getElementById('availableGrid');grid.innerHTML='';if(!list.length){grid.innerHTML='<p style="color:var(--m2);font-size:13px;padding:24px;grid-column:1/-1">No compounds found.</p>';return;}list.forEach(comp=>{const inStack=currentStack.some(c=>String(c.cid)===String(comp.cid));const card=document.createElement('div');card.className='compound-card';card.draggable=true;card.dataset.cid=comp.cid;card.innerHTML=`<div class="card-img"><img src="${comp.image}" alt="${comp.name}" loading="lazy" onerror="this.style.display='none'"><div class="cat-badge">${comp.category||'Nootropic'}</div></div><div class="card-body"><div class="card-name">${comp.name}</div><div class="card-desc">${comp.description}</div><button class="add-btn" data-cid="${comp.cid}" ${inStack?'disabled':''}>${inStack?'✓ Added':'+ Add to Stack'}</button></div>`;card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',comp.cid);card.style.opacity='.45';});card.addEventListener('dragend',()=>{card.style.opacity='1';});grid.appendChild(card);});document.querySelectorAll('.add-btn').forEach(btn=>{btn.addEventListener('click',e=>addToStack(e.target.dataset.cid));});}
+function renderCurrentStack(){const container=document.getElementById('currentStack');document.getElementById('stackCount').textContent=`${currentStack.length} compound${currentStack.length!==1?'s':''}`;if(currentStack.length===0){container.innerHTML=`<div class="empty-state" id="emptyState"><div class="empty-icon">📋</div><p>Drag here or click<br>"+ Add to Stack"</p></div>`;document.getElementById('safetyPanel').style.display='none';return;}container.innerHTML='';currentStack.forEach((comp,i)=>{const item=document.createElement('div');item.className='stack-item';item.draggable=true;item.dataset.index=i;item.innerHTML=`<span class="drag-handle">⠿</span><img class="item-thumb" src="${comp.image}" alt="${comp.name}" onerror="this.style.background='var(--bg-2)';this.src=''"><div class="item-info"><div class="item-name">${comp.name}</div><div class="item-dosage">${comp.dosage?comp.dosage.split('\n')[0]:'No dosage info'}</div></div><button class="remove-btn" data-cid="${comp.cid}" title="Remove">×</button>`;item.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',i);item.style.opacity='.45';});item.addEventListener('dragend',()=>{item.style.opacity='1';});container.appendChild(item);});new Sortable(container,{animation:150,handle:'.drag-handle',onEnd:evt=>{if(evt.oldIndex!==evt.newIndex){const moved=currentStack.splice(evt.oldIndex,1)[0];currentStack.splice(evt.newIndex,0,moved);renderCurrentStack();}}});document.querySelectorAll('.remove-btn').forEach(btn=>{btn.addEventListener('click',function(e){removeFromStack(e.currentTarget.dataset.cid);});});analyzeStack();}
+function addToStack(cid){const comp=window.compounds.find(c=>String(c.cid)===String(cid));if(!comp||currentStack.some(c=>String(c.cid)===String(cid)))return;currentStack.push(comp);renderCurrentStack();renderAvailable(getFiltered());}
+function removeFromStack(cid){currentStack=currentStack.filter(c=>String(c.cid)!==String(cid));renderCurrentStack();renderAvailable(getFiltered());}
+function clearStack(){if(confirm('Reset your stack?')){currentStack=[];renderCurrentStack();renderAvailable(getFiltered());}}
+function getFiltered(){const t=document.getElementById('stackSearch').value.toLowerCase();if(!t)return window.compounds||[];return(window.compounds||[]).filter(c=>c.name.toLowerCase().includes(t)||(c.description&&c.description.toLowerCase().includes(t))||(c.category&&c.category.toLowerCase().includes(t))||(c.benefits&&c.benefits.some(b=>b.toLowerCase().includes(t))));}
+function analyzeStack(){const panel=document.getElementById('safetyPanel');const content=document.getElementById('safetyContent');content.innerHTML='';if(currentStack.length<2){panel.style.display='none';return;}panel.style.display='block';const results=[];for(let i=0;i<currentStack.length;i++){for(let j=i+1;j<currentStack.length;j++){const inter=getInteraction(currentStack[i].cid,currentStack[j].cid);if(inter)results.push(inter);}}const order={danger:0,warning:1,synergy:2,safe:3};results.sort((a,b)=>(order[a.safety]??9)-(order[b.safety]??9));if(results.length===0){content.innerHTML=`<div class="inter-card inter-unknown"><div class="inter-top"><span class="inter-tag">No Data</span></div><div class="inter-msg">No known interactions found. This doesn't mean it's safe — always research independently.</div></div>`;return;}results.forEach(inter=>{const iconMap={synergy:'⚡',safe:'✓',warning:'⚠',danger:'✕'};const stars=inter.score?'★'.repeat(inter.score)+'☆'.repeat(5-inter.score):'';const card=document.createElement('div');card.className=`inter-card inter-${inter.safety}`;card.innerHTML=`<div class="inter-top"><span class="inter-icon">${iconMap[inter.safety]}</span><span class="inter-title">${inter.title||''}</span>${inter.tag?`<span class="inter-tag">${inter.tag}</span>`:''} ${stars?`<span class="inter-stars">${stars}</span>`:''}</div><div class="inter-msg">${inter.message}</div>`;content.appendChild(card);});}
+async function saveStack(){const user=firebase.auth().currentUser;if(!user){alert('Please log in first.');window.location.href='index.html';return;}if(currentStack.length===0){alert('Stack is empty.');return;}const defaultName=`Stack ${new Date().toLocaleDateString('en-US')}`;const name=prompt('Name your stack:',defaultName);if(name===null)return;const clean=name.replace(/[^a-zA-Z0-9 _\-]/g,'').substring(0,50);try{await firebase.firestore().collection('users').doc(user.uid).collection('stacks').add({name:clean.trim()||defaultName,compounds:currentStack.map(c=>({cid:c.cid,name:c.name,category:c.category,description:c.description})),createdAt:firebase.firestore.FieldValue.serverTimestamp()});alert('✅ Stack saved!');}catch(e){alert('Error saving stack.');}}
+function updateSaveButton(user){const btn=document.getElementById('saveBtn');btn.disabled=!user;btn.textContent=user?'Save Stack':'Login to Save';}
+function openAuthModal(){document.getElementById('authModal').classList.add('open');}
+function closeAuthModal(){document.getElementById('authModal').classList.remove('open');document.getElementById('loginError').textContent='';document.getElementById('signupError').textContent='';}
+function switchAuthMode(){const isLogin=document.getElementById('loginForm').style.display!=='none';document.getElementById('loginForm').style.display=isLogin?'none':'block';document.getElementById('signupForm').style.display=isLogin?'block':'none';document.getElementById('authTitle').textContent=isLogin?'Sign Up':'Login';document.getElementById('switchText').innerHTML=isLogin?'Already have an account? <a onclick="switchAuthMode()">Log in</a>':'No account? <a onclick="switchAuthMode()">Sign up</a>';}
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value,document.getElementById('loginPassword').value);closeAuthModal();}catch(err){document.getElementById('loginError').textContent=err.message;}});
+document.getElementById('signupForm').addEventListener('submit',async e=>{e.preventDefault();try{const cred=await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value,document.getElementById('signupPassword').value);await firebase.firestore().collection('users').doc(cred.user.uid).set({email:cred.user.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});closeAuthModal();}catch(err){document.getElementById('signupError').textContent=err.message;}});
+document.getElementById('authModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeAuthModal();});
+function makeDroppable(){const zone=document.getElementById('currentStack');zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const cid=e.dataTransfer.getData('text/plain');if(cid)addToStack(cid);});}
+function restoreFromSession(){try{const stored=sessionStorage.getItem('loadedStack');if(stored){const compounds=JSON.parse(stored);currentStack=compounds.map(c=>window.compounds.find(x=>String(x.cid)===String(c.cid))||c);renderCurrentStack();sessionStorage.removeItem('loadedStack');}}catch(e){console.error(e);}}
+function acceptCookies(){localStorage.setItem('cookiesAccepted','yes');document.getElementById('cookieConsent').style.display='none';}
+window.addEventListener('load',()=>{if(!localStorage.getItem('cookiesAccepted'))document.getElementById('cookieConsent').style.display='flex';});
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initApp):initApp();
+
+firebase.auth().onAuthStateChanged(function(user){const lb=document.getElementById('loadBtn');if(lb)lb.disabled=!user;});
+document.getElementById('loadBtn').addEventListener('click',function(){const user=firebase.auth().currentUser;if(!user){alert('Please log in first.');window.location.href='index.html';return;}document.getElementById('savedStacksModal').style.display='flex';document.getElementById('modalBody').innerHTML='<div style="text-align:center;padding:2.5rem;color:var(--m2)"><div class="spinner" style="margin:0 auto .75rem"></div>Loading…</div>';firebase.firestore().collection('users').doc(user.uid).collection('stacks').orderBy('createdAt','desc').limit(20).get().then(snap=>{const body=document.getElementById('modalBody');if(snap.empty){body.innerHTML='<div class="modal-empty">No saved stacks yet.<br>Build one and hit <strong>Save Stack</strong>!</div>';return;}body.innerHTML='';snap.forEach(doc=>{const d=doc.data();const count=d.compounds?d.compounds.length:0;const dateStr=d.createdAt?d.createdAt.toDate().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';const el=document.createElement('div');el.className='saved-stack-item';el.innerHTML='<div class="saved-stack-meta"><div class="saved-stack-name">'+escHtml(d.name||'Unnamed Stack')+'</div><div class="saved-stack-info">'+count+' compound'+(count!==1?'s':'')+(dateStr?' · '+dateStr:'')+'</div></div><button class="load-this-btn">Load</button>';el.querySelector('.load-this-btn').addEventListener('click',()=>{if(!d.compounds||!d.compounds.length)return;if(currentStack.length>0&&!confirm('Replace current stack?'))return;currentStack=d.compounds.map(c=>window.compounds.find(x=>x.cid===c.cid)||c).filter(Boolean);renderCurrentStack();renderAvailable(getFiltered());document.getElementById('savedStacksModal').style.display='none';});body.appendChild(el);});}).catch(()=>{document.getElementById('modalBody').innerHTML='<div class="modal-empty">Error loading stacks. Please try again.</div>';});});
+document.getElementById('modalClose').addEventListener('click',()=>document.getElementById('savedStacksModal').style.display='none');
+document.getElementById('savedStacksModal').addEventListener('click',e=>{if(e.target===e.currentTarget)e.target.style.display='none';});
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
+
+<script>
+// unified header
+(function(){var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');if(!b||!n)return;function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});window.addEventListener('resize',function(){if(window.innerWidth>768)c();});if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});})();
+</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+<script>
+// mobile FAB
+(function(){var fab=document.getElementById('viewStackFab'),panel=document.querySelector('.stack-panel'),backdrop=document.getElementById('stackBackdrop'),wrap=document.getElementById('stackPanelWrap');if(!fab||!panel)return;function isMob(){return window.innerWidth<=768;}function openSheet(){panel.classList.add('sheet-open');if(backdrop)backdrop.classList.add('is-open');if(wrap)wrap.classList.add('is-open');document.body.style.overflow='hidden';}function closeSheet(){panel.classList.remove('sheet-open');if(backdrop)backdrop.classList.remove('is-open');if(wrap)wrap.classList.remove('is-open');document.body.style.overflow='';}fab.addEventListener('click',function(){isMob()&&(panel.classList.contains('sheet-open')?closeSheet():openSheet());});if(backdrop)backdrop.addEventListener('click',closeSheet);function hookFab(){var count=(window.currentStack||[]).length;var badge=document.getElementById('fabCount');if(badge)badge.textContent=count;fab.style.display=(isMob()&&count>0)?'flex':'none';if(count===0)closeSheet();}var interval=setInterval(function(){if(typeof window.currentStack!=='undefined'){['addToStack','removeFromStack','clearStack'].forEach(function(fn){var orig=window[fn];if(orig&&!orig._fabHooked){window[fn]=function(){orig.apply(this,arguments);hookFab();};window[fn]._fabHooked=true;}});hookFab();clearInterval(interval);}},200);window.addEventListener('resize',hookFab);})();
+</script>
 </body>
 </html>

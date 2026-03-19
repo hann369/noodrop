@@ -5,1479 +5,569 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="global.css">
+  <script src="i18n.js"></script>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
+  <meta name="theme-color" content="#E8541A">
   <title>Library – Noodrop</title>
 
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
   <style>
-    :root {
-      --cream: #e8d8c9;
-      --slate: #4b607f;
-      --orange: #f3701e;
-      --white: #ffffff;
-      --dark-slate: #2c3e50;
-      --shadow: 0 10px 30px rgba(0,0,0,0.07);
-      --bg: #fafaf8;
-
-      /* Dark mode */
-      --dark-bg: #0a0e17;
-      --dark-text: #e0e0e0;
-      --dark-card: rgba(22, 28, 42, 0.85);
-      --dark-border: #1e2a3a;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      padding-top: 64px;
-      font-family: 'Tabular', sans-serif;
-      background: var(--bg);
-      color: var(--dark-slate);
-      min-height: 100vh;
-      overflow-x: hidden;
-      transition: background 0.35s, color 0.35s;
-    }
-    body.dark { background: var(--dark-bg); color: var(--dark-text); }
-
-    /* Particles */
-    #particles-js {
-      position: fixed; inset: 0; z-index: 0;
-      pointer-events: none;
-    }
-
-    /* ── Header ── */
-    nav a {
-      text-decoration: none; color: var(--slate);
-      margin: 0 0.9rem; font-weight: 500; font-size: 0.9rem;
-      position: relative; transition: color 0.2s;
-    }
-    nav a::after {
-      content: ""; position: absolute;
-      width: 0; height: 2px; background: var(--orange);
-      left: 0; bottom: -4px; transition: 0.3s;
-    }
-    nav a:hover::after, nav a.active::after { width: 100%; }
-    nav a:hover, nav a.active { color: var(--orange); }
-    body.dark nav a { color: var(--dark-text); }
-    body.dark nav a:hover { color: var(--orange); }
-    .auth-btn {
-      background: var(--orange); color: white; border: none;
-      padding: 0.45rem 1.1rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600;
-      font-size: 0.85rem; cursor: pointer; transition: all 0.25s;
-    }
-    .auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(243,112,30,0.35); }
-
-    /* Dark mode toggle */
-    .theme-toggle {
-      width: 46px; height: 24px; border-radius: 50px;
-      background: var(--cream); border: 1px solid rgba(0,0,0,0.08);
-      cursor: pointer; position: relative; transition: background 0.3s;
-      flex-shrink: 0;
-    }
-    body.dark .theme-toggle { background: #1e2a3a; border-color: #2a3a50; }
-    .toggle-knob {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: white; position: absolute;
-      top: 2px; left: 2px; transition: transform 0.3s cubic-bezier(0.68,-0.55,0.27,1.55);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-    }
-    body.dark .theme-toggle .toggle-knob {
-      background: #4a90e2;
-      transform: translateX(22px);
-    }
-    .theme-toggle.active .toggle-knob { transform: translateX(22px); background: var(--orange); }
-
-    /* ── Page Hero ── */
-    .page-hero {
-      position: relative; z-index: 1;
-      padding: 5rem 5% 3.5rem;
-      max-width: 1200px; margin: 0 auto;
-      display: flex; justify-content: space-between;
-      align-items: flex-end;
-      border-bottom: 1px solid var(--cream);
-    }
-    body.dark .page-hero { border-bottom-color: var(--dark-border); }
-
-    .hero-left .eyebrow {
-      font-size: 0.68rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--orange);
-      margin-bottom: 0.8rem;
-    }
-    .hero-left h1 {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: clamp(2.4rem, 5vw, 4rem);
-      font-weight: 600; line-height: 1.05;
-      letter-spacing: -1.5px; color: var(--slate);
-      transition: color 0.35s;
-    }
-    body.dark .hero-left h1 { color: var(--dark-text); }
-    .hero-left h1 em { font-style: normal; color: var(--orange); }
-
-    .hero-right {
-      display: flex; flex-direction: column;
-      align-items: flex-end; gap: 1rem;
-    }
-    .hero-cta {
-      display: flex; gap: 0.75rem; flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-    .btn-primary {
-      background: var(--orange); color: white; border: none;
-      padding: 0.7rem 1.6rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 700;
-      font-size: 0.88rem; cursor: pointer; transition: all 0.3s;
-      box-shadow: 0 4px 16px rgba(243,112,30,0.3);
-      text-decoration: none; display: inline-block;
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(243,112,30,0.4); }
-    .btn-secondary {
-      background: transparent; color: var(--slate);
-      border: 1.5px solid var(--cream);
-      padding: 0.7rem 1.6rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600;
-      font-size: 0.88rem; cursor: pointer; transition: all 0.3s;
-      text-decoration: none; display: inline-block;
-    }
-    body.dark .btn-secondary { color: var(--dark-text); border-color: var(--dark-border); }
-    .btn-secondary:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-2px); }
-
-    /* ── Container ── */
-    .container {
-      position: relative; z-index: 1;
-      max-width: 1200px; margin: 0 auto; padding: 2.5rem 5%;
-    }
+    /* ── Particles ── */
+    #particles-js { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
     /* ── Search ── */
     .search-wrap {
-      max-width: 560px; margin: 0 auto 2.5rem; position: relative;
+      max-width: 520px; margin: 0 auto 2rem; position: relative;
     }
     .search-wrap::before {
       content: "⌕";
-      position: absolute; left: 1.3rem; top: 50%;
+      position: absolute; left: 1.2rem; top: 50%;
       transform: translateY(-50%);
-      color: #aab0bc; font-size: 1.15rem; pointer-events: none;
-      z-index: 1;
+      color: var(--m2); font-size: 1.1rem;
+      pointer-events: none; z-index: 1;
     }
     #search {
-      width: 100%; padding: 1rem 1.4rem 1rem 3.2rem;
-      border: 1.5px solid rgba(232,216,201,0.8);
-      border-radius: 50px;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      font-family: 'Tabular', sans-serif;
-      font-size: 0.95rem; color: var(--dark-slate);
-      transition: all 0.3s; box-shadow: 0 2px 16px rgba(0,0,0,0.04);
-    }
-    body.dark #search {
-      background: rgba(22,28,42,0.8); border-color: var(--dark-border);
-      color: var(--dark-text);
+      width: 100%; padding: 0.9rem 1.2rem 0.9rem 3rem;
+      border: 1px solid var(--m3);
+      border-radius: 100px;
+      background: var(--bg-2);
+      font-family: var(--font-body); font-size: 14px;
+      color: var(--cream); font-weight: 300;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     #search:focus {
       outline: none; border-color: var(--orange);
-      box-shadow: 0 0 0 4px rgba(243,112,30,0.08), 0 4px 20px rgba(0,0,0,0.06);
-      background: white;
+      box-shadow: 0 0 0 3px rgba(232,84,26,0.1);
     }
-    body.dark #search:focus { background: var(--dark-card); }
-    #search::placeholder { color: #aab0bc; }
+    #search::placeholder { color: var(--m2); }
+    body.light #search { background: #fff; color: #1C1C1A; }
 
-    /* ── Category filters ── */
+    /* ── Categories ── */
     .categories {
-      display: flex; flex-wrap: wrap; gap: 0.55rem;
-      justify-content: center; margin-bottom: 3rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      justify-content: center; margin-bottom: 2.5rem;
     }
     .category-btn {
-      padding: 0.5rem 1.25rem; border-radius: 50px;
-      border: 1.5px solid rgba(232,216,201,0.9);
-      background: rgba(255,255,255,0.75);
-      backdrop-filter: blur(8px);
-      color: var(--slate);
-      font-family: 'Tabular', sans-serif;
-      font-weight: 600; font-size: 0.82rem;
-      cursor: pointer;
-      transition: all 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      font-size: 12px; font-weight: 400; letter-spacing: 0.01em;
     }
-    body.dark .category-btn {
-      background: rgba(22,28,42,0.7); border-color: var(--dark-border);
-      color: var(--dark-text);
-    }
-    .category-btn:hover, .category-btn.active {
-      background: var(--orange); color: white;
-      border-color: var(--orange);
-      box-shadow: 0 4px 16px rgba(243,112,30,0.32);
-      transform: translateY(-2px) scale(1.04);
-    }
-
-    /* ── Loading ── */
-    .loading-indicator {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 4rem 0; color: #8a9ab0;
-    }
-    .spinner {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2.5px solid rgba(243,112,30,0.2);
-      border-top-color: var(--orange);
-      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* ── Grid ── */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.8rem; margin-bottom: 4rem;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1px;
+      background: var(--m4);
+      border: 1px solid var(--m4);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 4rem;
     }
 
     /* ── Card ── */
     .card {
-      background: rgba(255,255,255,0.9);
-      border-radius: 20px;
-      border: 1px solid rgba(232,216,201,0.7);
+      background: var(--bg-2);
+      border-radius: 0;
+      border: none;
       overflow: hidden;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.04);
       cursor: pointer;
       display: flex; flex-direction: column;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1),
-                  box-shadow 0.35s cubic-bezier(0.16,1,0.3,1),
-                  border-color 0.25s;
-      will-change: transform;
-    }
-    body.dark .card {
-      background: rgba(22,28,42,0.75);
-      border-color: rgba(30,42,58,0.8);
-      backdrop-filter: blur(12px);
+      transition: background 0.2s !important;
+      box-shadow: none !important;
     }
     .card:hover {
-      transform: translateY(-8px) scale(1.012);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.11),
-                  0 8px 20px rgba(243,112,30,0.08),
-                  0 0 0 1px rgba(243,112,30,0.15);
-      border-color: rgba(243,112,30,0.25);
+      background: var(--bg-3) !important;
+      transform: none !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
     }
-    body.dark .card:hover {
-      box-shadow: 0 24px 60px rgba(0,0,0,0.4),
-                  0 0 0 1px rgba(243,112,30,0.25);
-      border-color: rgba(243,112,30,0.4);
+    /* Entry animation */
+    .card { opacity: 0; animation: cardIn 0.5s var(--ease-out) forwards; }
+    .card:nth-child(1)  { animation-delay: 0.03s; }
+    .card:nth-child(2)  { animation-delay: 0.06s; }
+    .card:nth-child(3)  { animation-delay: 0.09s; }
+    .card:nth-child(4)  { animation-delay: 0.12s; }
+    .card:nth-child(5)  { animation-delay: 0.15s; }
+    .card:nth-child(6)  { animation-delay: 0.18s; }
+    .card:nth-child(7)  { animation-delay: 0.21s; }
+    .card:nth-child(8)  { animation-delay: 0.24s; }
+    .card:nth-child(n+9){ animation-delay: 0.27s; }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: none; }
     }
-
-    /* Card entry animation stagger */
-    .card { opacity: 0; animation: nd-fade-up 0.55s cubic-bezier(0.16,1,0.3,1) forwards; }
-    @keyframes nd-fade-up {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .card:nth-child(1)  { animation-delay: 0.04s; }
-    .card:nth-child(2)  { animation-delay: 0.08s; }
-    .card:nth-child(3)  { animation-delay: 0.12s; }
-    .card:nth-child(4)  { animation-delay: 0.16s; }
-    .card:nth-child(5)  { animation-delay: 0.20s; }
-    .card:nth-child(6)  { animation-delay: 0.24s; }
-    .card:nth-child(7)  { animation-delay: 0.28s; }
-    .card:nth-child(8)  { animation-delay: 0.32s; }
-    .card:nth-child(n+9){ animation-delay: 0.36s; }
 
     .card-image {
-      height: 180px; overflow: hidden;
-      background: #f0ece8; flex-shrink: 0;
-      position: relative;
+      height: 160px; overflow: hidden;
+      background: var(--bg-3); flex-shrink: 0; position: relative;
     }
-    body.dark .card-image { background: #141a27; }
     .card-image img {
       width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.4s ease;
+      transition: transform 0.4s var(--ease-out);
+      opacity: 0.9;
     }
     .card:hover .card-image img { transform: scale(1.04); }
 
-    /* Category badge on image */
     .card-category-badge {
-      position: absolute; top: 0.8rem; left: 0.8rem;
-      background: rgba(0,0,0,0.5); backdrop-filter: blur(6px);
-      color: white; font-size: 0.65rem; letter-spacing: 2px;
-      text-transform: uppercase; padding: 0.25rem 0.7rem;
-      border-radius: 20px; font-weight: 600;
+      position: absolute; top: 0.7rem; left: 0.7rem;
+      background: rgba(17,17,16,0.6);
+      backdrop-filter: blur(8px);
+      color: var(--m1); font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.22rem 0.65rem;
+      border-radius: 100px; font-weight: 500;
+      border: 1px solid var(--m4);
     }
 
-    .card-body { padding: 1.4rem 1.5rem 1.6rem; flex: 1; display: flex; flex-direction: column; }
+    .card-body { padding: 1.2rem 1.4rem 1.4rem; flex: 1; display: flex; flex-direction: column; }
     .card-name {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1.2rem; font-weight: 600;
-      color: var(--slate); margin-bottom: 0.6rem;
-      transition: color 0.35s;
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 400;
+      color: var(--cream); margin-bottom: 0.5rem;
+      letter-spacing: -0.02em; line-height: 1.2;
     }
-    body.dark .card-name { color: var(--dark-text); }
     .card-desc {
-      font-size: 0.86rem; color: #7a8a9a; line-height: 1.65;
-      margin-bottom: 1.2rem; flex: 1;
+      font-size: 13px; font-weight: 300;
+      color: var(--m2); line-height: 1.65;
+      margin-bottom: 1rem; flex: 1;
     }
-    body.dark .card-desc { color: #8a9ab0; }
-
-    .card-benefits {
-      display: flex; flex-wrap: wrap; gap: 0.4rem;
-      margin-bottom: 1rem;
-    }
+    .card-benefits { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem; }
     .benefit-tag {
-      font-size: 0.7rem; padding: 3px 10px;
-      border-radius: 20px;
-      background: rgba(243,112,30,0.1); color: var(--orange);
-      font-weight: 600;
+      font-size: 10px; padding: 3px 9px; border-radius: 100px;
+      background: var(--orange-dim); color: var(--orange);
+      font-weight: 500; letter-spacing: 0.03em;
+      border: 1px solid rgba(232,84,26,0.15);
     }
-    body.dark .benefit-tag { background: rgba(243,112,30,0.15); }
-
-    .card-footer-row {
-      display: flex; justify-content: flex-end;
-    }
-    .card-arrow {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--orange); color: white;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem; transition: transform 0.2s;
-    }
-    .card:hover .card-arrow { transform: translateX(3px); }
-
-    /* ── Footer ── */
-    footer {
-      position: relative; z-index: 1;
-      text-align: center; padding: 2rem 0;
-      border-top: 1px solid var(--cream);
-      color: #8a9ab0; font-size: 0.85rem;
-      transition: border-color 0.35s;
-    }
-    body.dark footer { border-top-color: var(--dark-border); }
-    .social-links {
-      display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.8rem;
-    }
-    .social-link {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--cream); color: var(--slate);
-      display: flex; align-items: center; justify-content: center;
-      text-decoration: none; transition: all 0.25s;
-    }
-    body.dark .social-link { background: var(--dark-card); color: var(--dark-text); }
-    .social-link:hover { background: var(--orange); color: white; transform: translateY(-2px); }
-
-    /* ── Cookie banner ── */
-    #cookieConsent {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-      background: var(--slate); color: white;
-      padding: 1rem 5%; display: none;
-      align-items: center; justify-content: center; gap: 1.5rem;
-      font-size: 0.88rem; flex-wrap: wrap;
-    }
-    body.dark #cookieConsent { background: #0d1320; }
-    #cookieConsent button {
-      background: var(--orange); color: white; border: none;
-      padding: 0.45rem 1.2rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-    }
-    #cookieConsent button:hover { background: #e2661a; }
-
-    /* ── Auth Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(6px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 10000;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: white; border-radius: 20px;
-      padding: 2.5rem; width: 100%; max-width: 400px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.2);
-    }
-    body.dark .modal-box { background: #111827; }
-    .modal-header {
-      display: flex; justify-content: space-between;
-      align-items: center; margin-bottom: 2rem;
-    }
-    .modal-header h2 {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1.4rem; font-weight: 600; color: var(--slate);
-    }
-    body.dark .modal-header h2 { color: var(--dark-text); }
-    .modal-close {
-      background: none; border: none; font-size: 1.4rem;
-      cursor: pointer; color: #999; line-height: 1;
-    }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-label {
-      display: block; margin-bottom: 0.5rem;
-      font-weight: 600; font-size: 0.85rem; color: var(--slate);
-    }
-    body.dark .form-label { color: var(--dark-text); }
-    .form-input {
-      width: 100%; padding: 0.85rem 1rem;
-      border: 1.5px solid var(--cream); border-radius: 10px;
-      font-family: 'Tabular', sans-serif; font-size: 0.95rem;
-      color: var(--dark-slate); transition: border-color 0.2s;
-    }
-    body.dark .form-input {
-      background: #1a2235; border-color: var(--dark-border);
-      color: var(--dark-text);
-    }
-    .form-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(243,112,30,0.1); }
-    .form-error { color: #ef4444; font-size: 0.8rem; margin-top: 0.4rem; min-height: 1rem; }
-    .btn-full {
-      width: 100%; padding: 0.9rem;
-      background: var(--orange); color: white; border: none;
-      border-radius: 50px; font-family: 'Tabular', sans-serif;
-      font-weight: 700; cursor: pointer; transition: all 0.3s;
-      margin-top: 0.5rem;
-    }
-    .btn-full:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(243,112,30,0.35); }
-    .switch-auth {
-      text-align: center; margin-top: 1.2rem;
-      font-size: 0.88rem; color: var(--slate);
-    }
-    body.dark .switch-auth { color: var(--dark-text); }
-    .switch-auth a { color: var(--orange); text-decoration: none; font-weight: 600; cursor: pointer; }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--slate);
-    }
-
-    /* old nav.open block removed – handled by nd-nav / Global mobile foundation below */
-
-    /* ── Hero mesh SVG ── */
-    .hero-mesh {
-      color: var(--slate);
-      flex-shrink: 0;
-      animation: mesh-spin 40s linear infinite;
-      opacity: 0.7;
-    }
-    body.dark .hero-mesh { color: #8a9ab0; }
-    @keyframes mesh-spin {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
-
-    /* ── Page-entry animation ── */
-    .page-hero { animation: nd-fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
-    .search-wrap { animation: nd-fade-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.1s both; }
-    .categories { animation: nd-fade-up 0.6s cubic-bezier(0.16,1,0.3,1) 0.18s both; }
-    @keyframes nd-fade-up {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ── Card image upgrade ── */
-    .card-image {
-      height: 180px; overflow: hidden;
-      background: linear-gradient(135deg, #f0ece8 0%, #e8e0d8 100%);
-      flex-shrink: 0; position: relative;
-    }
-    body.dark .card-image {
-      background: linear-gradient(135deg, #141a27 0%, #0e1420 100%);
-    }
-    .card-image img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-    }
-    .card:hover .card-image img { transform: scale(1.07); }
-
-    /* Category badge — refined */
-    .card-category-badge {
-      position: absolute; top: 0.8rem; left: 0.8rem;
-      background: rgba(0,0,0,0.42);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: rgba(255,255,255,0.92);
-      font-size: 0.62rem; letter-spacing: 2.5px;
-      text-transform: uppercase; padding: 0.28rem 0.75rem;
-      border-radius: 20px; font-weight: 600;
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    /* Card body */
-    .card-body { padding: 1.4rem 1.5rem 1.6rem; flex: 1; display: flex; flex-direction: column; }
-    .card-name {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1.18rem; font-weight: 600;
-      color: var(--slate); margin-bottom: 0.55rem;
-      letter-spacing: -0.02em;
-    }
-    body.dark .card-name { color: var(--dark-text); }
-    .card-desc {
-      font-size: 0.86rem; color: #7a8a9a; line-height: 1.68;
-      margin-bottom: 1.2rem; flex: 1;
-    }
-    body.dark .card-desc { color: #8a9ab0; }
-
-    /* Benefit tags — glass style */
-    .card-benefits { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
-    .benefit-tag {
-      font-size: 0.7rem; padding: 4px 11px;
-      border-radius: 20px;
-      background: rgba(243,112,30,0.09);
-      color: var(--orange); font-weight: 600;
-      border: 1px solid rgba(243,112,30,0.15);
-      transition: all 0.2s;
-    }
-    .card:hover .benefit-tag {
-      background: rgba(243,112,30,0.14);
-      border-color: rgba(243,112,30,0.25);
-    }
-    body.dark .benefit-tag { background: rgba(243,112,30,0.12); border-color: rgba(243,112,30,0.2); }
 
     .card-footer-row { display: flex; justify-content: flex-end; }
     .card-arrow {
-      width: 34px; height: 34px; border-radius: 50%;
-      background: var(--orange); color: white;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--m4); color: var(--m2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+      font-size: 13px;
+      transition: background 0.2s, color 0.2s, transform 0.2s;
     }
     .card:hover .card-arrow {
-      transform: translateX(4px) scale(1.1);
-      box-shadow: 0 4px 14px rgba(243,112,30,0.4);
+      background: var(--orange); color: white;
+      transform: translateX(2px);
     }
-  
-/* ── Backdrop (hidden by default, shown only in mobile @media) ── */
 
-
-
-
-/* ── Base safety ────────────────────── */
-
-html {
-  overflow-x: hidden;
-}
-
-body {
-  overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-}
-
-button, a {
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* ══════════════════════════════════════
-   MOBILE BREAKPOINT
-   ══════════════════════════════════════ */
-
-@media (max-width: 768px) {
-
-  /* ── Layout padding consistency ── */
-  .container,
-  [class*="container"] {
-    padding-left: 1.2rem;
-    padding-right: 1.2rem;
-  }
-
-  /* ── Typography scaling ── */
-  h1 {
-    font-size: clamp(1.9rem, 7vw, 2.6rem);
-  }
-
-  h2 {
-    font-size: clamp(1.3rem, 5vw, 1.8rem);
-  }
-
-  /* ── Header adjustments ── */
-
-  
-
-  
-
-  
-
-  /* ── Page hero stacking ── */
-
-  .page-hero {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1.8rem;
-    padding: 2.2rem 1.2rem;
-  }
-
-  .hero-right {
-    width: 100%;
-    align-items: flex-start;
-  }
-
-  .hero-cta {
-    flex-direction: column;
-    width: 100%;
-    gap: 0.8rem;
-  }
-
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    text-align: center;
-    justify-content: center;
-  }
-
-  /* ── Grid → single column ── */
-
-  .grid,
-  .reviews-grid,
-  .products-grid,
-  .purchased-grid,
-  .available-grid,
-  .layout,
-  .product-layout,
-  .content-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
-  }
-
-  /* ── Cards stack cleanly ── */
-
-  .card-actions,
-  .stack-actions {
-    flex-direction: column;
-  }
-
-  .card-actions .btn,
-  .stack-actions .btn,
-  .download-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* ── Purchased / profile sections ── */
-
-  .purchased-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-
-  .profile-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .logout-btn {
-    width: 100%;
-  }
-
-  /* ── Modal behavior on mobile ── */
-
-  .modal-overlay {
-    padding: 1rem;
-  }
-
-  .modal-box {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 1.8rem 1.4rem;
-    border-radius: 18px;
-  }
-
-  /* ── Cookie banner ── */
-
-  #cookieConsent {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-
-  /* ── Footer ── */
-
-  footer {
-    padding: 1.6rem 1rem;
-    font-size: 0.82rem;
-  }
-}
-
-/* ══════════════════════════════════════
-   EXTRA SMALL DEVICES
-   ══════════════════════════════════════ */
-
-@media (max-width: 380px) {
-
-  .page-hero {
-    padding: 1.8rem 1rem;
-  }
-
-  .modal-box {
-    padding: 1.6rem 1.2rem;
-  }
-
-  .card-body {
-    padding: 1.2rem;
-  }
-
-}
-
-
-
-
-/* ── Transition foundation ── */
-a, button, [class*="btn"], [class*="card"],
-[class*="chip"], [class*="pill"], [class*="link"],
-.category-btn, .compound-card, .product-card,
-.review-card, .highlight-card, .philosophy-card,
-.stack-item, .faq-item, .social-link, .social-pill,
-.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
-.suggest-chip, .research-link {
-  transition-property: color, background, border-color,
-                        box-shadow, transform, opacity;
-  transition-duration: 0.22s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ── Primary buttons ── */
-.btn-primary:hover,
-.btn-orange:hover,
-.buy-button:hover:not(:disabled),
-.add-btn:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
-              0 2px 8px  rgba(243,112,30,0.18) !important;
-  filter: brightness(1.06);
-}
-
-/* ── Ghost / secondary buttons ── */
-.btn-ghost:hover,
-.btn-secondary:hover,
-.btn-load:hover,
-.btn-save:hover:not(:disabled) {
-  border-color: rgba(243,112,30,0.55) !important;
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.06) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
-}
-
-/* ── Auth button ── */
-.auth-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
-  filter: brightness(1.05);
-}
-
-/* ── Cards – lift + orange accent border glow ── */
-.card:hover,
-.compound-card:hover,
-.product-card:hover,
-.review-card:hover,
-.highlight-card:hover,
-.philosophy-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(243,112,30,0.28) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
-              0 0  0 1.5px rgba(243,112,30,0.14) !important;
-}
-
-/* ── Stack items ── */
-.stack-item:hover {
-  border-color: rgba(243,112,30,0.35) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
-}
-
-/* ── FAQ items ── */
-.faq-item:hover {
-  border-color: rgba(243,112,30,0.3) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
-}
-
-/* ── Social links (circle icons) ── */
-.social-link:hover {
-  background: #f3701e !important;
-  color: white !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
-}
-
-/* ── Social pills ── */
-.social-pill:hover {
-  background: rgba(243,112,30,0.09) !important;
-  border-color: rgba(243,112,30,0.4) !important;
-  color: #f3701e !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Suggest chips / category chips ── */
-.suggest-chip:hover,
-.category-btn:hover,
-.category-btn.active {
-  background: rgba(243,112,30,0.08) !important;
-  border-color: rgba(243,112,30,0.40) !important;
-  color: #f3701e !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ── Back / nav text links ── */
-.back-link:hover,
-.nd-back-btn:hover {
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.07) !important;
-  border-color: rgba(243,112,30,0.3) !important;
-}
-
-/* ── Bookmark & ctrl buttons ── */
-.bookmark-btn:hover,
-.ctrl-btn:hover {
-  background: #f3701e !important;
-  color: white !important;
-  border-color: #f3701e !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Research / external links ── */
-.research-link:hover {
-  color: #f3701e !important;
-  border-color: rgba(243,112,30,0.5) !important;
-  background: rgba(243,112,30,0.05) !important;
-}
-
-/* ── Download / load stack btn ── */
-.download-btn:hover,
-.load-this-btn:hover {
-  background: #3a4a63 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
-}
-
-/* ── Dark mode card hover ── */
-body.dark .card:hover,
-body.dark .compound-card:hover {
-  border-color: rgba(243,112,30,0.45) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
-              0 0 0 1.5px rgba(243,112,30,0.22) !important;
-}
-
-/* ── Cookie consent button ── */
-#cookieConsent button:hover {
-  background: #e2661a !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Remove / reset (red) – keep red, just smooth it ── */
-.remove-btn:hover {
-  background: rgba(239,68,68,0.10) !important;
-  color: #ef4444 !important;
-  border-color: rgba(239,68,68,0.3) !important;
-}
-.btn-reset:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444 !important;
-  background: rgba(239,68,68,0.05) !important;
-}
-
-
-
-
-  /* Backdrop */
-  
-  
-
-  /* Modal panel slides up from bottom */
-  
-  body.dark 
-  
-
-  /* Drag handle */
-  
-  body.dark 
-
-  /* Modal header row */
-  
-  body.dark 
-  
-  body.dark 
-  
-  body.dark 
-  
-
-  /* Nav links */
-  
-  
-  body.dark 
-  
-  
-  
-  
-  
-
-  /* Bottom padding for safe area */
-  
-}
-
-</style>
+    /* Skeleton grid */
+    .skeleton-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1px; background: var(--m4);
+      border: 1px solid var(--m4); border-radius: 12px;
+      overflow: hidden; margin-bottom: 4rem;
+    }
+    .skeleton-card { border-radius: 0; border: none; box-shadow: none; }
+    body.light .skeleton { background: linear-gradient(90deg, #ede8e3 25%, #f5f2ef 50%, #ede8e3 75%); background-size: 600px 100%; }
+  </style>
 </head>
 <body>
 
-<!-- Ambient orbs -->
 <div class="nd-orb nd-orb--1" aria-hidden="true"></div>
 <div class="nd-orb nd-orb--2" aria-hidden="true"></div>
+<div id="particles-js"></div>
 
+<!-- NAV -->
 <header class="nd-header" id="ndHeader">
-  <a href="landing.html" class="nd-logo">Noodrop</a>
+  <a href="landing.html" class="nd-logo">
+    <span class="nd-logo-pip"></span>noodrop
+  </a>
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
     <div class="nd-nav-header">
-      <span class="nd-nav-title">Noodrop</span>
+      <span class="nd-nav-title">noodrop</span>
       <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
     </div>
     <div class="nd-nav-links">
-    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-    <a href="index.html" class="nd-nav__link active">Library<span class="nav-arrow">›</span></a>
-    <a href="stack.html" class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
-    <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
-    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-    <a href="faq.html" class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-      <a href="nooai.html" class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html" class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link active" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
-    <button class="auth-btn" id="authBtn">Login</button>
-    <div class="theme-toggle" id="themeToggle"><div class="toggle-knob"></div></div>
+    <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
+    <div class="theme-toggle" id="themeToggle">
+      <div class="theme-toggle-inner"><div class="toggle-knob"></div></div>
+    </div>
     <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
 
-
-
-  <div id="particles-js"></div>
-
-  <!-- Header -->
-  
-
-  <!-- Page Hero -->
-  <div class="page-hero nd-reveal">
-    <div class="hero-left">
-      <div class="eyebrow">Noodrop · Research Library</div>
-      <h1>Explore<br><em>Nootropics.</em></h1>
-    </div>
-    <div class="hero-right nd-reveal nd-delay-1">
-      <!-- Wireframe sphere accent (inspired by reference image) -->
-      <svg class="hero-mesh" width="120" height="120" viewBox="0 0 120 120" fill="none" aria-hidden="true">
-        <circle cx="60" cy="60" r="54" stroke="currentColor" stroke-width="0.8" opacity="0.18"/>
-        <ellipse cx="60" cy="60" rx="54" ry="22" stroke="currentColor" stroke-width="0.8" opacity="0.15"/>
-        <ellipse cx="60" cy="60" rx="54" ry="38" stroke="currentColor" stroke-width="0.8" opacity="0.12"/>
-        <ellipse cx="60" cy="60" rx="22" ry="54" stroke="currentColor" stroke-width="0.8" opacity="0.15"/>
-        <line x1="6" y1="60" x2="114" y2="60" stroke="currentColor" stroke-width="0.8" opacity="0.13"/>
-        <line x1="60" y1="6" x2="60" y2="114" stroke="currentColor" stroke-width="0.8" opacity="0.13"/>
-      </svg>
-      <div class="hero-cta">
-        <a href="stack.html" class="btn-primary">Build Your Stack</a>
-        <a href="marketplace.html" class="btn-secondary">Marketplace →</a>
-      </div>
-    </div>
+<!-- PAGE HERO -->
+<div class="page-hero nd-reveal">
+  <div class="hero-left">
+    <div class="eyebrow">Noodrop · Research Library</div>
+    <h1>Explore<br><em>the library.</em></h1>
   </div>
-
-  <div class="container">
-
-    <!-- Search -->
-    <div class="search-wrap">
-      <input type="text" id="search" placeholder="Search compounds...">
-    </div>
-
-    <!-- Categories -->
-    <div class="categories">
-      <button class="category-btn active" data-category="all">All</button>
-      <button class="category-btn" data-category="Racetams">Racetams</button>
-      <button class="category-btn" data-category="Cholinergics">Cholinergics</button>
-      <button class="category-btn" data-category="Stimulants">Stimulants</button>
-      <button class="category-btn" data-category="Adaptogens">Adaptogens</button>
-      <button class="category-btn" data-category="Miscellaneous">Miscellaneous</button>
-    </div>
-
-    <!-- Loading -->
-    <div class="loading-indicator" id="loadingIndicator">
-      <div class="spinner"></div>
-
-      <span style="font-size:0.85rem;">Loading compounds...</span>
-    </div>
-
-<div class="grid skeleton-grid" id="skeletonGrid" aria-hidden="true">
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
-    </div>
-  </div>
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
-    </div>
-  </div>
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
-    </div>
-  </div>
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
-    </div>
-  </div>
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
-    </div>
-  </div>
-  <div class="skeleton-card">
-    <div class="skeleton sk-img"></div>
-    <div class="sk-body">
-      <div class="skeleton sk-title"></div>
-      <div class="skeleton sk-line"></div>
-      <div class="skeleton sk-line short"></div>
-      <div class="sk-tags">
-        <div class="skeleton sk-tag"></div>
-        <div class="skeleton sk-tag"></div>
-      </div>
+  <div class="hero-right nd-reveal nd-delay-1">
+    <div class="hero-cta">
+      <a href="stack.html" class="btn-primary" data-i18n="index.buildStack">Build a stack</a>
+      <a href="marketplace.html" class="btn-secondary" data-i18n="index.marketplace">Marketplace →</a>
     </div>
   </div>
 </div>
 
-    <!-- Grid -->
-    <div class="grid" id="grid"></div>
+<div class="container">
 
-    <footer>
-      <div class="social-links">
-        <a href="https://x.com/hann_369" target="_blank" class="social-link" aria-label="X">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
-        </a>
-        <a href="https://www.youtube.com/@hann.369" target="_blank" class="social-link" aria-label="YouTube">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
-        </a>
-      </div>
-      <p>© 2026 Noodrop · For educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></p>
-    </footer>
+  <!-- Search -->
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Search compounds…">
   </div>
 
-  <!-- Cookie Banner -->
-  <div id="cookieConsent" style="display:none;">
-    <span>This website uses cookies to improve your experience.</span>
-    <button onclick="acceptCookies()">Accept</button>
+  <!-- Categories -->
+  <div class="categories">
+    <button class="category-btn active" data-category="all">All</button>
+    <button class="category-btn" data-category="Racetams" data-i18n="index.categories.racetams">Racetams</button>
+    <button class="category-btn" data-category="Cholinergics" data-i18n="index.categories.cholinergics">Cholinergics</button>
+    <button class="category-btn" data-category="Stimulants" data-i18n="index.categories.stimulants">Stimulants</button>
+    <button class="category-btn" data-category="Adaptogens" data-i18n="index.categories.adaptogens">Adaptogens</button>
+    <button class="category-btn" data-category="Miscellaneous" data-i18n="index.categories.misc">Miscellaneous</button>
   </div>
 
-  <!-- Auth Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="authTitle">Login</h2>
-        <button class="modal-close" onclick="closeAuthModal()">×</button>
+  <!-- Loading -->
+  <div class="loading-indicator" id="loadingIndicator">
+    <div class="spinner"></div>
+    <span data-i18n="index.loading">Loading compounds…</span>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="skeleton-grid" id="skeletonGrid" aria-hidden="true">
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+    <div class="skeleton-card"><div class="skeleton sk-img"></div><div class="sk-body"><div class="skeleton sk-title"></div><div class="skeleton sk-line"></div><div class="skeleton sk-line short"></div><div class="sk-tags"><div class="skeleton sk-tag"></div><div class="skeleton sk-tag"></div></div></div></div>
+  </div>
+
+  <!-- Compound Grid -->
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <div class="social-links">
+      <a href="https://x.com/hann_369" target="_blank" rel="noopener" class="social-link" aria-label="X">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+      </a>
+      <a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener" class="social-link" aria-label="YouTube">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+      </a>
+    </div>
+    <p>© 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a></p>
+  </footer>
+</div>
+
+<!-- Cookie Banner -->
+<div id="cookieConsent" style="display:none;">
+  <span>We use cookies to improve your experience.</span>
+  <button onclick="acceptCookies()">Accept</button>
+</div>
+
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="authTitle">Login</h2>
+      <button class="modal-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <form id="loginForm">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="loginEmail" required>
       </div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="loginEmail" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="loginPassword" required minlength="6">
-        </div>
-        <div class="form-error" id="loginError"></div>
-        <button type="submit" class="btn-full">Login</button>
-      </form>
-      <form id="signupForm" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="signupEmail" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="signupPassword" required minlength="6">
-        </div>
-        <div class="form-error" id="signupError"></div>
-        <button type="submit" class="btn-full">Create Account</button>
-      </form>
-      <div class="switch-auth">
-        <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="loginPassword" required minlength="6">
       </div>
+      <div class="form-error" id="loginError"></div>
+      <button type="submit" class="btn-full">Login</button>
+    </form>
+    <form id="signupForm" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="signupEmail" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="signupPassword" required minlength="6">
+      </div>
+      <div class="form-error" id="signupError"></div>
+      <button type="submit" class="btn-full">Create Account</button>
+    </form>
+    <div class="switch-auth">
+      <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
     </div>
   </div>
-
-  <script>
-    // Firebase config loaded from firebase-config.js (single source of truth)
-    const toggle = document.getElementById('themeToggle');
-    let isDark = localStorage.getItem('darkMode') === 'true';
-    if (isDark) { document.body.classList.add('dark'); toggle.classList.add('active'); initDarkParticles(); }
-    else { initLightParticles(); }
-
-    toggle.addEventListener('click', () => {
-      isDark = !isDark;
-      document.body.classList.toggle('dark', isDark);
-      toggle.classList.toggle('active', isDark);
-      localStorage.setItem('darkMode', isDark);
-      isDark ? initDarkParticles() : initLightParticles();
-    });
-
-    function initLightParticles() {
-      if (window.pJSDom && window.pJSDom.length) {
-        window.pJSDom.forEach(p => p.pJS.fn.vendors.destroypJS());
-        window.pJSDom = [];
-      }
-      particlesJS("particles-js", {
-        particles: {
-          number: { value: 120, density: { enable: true, value_area: 1000 } },
-          color: { value: ["#1a1a2e", "#2c3e50", "#34495e", "#4b607f"] },
-          shape: {
-            type: "star",
-            stroke: { width: 0 },
-            polygon: { nb_sides: 5 }
-          },
-          opacity: {
-            value: 0.55,
-            random: true,
-            anim: { enable: true, speed: 0.4, opacity_min: 0.08, sync: false }
-          },
-          size: {
-            value: 2.2,
-            random: true,
-            anim: { enable: true, speed: 0.6, size_min: 0.4, sync: false }
-          },
-          line_linked: { enable: false },
-          move: {
-            enable: true,
-            speed: 0.35,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false
-          }
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "bubble" },
-            onclick: { enable: false },
-            resize: true
-          },
-          modes: {
-            bubble: { distance: 120, size: 3.5, duration: 0.4, opacity: 0.7 }
-          }
-        },
-        retina_detect: true
-      });
-    }
-    function initDarkParticles() {
-      if (window.pJSDom && window.pJSDom.length) {
-        window.pJSDom.forEach(p => p.pJS.fn.vendors.destroypJS());
-        window.pJSDom = [];
-      }
-      particlesJS("particles-js", {
-        particles: {
-          number: { value: 160, density: { enable: true, value_area: 850 } },
-          color: { value: ["#ffffff", "#e8d8c9", "#adc4e0", "#f3b07e"] },
-          shape: {
-            type: "star",
-            stroke: { width: 0 },
-            polygon: { nb_sides: 5 }
-          },
-          opacity: {
-            value: 0.75,
-            random: true,
-            anim: { enable: true, speed: 0.6, opacity_min: 0.15, sync: false }
-          },
-          size: {
-            value: 1.8,
-            random: true,
-            anim: { enable: true, speed: 0.5, size_min: 0.3, sync: false }
-          },
-          line_linked: { enable: false },
-          move: {
-            enable: true,
-            speed: 0.3,
-            direction: "none",
-            random: true,
-            straight: false,
-            out_mode: "out",
-            bounce: false
-          }
-        },
-        interactivity: {
-          detect_on: "canvas",
-          events: {
-            onhover: { enable: true, mode: "bubble" },
-            onclick: { enable: false },
-            resize: true
-          },
-          modes: {
-            bubble: { distance: 140, size: 3, duration: 0.4, opacity: 1 }
-          }
-        },
-        retina_detect: true
-      });
-    }
-
-    // ── Auth ──
-    const authBtn = document.getElementById('authBtn');
-    authBtn.addEventListener('click', () => {
-      firebase.auth().currentUser ? window.location.href = 'profile.html' : openAuthModal();
-    });
-    firebase.auth().onAuthStateChanged(user => {
-      authBtn.textContent = user ? 'Profile' : 'Login';
-    });
-    function openAuthModal() { document.getElementById('authModal').classList.add('open'); }
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('open');
-      document.getElementById('loginError').textContent = '';
-      document.getElementById('signupError').textContent = '';
-    }
-    function switchAuthMode() {
-      const isLogin = document.getElementById('loginForm').style.display !== 'none';
-      document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
-      document.getElementById('switchText').innerHTML = isLogin
-        ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
-        : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
-    }
-    document.getElementById('loginForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-        closeAuthModal();
-      } catch (err) { document.getElementById('loginError').textContent = err.message; }
-    });
-    document.getElementById('signupForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        const cred = await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
-        await firebase.firestore().collection('users').doc(cred.user.uid).set({ email: cred.user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        closeAuthModal();
-      } catch (err) { document.getElementById('signupError').textContent = err.message; }
-    });
-
-    // ── Cookie ──
-    function acceptCookies() {
-      localStorage.setItem('cookiesAccepted', 'yes');
-      document.getElementById('cookieConsent').style.display = 'none';
-    }
-    window.addEventListener('load', () => {
-      if (!localStorage.getItem('cookiesAccepted'))
-        document.getElementById('cookieConsent').style.display = 'flex';
-    });
-
-    // ── Data + Cards ──
-    function loadDataAndInitialize() {
-      const s = document.createElement('script');
-      s.src = 'data.js';
-      s.onload = () => initializeApp();
-      s.onerror = () => { document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Error loading compounds.</p>'; };
-      document.head.appendChild(s);
-    }
-
-    function initializeApp() {
-      document.getElementById('loadingIndicator').style.display = 'none';
-  var sk = document.getElementById('skeletonGrid'); if (sk) sk.style.display = 'none';
-
-      if (!window.compounds || !Array.isArray(window.compounds)) {
-        document.getElementById('grid').innerHTML = '<p style="color:#8a9ab0;text-align:center;padding:2rem;">Error loading compounds.</p>';
-        return;
-      }
-      renderCards(window.compounds);
-      document.getElementById('search').addEventListener('input', e => {
-        const t = e.target.value.toLowerCase();
-        renderCards(window.compounds.filter(c =>
-          c.name.toLowerCase().includes(t) ||
-          (c.description && c.description.toLowerCase().includes(t)) ||
-          (c.category && c.category.toLowerCase().includes(t)) ||
-          (c.benefits && c.benefits.some(b => b.toLowerCase().includes(t)))
-        ));
-      });
-      document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-          document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          const cat = e.target.dataset.category;
-          renderCards(cat === 'all' ? window.compounds : window.compounds.filter(c => c.category === cat));
-        });
-      });
-    }
-
-    function renderCards(list) {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
-      if (!list || !list.length) {
-        grid.innerHTML = '<p style="color:#8a9ab0;text-align:center;padding:3rem;grid-column:1/-1;">No compounds found.</p>';
-        return;
-      }
-      list.forEach(comp => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="card-image">
-            <img src="${comp.image}" alt="${comp.name}" onerror="this.parentElement.style.background='#f0ece8';this.style.display='none'">
-            <div class="card-category-badge">${comp.category || 'Nootropic'}</div>
-          </div>
-          <div class="card-body">
-            <div class="card-name">${comp.name}</div>
-            <div class="card-desc">${comp.description}</div>
-            <div class="card-benefits">
-              ${(comp.benefits || []).slice(0, 3).map(b => `<span class="benefit-tag">${b}</span>`).join('')}
-            </div>
-            <div class="card-footer-row">
-              <div class="card-arrow">→</div>
-            </div>
-          </div>
-        `;
-        card.onclick = () => { window.location.href = `compound.html?cid=${comp.cid}`; };
-        grid.appendChild(card);
-      });
-    }
-
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', loadDataAndInitialize) : loadDataAndInitialize();
-  </script>
-  
-
-
-
-
+</div>
 
 <script>
-/* ── Noodrop unified header JS ── */
-(function () {
+// ── Theme (dark-first: no class = dark) ──
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var stored = localStorage.getItem('ndTheme'); // 'light' | null
+  var isLight = stored === 'light';
+  function applyTheme(light) {
+    document.body.classList.toggle('light', light);
+    if (toggle) toggle.classList.toggle('active', light);
+    isLight = light;
+  }
+  applyTheme(isLight);
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      applyTheme(!isLight);
+      localStorage.setItem('ndTheme', isLight ? 'light' : '');
+      isLight ? initLightParticles() : initDarkParticles();
+    });
+  }
+  // Init correct particles
+  window.addEventListener('DOMContentLoaded', function() {
+    isLight ? initLightParticles() : initDarkParticles();
+  });
+})();
+
+function initDarkParticles() {
+  if (window.pJSDom && window.pJSDom.length) {
+    window.pJSDom.forEach(function(p) { p.pJS.fn.vendors.destroypJS(); });
+    window.pJSDom = [];
+  }
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 42, density: { enable: true, value_area: 1000 } },
+      color: { value: '#E8541A' },
+      shape: { type: 'circle' },
+      opacity: { value: .12, random: true, anim: { enable: true, speed: .3, opacity_min: .02, sync: false } },
+      size: { value: 1.5, random: true },
+      line_linked: { enable: true, distance: 155, color: '#E8541A', opacity: .05, width: .6 },
+      move: { enable: true, speed: .35, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: { onhover: { enable: true, mode: 'grab' }, resize: true },
+      modes: { grab: { distance: 180, line_linked: { opacity: .14 } } }
+    },
+    retina_detect: true
+  });
+}
+
+function initLightParticles() {
+  if (window.pJSDom && window.pJSDom.length) {
+    window.pJSDom.forEach(function(p) { p.pJS.fn.vendors.destroypJS(); });
+    window.pJSDom = [];
+  }
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: 90, density: { enable: true, value_area: 900 } },
+      color: { value: ['#1a1a1a', '#2c3e50', '#4b607f', '#8a7060'] },
+      shape: { type: 'star', stroke: { width: 0 }, polygon: { nb_sides: 5 } },
+      opacity: { value: .45, random: true, anim: { enable: true, speed: .5, opacity_min: .08, sync: false } },
+      size: { value: 2.0, random: true, anim: { enable: true, speed: .6, size_min: .4, sync: false } },
+      line_linked: { enable: false },
+      move: { enable: true, speed: .32, direction: 'none', random: true, straight: false, out_mode: 'out', bounce: false }
+    },
+    interactivity: {
+      detect_on: 'canvas',
+      events: { onhover: { enable: true, mode: 'bubble' }, onclick: { enable: false }, resize: true },
+      modes: { bubble: { distance: 130, size: 3.5, duration: 0.4, opacity: .7 } }
+    },
+    retina_detect: true
+  });
+}
+
+// ── Auth ──
+var authBtn = document.getElementById('authBtn');
+authBtn.addEventListener('click', function() {
+  firebase.auth().currentUser ? window.location.href = 'profile.html' : openAuthModal();
+});
+firebase.auth().onAuthStateChanged(function(user) {
+  authBtn.textContent = user ? 'Profile' : 'Login';
+});
+function openAuthModal()  { document.getElementById('authModal').classList.add('open'); }
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('loginError').textContent = '';
+  document.getElementById('signupError').textContent = '';
+}
+function switchAuthMode() {
+  var isLogin = document.getElementById('loginForm').style.display !== 'none';
+  document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
+  document.getElementById('switchText').innerHTML = isLogin
+    ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
+    : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
+}
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  try {
+    await firebase.auth().signInWithEmailAndPassword(
+      document.getElementById('loginEmail').value,
+      document.getElementById('loginPassword').value
+    );
+    closeAuthModal();
+  } catch(err) { document.getElementById('loginError').textContent = err.message; }
+});
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  try {
+    var cred = await firebase.auth().createUserWithEmailAndPassword(
+      document.getElementById('signupEmail').value,
+      document.getElementById('signupPassword').value
+    );
+    await firebase.firestore().collection('users').doc(cred.user.uid).set({
+      email: cred.user.email,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeAuthModal();
+  } catch(err) { document.getElementById('signupError').textContent = err.message; }
+});
+
+// ── Cookie ──
+function acceptCookies() {
+  localStorage.setItem('cookiesAccepted', 'yes');
+  document.getElementById('cookieConsent').style.display = 'none';
+}
+window.addEventListener('load', function() {
+  if (!localStorage.getItem('cookiesAccepted'))
+    document.getElementById('cookieConsent').style.display = 'flex';
+});
+
+// ── Data + Cards ──
+function loadDataAndInitialize() {
+  var s = document.createElement('script');
+  s.src = 'data.js';
+  s.onload = function() { initializeApp(); };
+  s.onerror = function() {
+    document.getElementById('loadingIndicator').innerHTML = '<p style="color:var(--m2)">Error loading compounds.</p>';
+  };
+  document.head.appendChild(s);
+}
+
+function initializeApp() {
+  document.getElementById('loadingIndicator').style.display = 'none';
+  var sk = document.getElementById('skeletonGrid');
+  if (sk) sk.style.display = 'none';
+  if (!window.compounds || !Array.isArray(window.compounds)) {
+    document.getElementById('grid').innerHTML = '<p style="color:var(--m2);text-align:center;padding:2rem;">Error loading compounds.</p>';
+    return;
+  }
+  renderCards(window.compounds);
+  document.getElementById('search').addEventListener('input', function(e) {
+    var t = e.target.value.toLowerCase();
+    renderCards(window.compounds.filter(function(c) {
+      return c.name.toLowerCase().includes(t) ||
+        (c.description && c.description.toLowerCase().includes(t)) ||
+        (c.category && c.category.toLowerCase().includes(t)) ||
+        (c.benefits && c.benefits.some(function(b) { return b.toLowerCase().includes(t); }));
+    }));
+  });
+  document.querySelectorAll('.category-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      document.querySelectorAll('.category-btn').forEach(function(b) { b.classList.remove('active'); });
+      e.target.classList.add('active');
+      var cat = e.target.dataset.category;
+      renderCards(cat === 'all' ? window.compounds : window.compounds.filter(function(c) { return c.category === cat; }));
+    });
+  });
+}
+
+function renderCards(list) {
+  var grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  if (!list || !list.length) {
+    grid.innerHTML = '<p style="color:var(--m2);text-align:center;padding:3rem;grid-column:1/-1;">No compounds found.</p>';
+    return;
+  }
+  list.forEach(function(comp) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML =
+      '<div class="card-image">' +
+        '<img src="' + comp.image + '" alt="' + comp.name + '" loading="lazy" onerror="this.style.display=\'none\'">' +
+        '<div class="card-category-badge">' + (comp.category || 'Nootropic') + '</div>' +
+      '</div>' +
+      '<div class="card-body">' +
+        '<div class="card-name">' + comp.name + '</div>' +
+        '<div class="card-desc">' + comp.description + '</div>' +
+        '<div class="card-benefits">' +
+          (comp.benefits || []).slice(0, 3).map(function(b) {
+            return '<span class="benefit-tag">' + b + '</span>';
+          }).join('') +
+        '</div>' +
+        '<div class="card-footer-row"><div class="card-arrow">→</div></div>' +
+      '</div>';
+    card.onclick = function() { window.location.href = 'compound.html?cid=' + comp.cid; };
+    grid.appendChild(card);
+  });
+}
+
+document.readyState === 'loading'
+  ? document.addEventListener('DOMContentLoaded', loadDataAndInitialize)
+  : loadDataAndInitialize();
+</script>
+
+<!-- Unified header JS -->
+<script>
+(function() {
   var burger = document.getElementById('ndBurger');
   var nav    = document.getElementById('ndNav');
   var header = document.getElementById('ndHeader');
   if (!burger || !nav) return;
-
   function openMenu() {
-    nav.classList.add('is-open');
-    burger.classList.add('is-open');
+    nav.classList.add('is-open'); burger.classList.add('is-open');
     var bd = document.getElementById('ndNavBackdrop');
     if (bd) bd.classList.add('is-open');
     burger.setAttribute('aria-expanded', 'true');
     document.body.style.overflow = 'hidden';
   }
   function closeMenu() {
-    nav.classList.remove('is-open');
-    burger.classList.remove('is-open');
+    nav.classList.remove('is-open'); burger.classList.remove('is-open');
     var bd = document.getElementById('ndNavBackdrop');
     if (bd) bd.classList.remove('is-open');
     burger.setAttribute('aria-expanded', 'false');
     document.body.style.overflow = '';
   }
-
-  burger.addEventListener('click', function () {
+  burger.addEventListener('click', function() {
     nav.classList.contains('is-open') ? closeMenu() : openMenu();
   });
   var closeBtn = document.getElementById('ndNavClose');
   if (closeBtn) closeBtn.addEventListener('click', closeMenu);
   var backdrop = document.getElementById('ndNavBackdrop');
   if (backdrop) backdrop.addEventListener('click', closeMenu);
-  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
-    a.addEventListener('click', closeMenu);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeMenu();
-  });
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) closeMenu();
-  });
+  nav.querySelectorAll('.nd-nav__link').forEach(function(a) { a.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
   if (header) {
-    window.addEventListener('scroll', function () {
+    window.addEventListener('scroll', function() {
       header.classList.toggle('scrolled', window.scrollY > 10);
     }, { passive: true });
   }
 })();
 </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
-    });
-  }
-</script>
 
 <script>
-/* ── Magnetic card tilt effect ── */
-(function() {
-  var STRENGTH = 8; // max tilt degrees
-  function attachMagnetic(card) {
-    card.addEventListener('mousemove', function(e) {
-      var r = card.getBoundingClientRect();
-      var x = (e.clientX - r.left) / r.width  - 0.5; // -0.5 to 0.5
-      var y = (e.clientY - r.top)  / r.height - 0.5;
-      card.style.transform = 'translateY(-8px) scale(1.012) rotateY(' + (x * STRENGTH) + 'deg) rotateX(' + (-y * STRENGTH) + 'deg)';
-      card.style.transition = 'transform 0.1s ease, box-shadow 0.35s, border-color 0.25s';
-      // Shift the image subtly
-      var img = card.querySelector('.card-image img');
-      if (img) img.style.transform = 'scale(1.07) translate(' + (x * 6) + 'px,' + (y * 6) + 'px)';
-    });
-    card.addEventListener('mouseleave', function() {
-      card.style.transform = '';
-      card.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s, border-color 0.25s';
-      var img = card.querySelector('.card-image img');
-      if (img) { img.style.transform = ''; img.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1)'; }
-    });
-  }
-  // Attach to existing and future cards
-  function initCards() {
-    document.querySelectorAll('.card').forEach(function(c) {
-      if (!c.dataset.magnetic) { c.dataset.magnetic = '1'; attachMagnetic(c); }
-    });
-  }
-  // Observe for dynamically added cards
-  var obs = new MutationObserver(initCards);
-  obs.observe(document.body, { childList: true, subtree: true });
-  // Also run on DOMContentLoaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCards);
-  } else { initCards(); }
-})();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').catch(function() {});
+  });
+}
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() { i18n.init(); });
 </script>
 </body>
 </html>

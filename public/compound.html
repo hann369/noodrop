@@ -5,1158 +5,430 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="global.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
+  <meta name="theme-color" content="#E8541A">
   <title>Compound – Noodrop</title>
 
-<script src="https://3dmol.org/build/3Dmol-min.js"></script>
+  <script src="https://3dmol.org/build/3Dmol-min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
   <script src="data.js"></script>
-
   <style>
-    :root {
-      --cream: #e8d8c9;
-      --slate: #4b607f;
-      --orange: #f3701e;
-      --white: #ffffff;
-      --dark-slate: #2c3e50;
-      --shadow: 0 8px 28px rgba(0,0,0,0.07);
-      --bg: #fafaf8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      padding-top: 64px;
-      font-family: 'Tabular', sans-serif;
-      background: var(--bg);
-      color: var(--dark-slate);
-      min-height: 100vh;
-    }
-
-    /* ── Header ── */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1rem 5%;
-      border-bottom: 1px solid var(--cream);
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(250,250,248,0.92);
-      backdrop-filter: blur(14px);
-    }
-    nav a {
-      text-decoration: none; color: var(--slate);
-      margin: 0 0.9rem; font-weight: 500; font-size: 0.9rem;
-      position: relative; transition: color 0.2s;
-    }
-    nav a::after {
-      content: ""; position: absolute;
-      width: 0; height: 2px; background: var(--orange);
-      left: 0; bottom: -4px; transition: 0.3s;
-    }
-    nav a:hover::after { width: 100%; }
-    nav a:hover { color: var(--orange); }
-
-    /* ── Container ── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 3rem 5%; }
-
-    /* ── Back link ── */
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      color: #8a9ab0; text-decoration: none; font-size: 0.85rem;
-      font-weight: 600; margin-bottom: 2.5rem; transition: color 0.2s;
-    }
-    .back-link:hover { color: var(--orange); }
-
-    /* ── Loading ── */
-    .loading {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 6rem 0; color: #8a9ab0;
-    }
-    .spinner {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2.5px solid rgba(243,112,30,0.2);
-      border-top-color: var(--orange);
-      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Compound Hero ── */
-    .compound-hero {
-      display: flex; justify-content: space-between;
-      align-items: flex-start; gap: 2rem;
-      margin-bottom: 2rem; flex-wrap: wrap;
-    }
-    .compound-hero-left {}
-    .compound-eyebrow {
-      font-size: 0.68rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--orange);
-      margin-bottom: 0.6rem;
-    }
-    .compound-title {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      font-weight: 600; color: var(--slate);
-      letter-spacing: -1px; line-height: 1.05;
-    }
-    .compound-hero-right {
-      display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
-    }
-
-    /* Meta pills */
-    .meta-pill {
-      display: flex; align-items: center; gap: 0.5rem;
-      background: white; border: 1px solid var(--cream);
-      border-radius: 50px; padding: 0.45rem 1rem;
-      font-size: 0.82rem; box-shadow: var(--shadow);
-    }
-    .meta-pill .label { color: var(--orange); font-weight: 700; }
-    .meta-pill .value { color: var(--slate); }
-
-    /* Bookmark button */
-    .bookmark-btn {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: white; border: 1px solid var(--cream);
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.25s; box-shadow: var(--shadow);
-      color: var(--slate);
-    }
-    .bookmark-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
-    .bookmark-btn.bookmarked { color: #ef4444; border-color: #ef4444; }
-
-    /* ── Description block ── */
-    .compound-desc {
-      background: white; border: 1px solid var(--cream);
-      border-radius: 16px; padding: 1.8rem 2rem;
-      font-size: 1.02rem; line-height: 1.8; color: #5a6a7a;
-      margin-bottom: 2.5rem; box-shadow: var(--shadow);
-    }
-
-    /* ── Section label ── */
-    .section-label {
-      font-size: 0.68rem; letter-spacing: 4px;
-      text-transform: uppercase; color: #aab0bc;
-      margin-bottom: 1.5rem;
-    }
-
-    /* ── Content grid ── */
-    .content-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 1.5rem; margin-bottom: 1.5rem;
-    }
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--slate);
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0; right: 0;
-        background: var(--bg);
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
-      }
-      nav.open { display: flex; }
-      nav a { margin: 0.8rem 0; }
-      .content-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ── Card ── */
-    .card {
-      background: white; border-radius: 16px;
-      border: 1px solid var(--cream); padding: 1.6rem;
-      box-shadow: var(--shadow);
-    }
-    .card-title {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1rem; font-weight: 600; color: var(--slate);
-      margin-bottom: 1.2rem; display: flex;
-      align-items: center; gap: 0.6rem;
-    }
-    .card-title-icon {
-      width: 28px; height: 28px; border-radius: 8px;
-      background: rgba(243,112,30,0.1);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.85rem; flex-shrink: 0;
-    }
-
-    /* Benefits pills */
-    .benefits { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .benefit-pill {
-      background: rgba(243,112,30,0.1); color: var(--orange);
-      padding: 0.35rem 0.9rem; border-radius: 20px;
-      font-size: 0.82rem; font-weight: 600;
-    }
-
-    /* Dosage */
-    .dosage-text { font-size: 0.92rem; line-height: 1.75; color: #5a6a7a; white-space: pre-line; }
-    .dosage-text strong { color: var(--orange); }
-
-    /* Pharma grid */
-    .pharma-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.8rem; }
-    .pharma-item {
-      background: rgba(243,112,30,0.04);
-      border: 1px solid rgba(243,112,30,0.15);
-      border-radius: 12px; padding: 1rem 0.75rem; text-align: center;
-    }
-    .pharma-label {
-      font-size: 0.68rem; text-transform: uppercase;
-      letter-spacing: 2px; color: #8a9ab0; margin-bottom: 0.4rem;
-    }
-    .pharma-value { font-size: 1rem; font-weight: 700; color: var(--orange); }
-
-    /* List items */
-    .info-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
-    .info-item {
-      padding: 0.7rem 1rem; font-size: 0.88rem; line-height: 1.5;
-      border-radius: 8px; border-left: 3px solid var(--orange);
-      background: rgba(243,112,30,0.04); color: var(--dark-slate);
-    }
-    .info-item.warning {
-      border-left-color: #ef4444;
-      background: rgba(239,68,68,0.05); color: #ef4444;
-    }
-    .info-item.safe {
-      border-left-color: #10b981;
-      background: rgba(16,185,129,0.05); color: #059669;
-    }
-
-    /* Mechanisms */
-    .mechanisms-text { font-size: 0.92rem; line-height: 1.8; color: #5a6a7a; }
-
-    /* Research links */
-    .research-links { display: flex; flex-direction: column; gap: 0.6rem; }
-    .research-link {
-      display: flex; align-items: center; gap: 0.75rem;
-      padding: 0.85rem 1rem; border-radius: 10px;
-      background: rgba(75,96,127,0.04);
-      border: 1px solid rgba(75,96,127,0.1);
-      color: var(--slate); text-decoration: none;
-      font-size: 0.88rem; font-weight: 500;
-      transition: all 0.25s;
-    }
-    .research-link:hover {
-      background: rgba(243,112,30,0.06);
-      border-color: rgba(243,112,30,0.25);
-      transform: translateX(4px);
-      color: var(--orange);
-    }
-    .research-link-icon { flex-shrink: 0; opacity: 0.5; }
-
-    /* ── 3D Viewer ── */
-    .viewer-section { margin-top: 1.5rem; }
-    .viewer-card {
-      background: white; border-radius: 16px;
-      border: 1px solid var(--cream);
-      overflow: hidden; box-shadow: var(--shadow);
-    }
-    .viewer-header {
-      padding: 1.2rem 1.6rem;
-      border-bottom: 1px solid var(--cream);
-      display: flex; align-items: center; gap: 0.75rem;
-    }
-    #viewer {
-      width: 100%; height: 420px;
-      background: #f8f5f2;
-      position: relative;
-      overflow: hidden;
-      display: block;
-    }
-    #viewer canvas {
-      position: absolute !important;
-      top: 0 !important; left: 0 !important;
-      width: 100% !important; height: 100% !important;
-    }
-    .viewer-controls {
-      display: flex; gap: 0.5rem; flex-wrap: wrap;
-      padding: 1rem 1.4rem;
-      border-top: 1px solid var(--cream);
-      background: #fdfaf7;
-    }
-    .ctrl-btn {
-      background: white; border: 1px solid var(--cream);
-      padding: 0.4rem 1rem; border-radius: 50px;
-      color: var(--slate); font-family: 'Tabular', sans-serif;
-      font-size: 0.8rem; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .ctrl-btn:hover { background: var(--orange); color: white; border-color: var(--orange); }
-
-    /* ── Full-width card ── */
-    .card-full { margin-top: 1.5rem; }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 2rem 0;
-      border-top: 1px solid var(--cream);
-      margin-top: 4rem; color: #8a9ab0; font-size: 0.85rem;
-    }
-
-    /* ── Cookie ── */
-    #cookieConsent {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 9999;
-      background: var(--slate); color: white;
-      padding: 1rem 5%; display: none;
-      align-items: center; justify-content: center; gap: 1.5rem;
-      font-size: 0.88rem; flex-wrap: wrap;
-    }
-    #cookieConsent button {
-      background: var(--orange); color: white; border: none;
-      padding: 0.4rem 1.2rem; border-radius: 50px;
-      font-family: 'Tabular', sans-serif; font-weight: 600;
-      cursor: pointer;
-    }
-  
-    
-
-    /* Prevent text from ever overflowing horizontally */
-    html { overflow-x: hidden; }
-    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-    /* Make images responsive by default */
-    img { max-width: 100%; height: auto; }
-
-    /* Buttons / links: comfortable touch targets */
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ── Hamburger nav shared base ──────── */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: var(--slate, #4b607f);
-      padding: 0.25rem 0.4rem;
-      line-height: 1;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-
-      /* Slide-down nav overlay */
-      nav {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(255,255,255,0.97) !important;
-        backdrop-filter: blur(16px) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 0.25rem !important;
-        padding: 2rem 1rem !important;
-        z-index: 500 !important;
-      }
-      nav.open { display: flex !important; }
-
-      /* Big tap targets for nav items on mobile */
-      nav a {
-        margin: 0 !important;
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        padding: 0.9rem 1.5rem !important;
-        width: 100% !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        transition: background 0.2s !important;
-      }
-      nav a:hover, nav a.active {
-        background: rgba(243,112,30,0.08) !important;
-      }
-
-      /* Close button inside open menu */
-      nav.open::before {
-        content: "✕";
-        position: fixed;
-        top: 1.2rem; right: 1.4rem;
-        font-size: 1.4rem;
-        color: var(--slate, #4b607f);
-        cursor: pointer;
-        z-index: 600;
-        pointer-events: none; /* closed by JS */
-      }
-
-      /* General layout helpers for mobile */
-      .container, [class*="container"] {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-      }
-
-      /* Typography scale */
-      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
-
-      /* Full-width CTAs */
-      .hero-cta, .cta-buttons, .quick-links {
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
-        width: 100% !important;
-        text-align: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Stack panels / grids → single column */
-      .grid, .reviews-grid, .products-grid, .purchased-grid,
-      .available-grid, .layout, .product-layout, .content-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      /* Auth banner wrap */
-      .auth-banner {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        text-align: center !important;
-      }
-      .auth-banner .btn-orange { width: 100% !important; }
-
-      /* Auth/saved-stack modals – full-screen on small screens */
-      .modal-box {
-        max-width: 100% !important;
-        margin: 0 1rem !important;
-        padding: 1.8rem 1.4rem !important;
-        border-radius: 16px !important;
-      }
-
-      /* Purchased cards wrap */
-      .purchased-card {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-      }
-      .download-btn { width: 100% !important; justify-content: center !important; }
-
-      /* Stack panel: no sticky on mobile */
-      .stack-panel { position: static !important; }
-
-      /* Stack actions vertical */
-      .stack-actions { flex-direction: column !important; }
-      .stack-actions .btn-reset,
-      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
-
-      /* Profile card */
-      .profile-header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-      }
-      .logout-btn { width: 100% !important; }
-
-      /* Card actions */
-      .card-actions { flex-direction: column !important; }
-      .card-actions .btn { width: 100% !important; }
-
-      /* Footer */
-      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
-
-      /* Page heroes */
-      .page-hero {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        align-items: flex-start !important;
-        padding: 2rem 1.1rem !important;
-      }
-      .hero-right { align-items: flex-start !important; width: 100% !important; }
-
-      /* Cookie banner */
-      #cookieConsent {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        text-align: center !important;
-        padding: 1rem !important;
-      }
-    }
-
-    /* ── Extra-small phones ──────────────── */
-    @media (max-width: 375px) {
-      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
-      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
-      .purchase-box { padding: 1.2rem !important; }
-      .cta-box { padding: 1.8rem 1rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-    @media (max-width: 768px) {
-      .compound-hero {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        padding: 2rem 1.1rem 1.5rem !important;
-      }
-      .compound-image-wrap { width: 100% !important; max-height: 220px !important; }
-      .content-grid { grid-template-columns: 1fr !important; }
-      .dosage-grid { grid-template-columns: 1fr !important; }
-    }
-
-
-
-
-/* ── Transition foundation ── */
-a, button, [class*="btn"], [class*="card"],
-[class*="chip"], [class*="pill"], [class*="link"],
-.category-btn, .compound-card, .product-card,
-.review-card, .highlight-card, .philosophy-card,
-.stack-item, .faq-item, .social-link, .social-pill,
-.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
-.suggest-chip, .research-link {
-  transition-property: color, background, border-color,
-                        box-shadow, transform, opacity;
-  transition-duration: 0.22s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ── Primary buttons ── */
-.btn-primary:hover,
-.btn-orange:hover,
-.buy-button:hover:not(:disabled),
-.add-btn:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
-              0 2px 8px  rgba(243,112,30,0.18) !important;
-  filter: brightness(1.06);
-}
-
-/* ── Ghost / secondary buttons ── */
-.btn-ghost:hover,
-.btn-secondary:hover,
-.btn-load:hover,
-.btn-save:hover:not(:disabled) {
-  border-color: rgba(243,112,30,0.55) !important;
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.06) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
-}
-
-/* ── Auth button ── */
-.auth-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
-  filter: brightness(1.05);
-}
-
-/* ── Cards – lift + orange accent border glow ── */
-.card:hover,
-.compound-card:hover,
-.product-card:hover,
-.review-card:hover,
-.highlight-card:hover,
-.philosophy-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(243,112,30,0.28) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
-              0 0  0 1.5px rgba(243,112,30,0.14) !important;
-}
-
-/* ── Stack items ── */
-.stack-item:hover {
-  border-color: rgba(243,112,30,0.35) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
-}
-
-/* ── FAQ items ── */
-.faq-item:hover {
-  border-color: rgba(243,112,30,0.3) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
-}
-
-/* ── Social links (circle icons) ── */
-.social-link:hover {
-  background: #f3701e !important;
-  color: white !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
-}
-
-/* ── Social pills ── */
-.social-pill:hover {
-  background: rgba(243,112,30,0.09) !important;
-  border-color: rgba(243,112,30,0.4) !important;
-  color: #f3701e !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Suggest chips / category chips ── */
-.suggest-chip:hover,
-.category-btn:hover,
-.category-btn.active {
-  background: rgba(243,112,30,0.08) !important;
-  border-color: rgba(243,112,30,0.40) !important;
-  color: #f3701e !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ── Back / nav text links ── */
-.back-link:hover,
-.nd-back-btn:hover {
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.07) !important;
-  border-color: rgba(243,112,30,0.3) !important;
-}
-
-/* ── Bookmark & ctrl buttons ── */
-.bookmark-btn:hover,
-.ctrl-btn:hover {
-  background: #f3701e !important;
-  color: white !important;
-  border-color: #f3701e !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Research / external links ── */
-.research-link:hover {
-  color: #f3701e !important;
-  border-color: rgba(243,112,30,0.5) !important;
-  background: rgba(243,112,30,0.05) !important;
-}
-
-/* ── Download / load stack btn ── */
-.download-btn:hover,
-.load-this-btn:hover {
-  background: #3a4a63 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
-}
-
-/* ── Dark mode card hover ── */
-body.dark .card:hover,
-body.dark .compound-card:hover {
-  border-color: rgba(243,112,30,0.45) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
-              0 0 0 1.5px rgba(243,112,30,0.22) !important;
-}
-
-/* ── Cookie consent button ── */
-#cookieConsent button:hover {
-  background: #e2661a !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Remove / reset (red) – keep red, just smooth it ── */
-.remove-btn:hover {
-  background: rgba(239,68,68,0.10) !important;
-  color: #ef4444 !important;
-  border-color: rgba(239,68,68,0.3) !important;
-}
-.btn-reset:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444 !important;
-  background: rgba(239,68,68,0.05) !important;
-}
-
-
-
-
-  /* Backdrop */
-  
-  
-
-  /* Modal panel slides up from bottom */
-  
-  body.dark 
-  
-
-  /* Drag handle */
-  
-  body.dark 
-
-  /* Modal header row */
-  
-  body.dark 
-  
-  body.dark 
-  
-  body.dark 
-  
-
-  /* Nav links */
-  
-  
-  body.dark 
-  
-  
-  
-  
-  
-
-  /* Bottom padding for safe area */
-  
-}
-
-</style>
+  .container{max-width:1100px;margin:0 auto;padding:2.5rem 5%;position:relative;z-index:1}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--m2);text-decoration:none;font-size:13px;margin-bottom:40px;padding:6px 14px;border:1px solid var(--m4);border-radius:100px;transition:color .2s,border-color .2s,background .2s}
+  .back-link:hover{color:var(--cream);border-color:var(--m3);background:var(--m4)}
+  .loading{display:flex;flex-direction:column;align-items:center;padding:8rem 0;gap:1rem;color:var(--m2);font-size:13px}
+
+  /* hero */
+  .c-hero{padding-bottom:48px;border-bottom:1px solid var(--m4);display:flex;justify-content:space-between;align-items:flex-start;gap:2rem;flex-wrap:wrap;animation:ndFadeUp .7s var(--ease-out) .05s both}
+  .c-eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:14px;font-weight:500}
+  .c-title{font-family:var(--font-display);font-size:clamp(2rem,5vw,3.8rem);font-weight:300;color:var(--cream);letter-spacing:-.04em;line-height:.97}
+  .c-hero-right{display:flex;align-items:center;gap:10px;flex-shrink:0;padding-top:6px}
+  .meta-pill{display:flex;align-items:center;gap:6px;background:var(--m4);border:1px solid var(--m3);border-radius:100px;padding:6px 14px;font-size:12px}
+  .meta-pill .label{color:var(--orange);font-weight:500}
+  .meta-pill .value{color:var(--m2)}
+  .bookmark-btn{width:36px;height:36px;border-radius:50%;background:var(--m4);border:1px solid var(--m3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--m2);transition:background .2s,color .2s,border-color .2s}
+  .bookmark-btn:hover{background:var(--orange);color:white;border-color:var(--orange)}
+  .bookmark-btn.bookmarked{color:#ef4444;border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+
+  /* description */
+  .c-desc{padding:40px 0;border-bottom:1px solid var(--m4);font-size:17px;font-weight:300;line-height:1.8;color:var(--m1);animation:ndFadeUp .7s var(--ease-out) .15s both}
+
+  /* section label */
+  .slabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);font-weight:500;margin:52px 0 24px;display:block}
+
+  /* grid */
+  .prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--m4);border:1px solid var(--m4);border-radius:12px;overflow:hidden}
+  .prop-col{display:flex;flex-direction:column;gap:1px}
+
+  /* cards */
+  .card{background:var(--bg-2);padding:28px;border-radius:0;border:none;box-shadow:none}
+  .card-full{background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;padding:28px;margin-top:1px}
+  .card-title{font-family:var(--font-display);font-size:11px;font-weight:500;color:var(--m2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+  .card-icon{width:22px;height:22px;border-radius:5px;background:var(--orange-dim);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:var(--orange)}
+  .benefits{display:flex;flex-wrap:wrap;gap:6px}
+  .benefit-pill{background:var(--orange-dim);color:var(--orange);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:500;letter-spacing:.03em;border:1px solid rgba(232,84,26,.15)}
+  .dosage-text{font-size:13px;font-weight:300;color:var(--m1);line-height:1.8;white-space:pre-line}
+  .pharma-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--m4);border-radius:8px;overflow:hidden}
+  .pharma-item{background:var(--bg-3);padding:16px;text-align:center}
+  .pharma-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--m2);margin-bottom:6px;font-weight:500}
+  .pharma-value{font-size:14px;font-weight:400;color:var(--cream);letter-spacing:-.01em}
+  .info-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+  .info-item{font-size:13px;font-weight:300;color:var(--m1);line-height:1.55;padding:8px 12px;border-radius:6px;background:var(--bg-3);border:1px solid var(--m4)}
+  .info-item.safe{color:#72C88C;background:rgba(114,200,140,.08);border-color:rgba(114,200,140,.15)}
+  .info-item.warning{color:#F0A050;background:rgba(240,160,80,.08);border-color:rgba(240,160,80,.15)}
+  .mechanisms-text{font-size:14px;font-weight:300;color:var(--m1);line-height:1.8}
+
+  /* PK chart */
+  .chart-wrap{position:relative;height:160px;margin-top:8px}
+  .chart-note{font-size:11px;color:var(--m2);margin-top:10px;font-weight:300;line-height:1.5}
+
+  /* interactions */
+  .inter-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .inter-cell{padding:16px 18px;border-radius:8px;border:1px solid var(--m4);background:var(--bg-3);transition:border-color .2s}
+  .inter-cell:hover{border-color:var(--m3)}
+  .inter-top{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .inter-icon{font-size:14px;flex-shrink:0}
+  .inter-title{font-size:13px;font-weight:500;color:var(--cream);flex:1}
+  .inter-tag{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:100px;white-space:nowrap}
+  .inter-stars{font-size:11px;color:var(--orange)}
+  .inter-msg{font-size:12px;font-weight:300;color:var(--m2);line-height:1.6}
+  .inter-synergy{border-color:rgba(114,200,140,.2)} .inter-synergy .inter-tag{background:rgba(114,200,140,.12);color:#72C88C}
+  .inter-safe .inter-tag{background:rgba(110,168,232,.12);color:#6EA8E8}
+  .inter-warning{border-color:rgba(240,160,80,.2)} .inter-warning .inter-tag{background:rgba(240,160,80,.12);color:#F0A050}
+  .inter-danger{border-color:rgba(239,68,68,.25)} .inter-danger .inter-tag{background:rgba(239,68,68,.12);color:#ef4444}
+  .inter-unknown .inter-tag{background:var(--m4);color:var(--m2)}
+
+  /* evidence */
+  .evidence-tabs{border-bottom-color:var(--m4)}
+  .evidence-tab{color:var(--m2);font-size:12px}
+  .evidence-tab.active{color:var(--orange);border-bottom-color:var(--orange)}
+  .evidence-panel{background:var(--bg-3);border-color:var(--m4);border-radius:0 0 8px 8px}
+  .evidence-item{border-bottom-color:var(--m4)}
+  .evidence-item-title{color:var(--cream);font-weight:400}
+  .evidence-item-meta{color:var(--m2)}
+
+  /* ── 3D viewer — THE FIX ── */
+  .viewer-section{margin-top:1px}
+  .viewer-card{background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;overflow:hidden}
+  .viewer-header{display:flex;align-items:center;gap:10px;padding:18px 24px;border-bottom:1px solid var(--m4);background:var(--bg-2)}
+  #viewer{
+    /* Must be display:block with explicit height and position:relative
+       so 3Dmol's internally-created canvas is contained */
+    display:block;
+    width:100%;
+    height:420px;
+    position:relative;
+    overflow:hidden;        /* clip canvas to our box */
+    background:var(--bg-3);
+  }
+  /* 3Dmol appends a <canvas> as direct child — ensure it fills the div */
+  #viewer>canvas{
+    position:absolute!important;
+    top:0!important;left:0!important;
+    width:100%!important;height:100%!important;
+  }
+  .viewer-controls{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px;border-top:1px solid var(--m4);background:var(--bg-2)}
+  .ctrl-btn{background:var(--m4);color:var(--m2);border:1px solid var(--m3);padding:7px 16px;border-radius:100px;font-family:var(--font-body);font-size:12px;font-weight:400;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+  .ctrl-btn:hover{background:var(--orange);color:white;border-color:var(--orange)}
+
+  /* footer */
+  .c-footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--m4);text-align:center;color:var(--m2);font-size:12px}
+
+  /* light */
+  body.light .card,body.light .card-full{background:#fff}
+  body.light .pharma-item,body.light .info-item,body.light .inter-cell{background:#f5f2ef}
+  body.light .prop-grid{background:rgba(200,180,160,.2)}
+  body.light .viewer-card,body.light .viewer-header,body.light .viewer-controls{background:#fff;border-color:rgba(200,180,160,.25)}
+  body.light #viewer{background:#f0ece8}
+
+  @keyframes ndFadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  @media(max-width:768px){
+    .prop-grid{grid-template-columns:1fr}
+    .c-hero{flex-direction:column;gap:1rem}
+    .c-hero-right{justify-content:flex-start}
+    .pharma-grid{grid-template-columns:1fr 1fr}
+    .pharma-grid>:last-child:nth-child(odd){grid-column:1/-1}
+    #viewer{height:280px}
+    .inter-grid{grid-template-columns:1fr}
+  }
+  </style>
 </head>
 <body>
 
 <header class="nd-header" id="ndHeader">
-  <a href="landing.html" class="nd-logo">Noodrop</a>
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-    <div class="nd-nav-header">
-      <span class="nd-nav-title">Noodrop</span>
-      <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
-    </div>
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
     <div class="nd-nav-links">
-    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-    <a href="index.html" class="nd-nav__link active">Library<span class="nav-arrow">›</span></a>
-    <a href="stack.html" class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
-    <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
-    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-    <a href="faq.html" class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-      <a href="nooai.html" class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link active">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
     <button class="auth-btn" id="authBtn">Login</button>
-    <div class="theme-toggle" id="themeToggle"><div class="toggle-knob"></div></div>
-    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
+<div class="container">
+  <a href="index.html" class="back-link">← Library</a>
 
+  <div id="loading" class="loading"><div class="spinner"></div><span>Loading compound…</span></div>
 
-  
+  <div id="compoundContent" style="display:none;">
 
-  <div class="container">
-
-    <a href="index.html" class="back-link">← Back to Library</a>
-
-    <!-- Loading -->
-    <div id="loading" class="loading">
-      <div class="spinner"></div>
-      <span style="font-size:0.85rem;">Loading compound...</span>
+    <div class="c-hero">
+      <div>
+        <div class="c-eyebrow" id="compCategory">Nootropic</div>
+        <h1 class="c-title" id="name">–</h1>
+      </div>
+      <div class="c-hero-right">
+        <div class="meta-pill"><span class="label">CID</span><span class="value" id="cidDisplay">–</span></div>
+        <button class="bookmark-btn" id="bookmarkBtn" title="Bookmark">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Content -->
-    <div id="compoundContent" style="display:none;">
+    <div class="c-desc" id="description">–</div>
 
-      <!-- Hero -->
-      <div class="compound-hero">
-        <div class="compound-hero-left">
-          <div class="compound-eyebrow" id="compCategory">Nootropic</div>
-          <h1 class="compound-title" id="name">–</h1>
+    <span class="slabel">Properties &amp; Data</span>
+    <div class="prop-grid">
+      <div class="prop-col">
+        <div class="card nd-r">
+          <div class="card-title"><div class="card-icon">✓</div>Benefits</div>
+          <div class="benefits" id="benefits"></div>
         </div>
-        <div class="compound-hero-right">
-          <div class="meta-pill">
-            <span class="label">CID</span>
-            <span class="value" id="cidDisplay">–</span>
-          </div>
-          <button class="bookmark-btn" id="bookmarkBtn" title="Bookmark this compound">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-          </button>
+        <div class="card nd-r nd-delay-1">
+          <div class="card-title"><div class="card-icon">⊕</div>Recommended Dosage</div>
+          <div class="dosage-text" id="dosage">No dosage info available.</div>
         </div>
-      </div>
-
-      <!-- Description -->
-      <div class="compound-desc" id="description">–</div>
-
-      <!-- Main 2-col grid -->
-      <div class="section-label">Properties & Data</div>
-      <div class="content-grid">
-
-        <!-- Left -->
-        <div style="display:flex;flex-direction:column;gap:1.5rem;">
-
-          <div class="card">
-            <div class="card-title">
-              <div class="card-title-icon">✓</div>
-              Benefits
-            </div>
-            <div class="benefits" id="benefits"></div>
+        <div class="card nd-r nd-delay-2">
+          <div class="card-title"><div class="card-icon">◷</div>Pharmacokinetics</div>
+          <div class="pharma-grid">
+            <div class="pharma-item"><div class="pharma-label">Half-Life</div><div class="pharma-value" id="halfLife">–</div></div>
+            <div class="pharma-item"><div class="pharma-label">Onset</div><div class="pharma-value" id="onsetTime">–</div></div>
+            <div class="pharma-item"><div class="pharma-label">Duration</div><div class="pharma-value" id="duration">–</div></div>
           </div>
-
-          <div class="card">
-            <div class="card-title">
-              <div class="card-title-icon">⊕</div>
-              Recommended Dosage
-            </div>
-            <div class="dosage-text" id="dosage">No dosage info available.</div>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <div class="card-title-icon">◷</div>
-              Pharmacokinetics
-            </div>
-            <div class="pharma-grid">
-              <div class="pharma-item">
-                <div class="pharma-label">Half-Life</div>
-                <div class="pharma-value" id="halfLife">–</div>
-              </div>
-              <div class="pharma-item">
-                <div class="pharma-label">Onset</div>
-                <div class="pharma-value" id="onsetTime">–</div>
-              </div>
-              <div class="pharma-item">
-                <div class="pharma-label">Duration</div>
-                <div class="pharma-value" id="duration">–</div>
-              </div>
-            </div>
-          </div>
-
         </div>
-
-        <!-- Right -->
-        <div style="display:flex;flex-direction:column;gap:1.5rem;">
-
-          <div class="card">
-            <div class="card-title">
-              <div class="card-title-icon">⚠</div>
-              Possible Side Effects
-            </div>
-            <ul class="info-list" id="sideEffects"></ul>
-          </div>
-
-          <div class="card">
-            <div class="card-title">
-              <div class="card-title-icon">🛡</div>
-              Safety & Warnings
-            </div>
-            <ul class="info-list" id="warnings"></ul>
-          </div>
-
+        <div class="card nd-r nd-delay-3">
+          <div class="card-title"><div class="card-icon">∿</div>Plasma Concentration Model</div>
+          <div class="chart-wrap"><canvas id="pkChart"></canvas></div>
+          <p class="chart-note">Illustrative model based on reported pharmacokinetic parameters. Not clinical data.</p>
         </div>
       </div>
-
-      <!-- Mechanisms – full width -->
-      <div class="card card-full">
-        <div class="card-title">
-          <div class="card-title-icon">⚙</div>
-          Mechanism of Action
+      <div class="prop-col">
+        <div class="card nd-r nd-delay-1">
+          <div class="card-title"><div class="card-icon">⚠</div>Possible Side Effects</div>
+          <ul class="info-list" id="sideEffects"></ul>
         </div>
-        <div class="mechanisms-text" id="mechanisms">Mechanism information coming soon.</div>
-      </div>
-
-      <!-- Research Links – full width -->
-      <div class="card card-full">
-        <div class="card-title">
-          <div class="card-title-icon">↗</div>
-          Research & Sources
-        </div>
-        <div class="research-links" id="researchLinks"></div>
-      </div>
-
-      <!-- 3D Viewer -->
-      <div class="viewer-section">
-        <div class="viewer-card">
-          <div class="viewer-header">
-            <div class="card-title-icon">⬡</div>
-            <span class="card-title" style="margin:0;">Interactive 3D Structure</span>
-          </div>
-          <div id="viewer"></div>
-          <div class="viewer-controls">
-            <button class="ctrl-btn" onclick="setStyle('stick')">Ball & Stick</button>
-            <button class="ctrl-btn" onclick="setStyle('sphere')">Spacefill</button>
-            <button class="ctrl-btn" id="spinBtn" onclick="toggleSpin()">▶ Auto Rotate</button>
-            <button class="ctrl-btn" onclick="resetView()">↺ Reset</button>
-            <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-          </div>
+        <div class="card nd-r nd-delay-2">
+          <div class="card-title"><div class="card-icon">🛡</div>Safety &amp; Warnings</div>
+          <ul class="info-list" id="warnings"></ul>
         </div>
       </div>
+    </div>
 
-    </div><!-- /compoundContent -->
+    <div class="card-full nd-r" style="margin-top:1px">
+      <div class="card-title"><div class="card-icon">⚙</div>Mechanism of Action</div>
+      <div class="mechanisms-text" id="mechanisms">Mechanism information coming soon.</div>
+    </div>
 
-    <footer>© 2026 Noodrop · For educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></footer>
+    <div class="card-full nd-r" id="interactionsSection" style="display:none;margin-top:1px">
+      <div class="card-title"><div class="card-icon">⚡</div>Known Interactions</div>
+      <div class="inter-grid" id="interGrid"></div>
+    </div>
+
+    <div class="card-full nd-r" style="margin-top:1px">
+      <div class="card-title"><div class="card-icon">↗</div>Research &amp; Sources</div>
+      <div class="evidence-tabs-wrap">
+        <div class="evidence-tabs" role="tablist">
+          <button class="evidence-tab active" data-tab="all"       role="tab" aria-selected="true">All <span class="tab-count" id="tabCountAll">0</span></button>
+          <button class="evidence-tab"        data-tab="rct"       role="tab">Clinical / RCT <span class="tab-count" id="tabCountRct">0</span></button>
+          <button class="evidence-tab"        data-tab="animal"    role="tab">Animal <span class="tab-count" id="tabCountAnimal">0</span></button>
+          <button class="evidence-tab"        data-tab="review"    role="tab">Review <span class="tab-count" id="tabCountReview">0</span></button>
+          <button class="evidence-tab"        data-tab="anecdotal" role="tab">Anecdotal <span class="tab-count" id="tabCountAnecdotal">0</span></button>
+        </div>
+        <div id="evidenceAll"       class="evidence-panel active"></div>
+        <div id="evidenceRct"       class="evidence-panel"></div>
+        <div id="evidenceAnimal"    class="evidence-panel"></div>
+        <div id="evidenceReview"    class="evidence-panel"></div>
+        <div id="evidenceAnecdotal" class="evidence-panel"></div>
+      </div>
+    </div>
+
+    <div class="viewer-section nd-r">
+      <div class="viewer-card">
+        <div class="viewer-header">
+          <div class="card-icon">⬡</div>
+          <span class="card-title" style="margin:0">Interactive 3D Structure</span>
+        </div>
+        <div id="viewer"></div>
+        <div class="viewer-controls">
+          <button class="ctrl-btn" onclick="setStyle('stick')">Ball &amp; Stick</button>
+          <button class="ctrl-btn" onclick="setStyle('sphere')">Spacefill</button>
+          <button class="ctrl-btn" id="spinBtn" onclick="toggleSpin()">▶ Rotate</button>
+          <button class="ctrl-btn" onclick="resetView()">↺ Reset</button>
+          <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="c-footer">© 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp;
+      <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a>
+    </div>
   </div>
+</div>
 
-  <!-- Cookie -->
-  <div id="cookieConsent">
-    <span>This website uses cookies to improve your experience.</span>
-    <button onclick="acceptCookies()">Accept</button>
-  </div>
-
-  <script>
-    // Firebase config loaded from firebase-config.js (single source of truth)
-
-    function getParam(n) { return new URLSearchParams(window.location.search).get(n); }
-
-    const cidParam = getParam('cid');
-    let comp = null, viewer = null, isSpinning = false;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      if (!window.compounds) {
-        document.getElementById('loading').innerHTML = '<p style="color:#8a9ab0">Error loading data.</p>';
-        return;
-      }
-      comp = window.compounds.find(c => c.cid == cidParam);
-      if (!comp) {
-        document.getElementById('loading').innerHTML = '<p style="color:#8a9ab0">Compound not found.</p>';
-        return;
-      }
-
-      document.getElementById('loading').style.display = 'none';
-      document.getElementById('compoundContent').style.display = 'block';
-
-      // Title + meta
-      document.getElementById('name').textContent = comp.name || '';
-      document.getElementById('compCategory').textContent = comp.category || 'Nootropic';
-      document.getElementById('cidDisplay').textContent = comp.cid || 'N/A';
-      document.getElementById('description').textContent = comp.description || '';
-      document.title = `${comp.name} – Noodrop`;
-
-      // Benefits
-      const bDiv = document.getElementById('benefits');
-      (comp.benefits || []).forEach(b => {
-        const s = document.createElement('span');
-        s.className = 'benefit-pill'; s.textContent = b;
-        bDiv.appendChild(s);
-      });
-
-      // Dosage
-      document.getElementById('dosage').textContent = comp.dosage || 'No dosage information available.';
-
-      // Pharma
-      document.getElementById('halfLife').textContent = comp.halfLife || '–';
-      document.getElementById('onsetTime').textContent = comp.onsetTime || '–';
-      document.getElementById('duration').textContent = comp.duration || '–';
-
-      // Mechanisms
-      document.getElementById('mechanisms').textContent = comp.mechanisms || 'Mechanism information coming soon.';
-
-      // Side effects
-      const seUl = document.getElementById('sideEffects');
-      (comp.sideEffects || ['No known side effects']).forEach(s => {
-        const li = document.createElement('li');
-        li.className = 'info-item'; li.textContent = s;
-        seUl.appendChild(li);
-      });
-
-      // Warnings
-      const wUl = document.getElementById('warnings');
-      (comp.warnings && comp.warnings.length ? comp.warnings : ['✓ General precautions apply.']).forEach(w => {
-        const li = document.createElement('li');
-        li.className = 'info-item';
-        if (w.startsWith('✓')) li.classList.add('safe');
-        else if (w.startsWith('⚠')) li.classList.add('warning');
-        li.textContent = w;
-        wUl.appendChild(li);
-      });
-
-      // Evidence tabs
-      const evidenceAll = document.getElementById('evidenceAll');
-      const panels = { all: evidenceAll, rct: document.getElementById('evidenceRct'), animal: document.getElementById('evidenceAnimal'), review: document.getElementById('evidenceReview'), anecdotal: document.getElementById('evidenceAnecdotal') };
-      const links = comp.researchLinks || [];
-      const counts = { all: links.length, rct: 0, animal: 0, review: 0, anecdotal: 0 };
-      function renderEvidence(panelId, items) {
-        const el = document.getElementById(panelId);
-        if (!el) return;
-        if (!items.length) { el.innerHTML = '<div class="evidence-empty">No sources in this category yet.</div>'; return; }
-        el.innerHTML = items.map(l => {
-          const type = (l.type || 'review').toLowerCase();
-          const badgeClass = type === 'rct' ? 'badge-rct' : type === 'animal' ? 'badge-animal' : type === 'anecdotal' ? 'badge-anecdotal' : 'badge-review';
-          const label = type === 'rct' ? 'Clinical / RCT' : type === 'animal' ? 'Animal Study' : type === 'anecdotal' ? 'Anecdotal' : 'Review';
-          return '<div class="evidence-item"><span class="evidence-badge ' + badgeClass + '">' + label + '</span><div class="evidence-item-title">' + (l.title||'Untitled') + '</div>' + (l.year || l.authors ? '<div class="evidence-item-meta">' + [l.authors, l.year].filter(Boolean).join(' · ') + '</div>' : '') + '<a href="' + l.url + '" target="_blank" rel="noopener">View source ↗</a></div>';
-        }).join('');
-      }
-      renderEvidence('evidenceAll', links);
-      const byType = { rct: links.filter(l=>(l.type||'').toLowerCase()==='rct'), animal: links.filter(l=>(l.type||'').toLowerCase()==='animal'), review: links.filter(l=>!l.type||['review','meta','narrative'].includes((l.type||'').toLowerCase())), anecdotal: links.filter(l=>(l.type||'').toLowerCase()==='anecdotal') };
-      Object.keys(byType).forEach(t => { counts[t] = byType[t].length; renderEvidence('evidence'+t.charAt(0).toUpperCase()+t.slice(1), byType[t]); });
-      Object.keys(counts).forEach(t => { const el = document.getElementById('tabCount'+t.charAt(0).toUpperCase()+t.slice(1)); if (el) el.textContent = counts[t]; });
-      if (!links.length && evidenceAll) evidenceAll.innerHTML = '<div class="evidence-empty">No research links available yet.</div>';
-      document.querySelectorAll('.evidence-tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-          document.querySelectorAll('.evidence-tab').forEach(t => { t.classList.remove('active'); t.setAttribute('aria-selected','false'); });
-          document.querySelectorAll('.evidence-panel').forEach(p => p.classList.remove('active'));
-          this.classList.add('active'); this.setAttribute('aria-selected','true');
-          var target = document.getElementById('evidence'+this.dataset.tab.charAt(0).toUpperCase()+this.dataset.tab.slice(1));
-          if (target) target.classList.add('active');
-        });
-      });
-
-      // Call page initialisers (inside DOMContentLoaded)
-      initViewer();
-      initBookmark();
-    }); // end DOMContentLoaded
-
-    // ── 3D Viewer ──
-    function initViewer() {
-      viewer = $3Dmol.createViewer(document.getElementById('viewer'), {
-        backgroundColor: '#f8f5f2', antialias: true, disableFog: true
-      });
-      if (!comp.cid) {
-        document.getElementById('viewer').innerHTML = '<div style="text-align:center;padding:3rem;color:#8a9ab0;">3D structure not available</div>';
-        return;
-      }
-      fetch(`https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/${comp.cid}/SDF?record_type=3d`)
-        .then(r => { if (!r.ok) throw new Error(); return r.text(); })
-        .then(sdf => {
-          viewer.addModel(sdf, 'sdf');
-          viewer.setStyle({}, { stick: { radius: 0.15, colorscheme: 'Jmol' } });
-          viewer.zoomTo(); viewer.render();
-        })
-        .catch(() => {
-          document.getElementById('viewer').innerHTML = '<div style="text-align:center;padding:3rem;color:#8a9ab0;">3D structure not available for this compound</div>';
-        });
-    }
-
-    window.setStyle = s => {
-      if (!viewer) return;
-      viewer.setStyle({}, s === 'stick'
-        ? { stick: { radius: 0.15, colorscheme: 'Jmol' } }
-        : { sphere: { scale: 0.2, colorscheme: 'Jmol' } });
-      viewer.render();
-    };
-    window.toggleSpin = () => {
-      if (!viewer) return;
-      isSpinning = !isSpinning;
-      viewer.spin(isSpinning ? 'vy' : false, 1);
-      document.getElementById('spinBtn').textContent = isSpinning ? '❚❚ Pause' : '▶ Auto Rotate';
-    };
-    window.resetView = () => {
-      if (!viewer) return;
-      isSpinning = false; viewer.spin(false);
-      viewer.zoomTo(); viewer.render();
-      document.getElementById('spinBtn').textContent = '▶ Auto Rotate';
-    };
-    window.toggleFullscreen = () => {
-      const el = document.getElementById('viewer');
-      !document.fullscreenElement ? el.requestFullscreen().catch(() => {}) : document.exitFullscreen();
-    };
-
-    // ── Bookmark ──
-    function initBookmark() {
-      const btn = document.getElementById('bookmarkBtn');
-      let bookmarked = false;
-
-      firebase.auth().onAuthStateChanged(user => {
-        if (!user) { btn.style.opacity = '0.4'; btn.title = 'Login to bookmark'; return; }
-        firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid)).get()
-          .then(snap => { bookmarked = snap.exists; updateBtnUI(); })
-          .catch(() => {});
-      });
-
-      function updateBtnUI() {
-        btn.classList.toggle('bookmarked', bookmarked);
-        btn.innerHTML = bookmarked
-          ? `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="18" height="18"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`
-          : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>`;
-      }
-
-      btn.addEventListener('click', async () => {
-        const user = firebase.auth().currentUser;
-        if (!user) { alert('Please log in to bookmark.'); return; }
-        const ref = firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid));
-        try {
-          if (bookmarked) { await ref.delete(); bookmarked = false; }
-          else { await ref.set({ cid: comp.cid, name: comp.name, category: comp.category, description: comp.description, benefits: comp.benefits, image: comp.image, dosage: comp.dosage, mechanisms: comp.mechanisms, sideEffects: comp.sideEffects, halfLife: comp.halfLife, onsetTime: comp.onsetTime, duration: comp.duration, warnings: comp.warnings, researchLinks: comp.researchLinks, bookmarkedAt: firebase.firestore.FieldValue.serverTimestamp() }); bookmarked = true; }
-          updateBtnUI();
-        } catch (err) { console.error(err); alert('Failed to save bookmark.'); }
-      });
-    }
-
-    // ── Cookie ──
-    function acceptCookies() {
-      localStorage.setItem('cookiesAccepted', 'yes');
-      document.getElementById('cookieConsent').style.display = 'none';
-    }
-    window.addEventListener('load', () => {
-      if (!localStorage.getItem('cookiesAccepted'))
-        document.getElementById('cookieConsent').style.display = 'flex';
-    });
-  </script>
-  
-
-
-
-
+<div id="cookieConsent" style="display:none;"><span>We use cookies to improve your experience.</span><button onclick="acceptCookies()">Accept</button></div>
 
 <script>
-/* ── Noodrop unified header JS ── */
-(function () {
-  var burger = document.getElementById('ndBurger');
-  var nav    = document.getElementById('ndNav');
-  var header = document.getElementById('ndHeader');
-  if (!burger || !nav) return;
-
-  function openMenu() {
-    nav.classList.add('is-open');
-    burger.classList.add('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.add('is-open');
-    burger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu() {
-    nav.classList.remove('is-open');
-    burger.classList.remove('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
-
-  burger.addEventListener('click', function () {
-    nav.classList.contains('is-open') ? closeMenu() : openMenu();
-  });
-  var closeBtn = document.getElementById('ndNavClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  var backdrop = document.getElementById('ndNavBackdrop');
-  if (backdrop) backdrop.addEventListener('click', closeMenu);
-  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
-    a.addEventListener('click', closeMenu);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeMenu();
-  });
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) closeMenu();
-  });
-  if (header) {
-    window.addEventListener('scroll', function () {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
-  }
+// theme
+(function(){
+  var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';
+  function apply(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);}
+  apply(isLight);
+  if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);});
 })();
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
-    });
+
+// scroll reveal — using global .nd-r / .nd-in classes from global.css
+var revIO=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('nd-in');revIO.unobserve(x.target);}});},{threshold:.08});
+document.querySelectorAll('.nd-r').forEach(function(el){revIO.observe(el);});
+
+// main
+function getParam(n){return new URLSearchParams(window.location.search).get(n);}
+var cidParam=getParam('cid'),comp=null,viewer3d=null,isSpinning=false;
+
+document.addEventListener('DOMContentLoaded',function(){
+  if(!window.compounds){document.getElementById('loading').innerHTML='<p style="color:var(--m2)">Error loading data.</p>';return;}
+  comp=window.compounds.find(function(c){return String(c.cid)===String(cidParam);});
+  if(!comp){document.getElementById('loading').innerHTML='<p style="color:var(--m2)">Compound not found.</p>';return;}
+
+  document.getElementById('loading').style.display='none';
+  document.getElementById('compoundContent').style.display='block';
+  document.getElementById('name').textContent=comp.name||'';
+  document.getElementById('compCategory').textContent=comp.category||'Nootropic';
+  document.getElementById('cidDisplay').textContent=comp.cid||'N/A';
+  document.getElementById('description').textContent=comp.description||'';
+  document.title=(comp.name||'Compound')+' – Noodrop';
+
+  // benefits
+  var bDiv=document.getElementById('benefits');
+  (comp.benefits||[]).forEach(function(b){var s=document.createElement('span');s.className='benefit-pill';s.textContent=b;bDiv.appendChild(s);});
+
+  document.getElementById('dosage').textContent=comp.dosage||'No dosage information available.';
+  document.getElementById('halfLife').textContent=comp.halfLife||'–';
+  document.getElementById('onsetTime').textContent=comp.onsetTime||'–';
+  document.getElementById('duration').textContent=comp.duration||'–';
+  document.getElementById('mechanisms').textContent=comp.mechanisms||'Mechanism information coming soon.';
+
+  // side effects
+  var seUl=document.getElementById('sideEffects');
+  (comp.sideEffects||['No known side effects']).forEach(function(s){var li=document.createElement('li');li.className='info-item';li.textContent=s;seUl.appendChild(li);});
+
+  // warnings
+  var wUl=document.getElementById('warnings');
+  (comp.warnings&&comp.warnings.length?comp.warnings:['✓ General precautions apply.']).forEach(function(w){
+    var li=document.createElement('li');li.className='info-item';
+    if(w.startsWith('✓'))li.classList.add('safe');
+    else if(w.startsWith('⚠'))li.classList.add('warning');
+    li.textContent=w;wUl.appendChild(li);
+  });
+
+  // evidence tabs
+  var links=comp.researchLinks||[];
+  var byType={all:links,rct:links.filter(function(l){return(l.type||'').toLowerCase()==='rct';}),animal:links.filter(function(l){return(l.type||'').toLowerCase()==='animal';}),review:links.filter(function(l){var t=(l.type||'').toLowerCase();return!t||['review','meta','narrative',''].includes(t);}),anecdotal:links.filter(function(l){return(l.type||'').toLowerCase()==='anecdotal';})};
+  function bClass(t){return t==='rct'?'badge-rct':t==='animal'?'badge-animal':t==='anecdotal'?'badge-anecdotal':'badge-review';}
+  function bLabel(t){return t==='rct'?'Clinical / RCT':t==='animal'?'Animal Study':t==='anecdotal'?'Anecdotal':'Review';}
+  function renderEv(id,items){
+    var el=document.getElementById(id);if(!el)return;
+    if(!items||!items.length){el.innerHTML='<div class="evidence-empty">No sources in this category yet.</div>';return;}
+    el.innerHTML=items.map(function(l){var type=(l.type||'review').toLowerCase();return'<div class="evidence-item"><span class="evidence-badge '+bClass(type)+'">'+bLabel(type)+'</span><div class="evidence-item-title">'+(l.title||'Untitled')+'</div>'+(l.year||l.authors?'<div class="evidence-item-meta">'+(l.authors||'')+( l.authors&&l.year?' · ':'')+( l.year||'')+'</div>':'')+'<a href="'+l.url+'" target="_blank" rel="noopener noreferrer">View source ↗</a></div>';}).join('');
   }
+  Object.keys(byType).forEach(function(t){var cap=t.charAt(0).toUpperCase()+t.slice(1);renderEv('evidence'+cap,byType[t]);var c=document.getElementById('tabCount'+cap);if(c)c.textContent=byType[t].length;});
+  document.querySelectorAll('.evidence-tab').forEach(function(tab){tab.addEventListener('click',function(){document.querySelectorAll('.evidence-tab').forEach(function(t){t.classList.remove('active');t.setAttribute('aria-selected','false');});document.querySelectorAll('.evidence-panel').forEach(function(p){p.classList.remove('active');});this.classList.add('active');this.setAttribute('aria-selected','true');var cap=this.dataset.tab.charAt(0).toUpperCase()+this.dataset.tab.slice(1);var tgt=document.getElementById('evidence'+cap);if(tgt)tgt.classList.add('active');});});
+
+  buildInteractions();
+  buildPKChart();
+  initViewer();
+  initBookmark();
+});
+
+// ── PK Chart ──
+function buildPKChart(){
+  var canvas=document.getElementById('pkChart');if(!canvas)return;
+  var hlRaw=comp.halfLife||'5';
+  var hl=parseFloat(hlRaw.replace(/[^0-9.–-]/g,'').split(/[–-]/)[0])||5;
+  var onsetRaw=comp.onsetTime||'0.5';
+  var onsetH=parseFloat(onsetRaw.replace(/[^0-9.]/g,''))||0.5;
+  if(onsetRaw.toLowerCase().includes('min'))onsetH=onsetH/60;
+  var totalH=Math.max(hl*3.5,8),steps=50,labels=[],data=[];
+  for(var i=0;i<=steps;i++){
+    var h=(i/steps)*totalH;
+    labels.push(h<1?Math.round(h*60)+'m':(Math.round(h*10)/10)+'h');
+    var val=h<=onsetH?(h/onsetH)*100:100*Math.pow(0.5,(h-onsetH)/hl);
+    data.push(Math.round(val*100)/100);
+  }
+  var isL=document.body.classList.contains('light');
+  var gridC=isL?'rgba(20,20,18,.06)':'rgba(245,240,232,.05)';
+  var tickC=isL?'rgba(20,20,18,.4)':'rgba(245,240,232,.3)';
+  new Chart(canvas,{type:'line',data:{labels:labels,datasets:[{label:'Plasma level (%)',data:data,borderColor:'#E8541A',borderWidth:2,pointRadius:0,tension:.4,fill:true,backgroundColor:function(ctx){var g=ctx.chart.ctx.createLinearGradient(0,0,0,ctx.chart.height);g.addColorStop(0,'rgba(232,84,26,.18)');g.addColorStop(1,'rgba(232,84,26,0)');return g;}}]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:isL?'#fff':'#1A1A18',borderColor:isL?'rgba(20,20,18,.12)':'rgba(245,240,232,.1)',borderWidth:1,titleColor:isL?'#141412':'#F5F0E8',bodyColor:isL?'rgba(20,20,18,.5)':'rgba(245,240,232,.45)',padding:10,callbacks:{label:function(c){return'Level: '+c.parsed.y.toFixed(0)+'%';}}}},scales:{x:{grid:{color:gridC,drawTicks:false},ticks:{color:tickC,font:{size:10},maxTicksLimit:8,maxRotation:0}},y:{min:0,max:110,grid:{color:gridC},ticks:{color:tickC,font:{size:10},callback:function(v){return v+'%';}}}}}}); 
+}
+
+// ── Interactions ──
+function buildInteractions(){
+  if(!window.interactions)return;
+  var db=window.interactions,results=[],cid=String(comp.cid);
+  Object.keys(db).forEach(function(key){if(key.includes(cid))results.push(db[key]);});
+  if(!results.length)return;
+  document.getElementById('interactionsSection').style.display='block';
+  var iconMap={synergy:'⚡',safe:'✓',warning:'⚠',danger:'✕'};
+  document.getElementById('interGrid').innerHTML=results.map(function(inter){
+    var stars=inter.score?'★'.repeat(inter.score)+'☆'.repeat(5-inter.score):'';
+    return'<div class="inter-cell inter-'+inter.safety+'"><div class="inter-top"><span class="inter-icon">'+iconMap[inter.safety]+'</span><span class="inter-title">'+(inter.title||'')+'</span>'+(inter.tag?'<span class="inter-tag">'+inter.tag+'</span>':'')+(stars?'<span class="inter-stars">'+stars+'</span>':'')+'</div><div class="inter-msg">'+(inter.message||'')+'</div></div>';
+  }).join('');
+}
+
+// ── 3D Viewer ──
+function initViewer(){
+  var el=document.getElementById('viewer');
+  var isLight=document.body.classList.contains('light');
+  viewer3d=$3Dmol.createViewer(el,{backgroundColor:isLight?'#f0ece8':'#1A1A18',antialias:true,disableFog:true});
+  if(!comp.cid||String(comp.cid).includes('placeholder')){
+    el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--m2);font-size:13px;font-weight:300">3D structure not available for this compound</div>';return;
+  }
+  fetch('https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/'+comp.cid+'/SDF?record_type=3d')
+    .then(function(r){if(!r.ok)throw new Error();return r.text();})
+    .then(function(sdf){viewer3d.addModel(sdf,'sdf');viewer3d.setStyle({},{stick:{radius:.15,colorscheme:'Jmol'}});viewer3d.zoomTo();viewer3d.render();})
+    .catch(function(){el.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--m2);font-size:13px;font-weight:300">3D structure not available for this compound</div>';});
+}
+window.setStyle=function(s){if(!viewer3d)return;viewer3d.setStyle({},s==='stick'?{stick:{radius:.15,colorscheme:'Jmol'}}:{sphere:{scale:.2,colorscheme:'Jmol'}});viewer3d.render();};
+window.toggleSpin=function(){if(!viewer3d)return;isSpinning=!isSpinning;viewer3d.spin(isSpinning?'vy':false,1);document.getElementById('spinBtn').textContent=isSpinning?'❚❚ Pause':'▶ Rotate';};
+window.resetView=function(){if(!viewer3d)return;isSpinning=false;viewer3d.spin(false);viewer3d.zoomTo();viewer3d.render();document.getElementById('spinBtn').textContent='▶ Rotate';};
+window.toggleFullscreen=function(){var el=document.getElementById('viewer');!document.fullscreenElement?el.requestFullscreen().catch(function(){}):document.exitFullscreen();};
+
+// ── Bookmark ──
+function initBookmark(){
+  var btn=document.getElementById('bookmarkBtn'),bookmarked=false;
+  firebase.auth().onAuthStateChanged(function(user){
+    if(!user){btn.style.opacity='0.4';btn.title='Login to bookmark';return;}
+    firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid)).get().then(function(snap){bookmarked=snap.exists;upBtn();}).catch(function(){});
+  });
+  function upBtn(){btn.classList.toggle('bookmarked',bookmarked);btn.innerHTML=bookmarked?'<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>':'<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';}
+  btn.addEventListener('click',async function(){
+    var user=firebase.auth().currentUser;if(!user){alert('Please log in to bookmark.');return;}
+    var ref=firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid));
+    try{if(bookmarked){await ref.delete();bookmarked=false;}else{await ref.set({cid:comp.cid,name:comp.name,category:comp.category,description:comp.description,benefits:comp.benefits,image:comp.image,dosage:comp.dosage,mechanisms:comp.mechanisms,sideEffects:comp.sideEffects,halfLife:comp.halfLife,onsetTime:comp.onsetTime,duration:comp.duration,warnings:comp.warnings,researchLinks:comp.researchLinks,bookmarkedAt:firebase.firestore.FieldValue.serverTimestamp()});bookmarked=true;}upBtn();}
+    catch(err){console.error(err);alert('Failed to save bookmark.');}
+  });
+}
+
+// auth
+var authBtn=document.getElementById('authBtn');
+firebase.auth().onAuthStateChanged(function(user){authBtn.textContent=user?'Profile':'Login';});
+authBtn.addEventListener('click',function(){firebase.auth().currentUser?window.location.href='profile.html':alert('Please log in from the Library page.');});
+
+// cookie
+function acceptCookies(){localStorage.setItem('cookiesAccepted','yes');document.getElementById('cookieConsent').style.display='none';}
+window.addEventListener('load',function(){if(!localStorage.getItem('cookiesAccepted'))document.getElementById('cookieConsent').style.display='flex';});
 </script>
 <script>
-  // ── Dark mode ──
-  (function() {
-    var toggle = document.getElementById('themeToggle');
-    var isDark = localStorage.getItem('darkMode') === 'true';
-    function applyTheme(dark) {
-      document.body.classList.toggle('dark', dark);
-      if (toggle) toggle.classList.toggle('active', dark);
-    }
-    applyTheme(isDark);
-    if (toggle) {
-      toggle.addEventListener('click', function() {
-        isDark = !isDark;
-        localStorage.setItem('darkMode', isDark);
-        applyTheme(isDark);
-        if (window.reinitParticles) window.reinitParticles(isDark);
-      });
-    }
-  })();
+(function(){var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');if(!b||!n)return;function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});window.addEventListener('resize',function(){if(window.innerWidth>768)c();});if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});})();
 </script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
 </body>
 </html>

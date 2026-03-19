@@ -5,1101 +5,269 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="global.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
+  <meta name="theme-color" content="#E8541A">
   <title>Product – Noodrop</title>
-
-<script src="https://js.stripe.com/v3/"></script>
+  <script src="https://js.stripe.com/v3/"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
-
   <style>
-    :root {
-      --cream: #e8d8c9;
-      --slate: #4b607f;
-      --orange: #f3701e;
-      --white: #ffffff;
-      --dark-slate: #2c3e50;
-      --shadow: 0 10px 30px rgba(0,0,0,0.06);
-      --bg: #fafaf8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      padding-top: 64px;
-      font-family: 'Tabular', sans-serif;
-      background: var(--bg);
-      color: var(--dark-slate);
-      min-height: 100vh;
-    }
-
-    /* ── Header ── */
-    header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1.1rem 5%;
-      border-bottom: 1px solid var(--cream);
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(12px);
-    }
-    nav a {
-      text-decoration: none; color: var(--slate);
-      margin: 0 1rem; font-weight: 500; font-size: 0.9rem;
-      position: relative; transition: color 0.2s;
-    }
-    nav a::after {
-      content: ""; position: absolute;
-      width: 0; height: 2px; background: var(--orange);
-      left: 0; bottom: -4px; transition: 0.3s;
-    }
-    nav a:hover::after { width: 100%; }
-    nav a:hover { color: var(--orange); }
-
-    /* ── Container ── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 3rem 5%; }
-
-    /* ── Back link ── */
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.5rem;
-      color: #8a9ab0; text-decoration: none;
-      font-size: 0.85rem; font-weight: 600;
-      margin-bottom: 2.5rem;
-      transition: color 0.2s;
-    }
-    .back-link:hover { color: var(--orange); }
-
-    /* ── Loading ── */
-    .loading {
-      display: flex; flex-direction: column;
-      align-items: center; padding: 6rem 0; color: #8a9ab0;
-    }
-    .spinner {
-      width: 28px; height: 28px; border-radius: 50%;
-      border: 2.5px solid rgba(243,112,30,0.2);
-      border-top-color: var(--orange);
-      animation: spin 0.9s linear infinite; margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── Product layout ── */
-    .product-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    /* Left: visual column */
-    .visual-col {}
-
-    /* Mockup-style image container */
-    .product-mockup {
-      background: #f0ece8;
-      border-radius: 20px;
-      padding: 3rem 2.5rem;
-      display: flex; align-items: center; justify-content: center;
-      min-height: 360px;
-      position: relative;
-      border: 1px solid var(--cream);
-      overflow: hidden;
-    }
-    .product-mockup::before {
-      content: "";
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 30% 30%, rgba(243,112,30,0.08), transparent 60%);
-    }
-    .product-mockup img {
-      max-width: 75%;
-      max-height: 300px;
-      object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-      position: relative; z-index: 1;
-    }
-    /* Placeholder when no image */
-    .mockup-placeholder {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 1rem; z-index: 1;
-    }
-    .mockup-placeholder .guide-title {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 2rem; font-weight: 700;
-      color: var(--dark-slate); text-align: left; line-height: 1.1;
-    }
-    .mockup-placeholder .guide-price {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 2.5rem; font-weight: 700;
-      color: var(--dark-slate);
-    }
-    .mockup-placeholder .guide-creator {
-      font-size: 0.8rem; letter-spacing: 2px;
-      color: #8a9ab0; text-transform: uppercase;
-    }
-
-    /* Creator strip below image */
-    .creator-strip {
-      display: flex; align-items: center; gap: 0.75rem;
-      margin-top: 1.2rem;
-      padding: 0.9rem 1.2rem;
-      background: white;
-      border: 1px solid var(--cream);
-      border-radius: 12px;
-    }
-    .creator-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--cream), #f0d8c0);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1rem; border: 2px solid var(--orange);
-      flex-shrink: 0;
-    }
-    .creator-info { flex: 1; }
-    .creator-name { font-size: 0.88rem; font-weight: 700; color: var(--slate); }
-    .creator-role { font-size: 0.72rem; color: #8a9ab0; }
-    .creator-link {
-      font-size: 0.75rem; color: var(--orange);
-      text-decoration: none; font-weight: 600;
-    }
-    .creator-link:hover { text-decoration: underline; }
-
-    /* Right: info column */
-    .info-col {}
-
-    .product-eyebrow {
-      font-size: 0.7rem; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--orange);
-      margin-bottom: 0.75rem;
-    }
-    .product-title {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: clamp(1.8rem, 3vw, 2.8rem);
-      font-weight: 600; color: var(--slate);
-      line-height: 1.1; margin-bottom: 1.2rem;
-      letter-spacing: -0.5px;
-    }
-    .product-price-display {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 2.2rem; font-weight: 700;
-      color: var(--dark-slate); margin-bottom: 1.5rem;
-    }
-    .product-price-display.free { color: var(--orange); }
-    .product-description {
-      font-size: 1rem; color: #6a7a8a;
-      line-height: 1.8; margin-bottom: 2rem;
-    }
-
-    /* Includes list */
-    .includes-title {
-      font-size: 0.7rem; letter-spacing: 3px;
-      text-transform: uppercase; color: #8a9ab0;
-      margin-bottom: 1rem;
-    }
-    .feature-list {
-      list-style: none;
-      margin-bottom: 2.5rem;
-      display: flex; flex-direction: column; gap: 0.75rem;
-    }
-    .feature-item {
-      display: flex; align-items: flex-start; gap: 0.75rem;
-      font-size: 0.92rem; color: var(--dark-slate); line-height: 1.5;
-    }
-    .feature-check {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: rgba(243,112,30,0.12);
-      color: var(--orange);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.65rem; flex-shrink: 0; margin-top: 1px;
-      font-weight: 700;
-    }
-
-    /* Purchase box */
-    .purchase-box {
-      background: white;
-      border: 1px solid var(--cream);
-      border-radius: 16px;
-      padding: 1.8rem;
-      box-shadow: var(--shadow);
-    }
-    .purchase-box-title {
-      font-size: 0.7rem; letter-spacing: 3px;
-      text-transform: uppercase; color: #8a9ab0;
-      margin-bottom: 1.2rem;
-    }
-
-    /* Auth message inside box */
-    .auth-note {
-      display: flex; align-items: center; gap: 0.75rem;
-      background: #fdf7f2; border: 1px solid rgba(243,112,30,0.2);
-      border-radius: 10px; padding: 1rem 1.2rem;
-      margin-bottom: 1.2rem;
-    }
-    .auth-note p { font-size: 0.88rem; color: var(--slate); line-height: 1.5; }
-    .auth-note a {
-      color: var(--orange); font-weight: 700;
-      text-decoration: none; cursor: pointer;
-    }
-
-    /* Main buy button */
-    .buy-button {
-      width: 100%; padding: 1rem 1.5rem;
-      background: var(--orange); color: white;
-      border: none; border-radius: 50px;
-      font-family: 'Tabular', sans-serif;
-      font-weight: 700; font-size: 1rem;
-      cursor: pointer; transition: all 0.3s;
-      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-      box-shadow: 0 6px 20px rgba(243,112,30,0.35);
-      margin-bottom: 1rem;
-    }
-    .buy-button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 30px rgba(243,112,30,0.45);
-    }
-    .buy-button:disabled {
-      background: #d0d8e0; box-shadow: none; cursor: not-allowed;
-    }
-
-    /* Trust badges */
-    .trust-row {
-      display: flex; justify-content: center; gap: 1.5rem;
-      margin-top: 1rem;
-    }
-    .trust-item {
-      display: flex; align-items: center; gap: 0.4rem;
-      font-size: 0.72rem; color: #8a9ab0;
-    }
-    .trust-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #10b981; flex-shrink: 0;
-    }
-
-    /* ── Footer ── */
-    footer {
-      text-align: center; padding: 2rem 0;
-      color: #8a9ab0; border-top: 1px solid var(--cream);
-      margin-top: 4rem; font-size: 0.85rem;
-    }
-
-    /* ── Auth Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 10000;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: white; border-radius: 20px;
-      padding: 2.5rem; width: 100%; max-width: 400px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.2);
-    }
-    .modal-header {
-      display: flex; justify-content: space-between;
-      align-items: center; margin-bottom: 2rem;
-    }
-    .modal-header h2 {
-      font-family: 'Clash Display', 'Tabular', sans-serif;
-      font-size: 1.4rem; font-weight: 600; color: var(--slate);
-    }
-    .modal-close {
-      background: none; border: none;
-      font-size: 1.4rem; cursor: pointer; color: #999;
-    }
-    .modal-close:hover { color: var(--slate); }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-label { display: block; margin-bottom: 0.5rem; color: var(--slate); font-weight: 600; font-size: 0.85rem; }
-    .form-input {
-      width: 100%; padding: 0.85rem 1rem;
-      border: 1.5px solid var(--cream); border-radius: 10px;
-      font-family: 'Tabular', sans-serif; font-size: 0.95rem;
-      color: var(--dark-slate); transition: border-color 0.2s;
-    }
-    .form-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(243,112,30,0.1); }
-    .form-error { color: #ef4444; font-size: 0.82rem; margin-top: 0.4rem; min-height: 1rem; }
-    .btn-orange {
-      width: 100%; padding: 0.9rem;
-      background: var(--orange); color: white; border: none;
-      border-radius: 50px; font-family: 'Tabular', sans-serif;
-      font-weight: 700; font-size: 0.95rem;
-      cursor: pointer; transition: all 0.3s;
-      margin-top: 0.5rem;
-    }
-    .btn-orange:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(243,112,30,0.35); }
-    .switch-auth { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: var(--slate); }
-    .switch-auth a { color: var(--orange); text-decoration: none; font-weight: 600; cursor: pointer; }
-
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--slate);
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-      nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0; right: 0;
-        background: var(--bg);
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
-      }
-      nav.open { display: flex; }
-      nav a { margin: 0.8rem 0; }
-      .product-layout { grid-template-columns: 1fr; gap: 2.5rem; }
-    }
-  
-    
-
-    /* Prevent text from ever overflowing horizontally */
-    html { overflow-x: hidden; }
-    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-    /* Make images responsive by default */
-    img { max-width: 100%; height: auto; }
-
-    /* Buttons / links: comfortable touch targets */
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ── Hamburger nav shared base ──────── */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: var(--slate, #4b607f);
-      padding: 0.25rem 0.4rem;
-      line-height: 1;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-
-      /* Slide-down nav overlay */
-      nav {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(255,255,255,0.97) !important;
-        backdrop-filter: blur(16px) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 0.25rem !important;
-        padding: 2rem 1rem !important;
-        z-index: 500 !important;
-      }
-      nav.open { display: flex !important; }
-
-      /* Big tap targets for nav items on mobile */
-      nav a {
-        margin: 0 !important;
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        padding: 0.9rem 1.5rem !important;
-        width: 100% !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        transition: background 0.2s !important;
-      }
-      nav a:hover, nav a.active {
-        background: rgba(243,112,30,0.08) !important;
-      }
-
-      /* Close button inside open menu – now a real element */
-      .nav-close {
-        display: none;
-      }
-      @media (max-width: 768px) {
-        .nav-close {
-          display: block;
-          position: fixed;
-          top: 1.2rem; right: 1.4rem;
-          font-size: 1.4rem;
-          color: var(--slate, #4b607f);
-          background: none;
-          border: none;
-          cursor: pointer;
-          z-index: 600;
-        }
-      }
-
-      /* General layout helpers for mobile */
-      .container, [class*="container"] {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-      }
-
-      /* Typography scale */
-      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
-
-      /* Full-width CTAs */
-      .hero-cta, .cta-buttons, .quick-links {
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
-        width: 100% !important;
-        text-align: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Stack panels / grids → single column */
-      .grid, .reviews-grid, .products-grid, .purchased-grid,
-      .available-grid, .layout, .product-layout, .content-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      /* Auth banner wrap */
-      .auth-banner {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        text-align: center !important;
-      }
-      .auth-banner .btn-orange { width: 100% !important; }
-
-      /* Auth/saved-stack modals – full-screen on small screens */
-      .modal-box {
-        max-width: 100% !important;
-        margin: 0 1rem !important;
-        padding: 1.8rem 1.4rem !important;
-        border-radius: 16px !important;
-      }
-
-      /* Purchased cards wrap */
-      .purchased-card {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-      }
-      .download-btn { width: 100% !important; justify-content: center !important; }
-
-      /* Stack panel: no sticky on mobile */
-      .stack-panel { position: static !important; }
-
-      /* Stack actions vertical */
-      .stack-actions { flex-direction: column !important; }
-      .stack-actions .btn-reset,
-      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
-
-      /* Profile card */
-      .profile-header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-      }
-      .logout-btn { width: 100% !important; }
-
-      /* Card actions */
-      .card-actions { flex-direction: column !important; }
-      .card-actions .btn { width: 100% !important; }
-
-      /* Footer */
-      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
-
-      /* Page heroes */
-      .page-hero {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        align-items: flex-start !important;
-        padding: 2rem 1.1rem !important;
-      }
-      .hero-right { align-items: flex-start !important; width: 100% !important; }
-
-      /* Cookie banner */
-      #cookieConsent {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        text-align: center !important;
-        padding: 1rem !important;
-      }
-    }
-
-    /* ── Extra-small phones ──────────────── */
-    @media (max-width: 375px) {
-      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
-      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
-      .purchase-box { padding: 1.2rem !important; }
-      .cta-box { padding: 1.8rem 1rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-    @media (max-width: 768px) {
-      .product-mockup { min-height: 200px !important; padding: 2rem 1.2rem !important; }
-      .product-title { font-size: 1.6rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-
-
-
-/* ── Transition foundation ── */
-a, button, [class*="btn"], [class*="card"],
-[class*="chip"], [class*="pill"], [class*="link"],
-.category-btn, .compound-card, .product-card,
-.review-card, .highlight-card, .philosophy-card,
-.stack-item, .faq-item, .social-link, .social-pill,
-.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
-.suggest-chip, .research-link {
-  transition-property: color, background, border-color,
-                        box-shadow, transform, opacity;
-  transition-duration: 0.22s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ── Primary buttons ── */
-.btn-primary:hover,
-.btn-orange:hover,
-.buy-button:hover:not(:disabled),
-.add-btn:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
-              0 2px 8px  rgba(243,112,30,0.18) !important;
-  filter: brightness(1.06);
-}
-
-/* ── Ghost / secondary buttons ── */
-.btn-ghost:hover,
-.btn-secondary:hover,
-.btn-load:hover,
-.btn-save:hover:not(:disabled) {
-  border-color: rgba(243,112,30,0.55) !important;
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.06) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
-}
-
-/* ── Auth button ── */
-.auth-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
-  filter: brightness(1.05);
-}
-
-/* ── Cards – lift + orange accent border glow ── */
-.card:hover,
-.compound-card:hover,
-.product-card:hover,
-.review-card:hover,
-.highlight-card:hover,
-.philosophy-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(243,112,30,0.28) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
-              0 0  0 1.5px rgba(243,112,30,0.14) !important;
-}
-
-/* ── Stack items ── */
-.stack-item:hover {
-  border-color: rgba(243,112,30,0.35) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
-}
-
-/* ── FAQ items ── */
-.faq-item:hover {
-  border-color: rgba(243,112,30,0.3) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
-}
-
-/* ── Social links (circle icons) ── */
-.social-link:hover {
-  background: #f3701e !important;
-  color: white !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
-}
-
-/* ── Social pills ── */
-.social-pill:hover {
-  background: rgba(243,112,30,0.09) !important;
-  border-color: rgba(243,112,30,0.4) !important;
-  color: #f3701e !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Suggest chips / category chips ── */
-.suggest-chip:hover,
-.category-btn:hover,
-.category-btn.active {
-  background: rgba(243,112,30,0.08) !important;
-  border-color: rgba(243,112,30,0.40) !important;
-  color: #f3701e !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ── Back / nav text links ── */
-.back-link:hover,
-.nd-back-btn:hover {
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.07) !important;
-  border-color: rgba(243,112,30,0.3) !important;
-}
-
-/* ── Bookmark & ctrl buttons ── */
-.bookmark-btn:hover,
-.ctrl-btn:hover {
-  background: #f3701e !important;
-  color: white !important;
-  border-color: #f3701e !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Research / external links ── */
-.research-link:hover {
-  color: #f3701e !important;
-  border-color: rgba(243,112,30,0.5) !important;
-  background: rgba(243,112,30,0.05) !important;
-}
-
-/* ── Download / load stack btn ── */
-.download-btn:hover,
-.load-this-btn:hover {
-  background: #3a4a63 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
-}
-
-/* ── Dark mode card hover ── */
-body.dark .card:hover,
-body.dark .compound-card:hover {
-  border-color: rgba(243,112,30,0.45) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
-              0 0 0 1.5px rgba(243,112,30,0.22) !important;
-}
-
-/* ── Cookie consent button ── */
-#cookieConsent button:hover {
-  background: #e2661a !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Remove / reset (red) – keep red, just smooth it ── */
-.remove-btn:hover {
-  background: rgba(239,68,68,0.10) !important;
-  color: #ef4444 !important;
-  border-color: rgba(239,68,68,0.3) !important;
-}
-.btn-reset:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444 !important;
-  background: rgba(239,68,68,0.05) !important;
-}
-
-
-
-
-  /* Backdrop */
-  
-  
-
-  /* Modal panel slides up from bottom */
-  
-  body.dark 
-  
-
-  /* Drag handle */
-  
-  body.dark 
-
-  /* Modal header row */
-  
-  body.dark 
-  
-  body.dark 
-  
-  body.dark 
-  
-
-  /* Nav links */
-  
-  
-  body.dark 
-  
-  
-  
-  
-  
-
-  /* Bottom padding for safe area */
-  
-}
-
-</style>
+  .container{max-width:1100px;margin:0 auto;padding:2.5rem 5%;position:relative;z-index:1}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(245,240,232,.55);text-decoration:none;font-size:13px;margin-bottom:40px;padding:6px 14px;border:1px solid var(--m4);border-radius:100px;transition:color .2s,border-color .2s,background .2s}
+  .back-link:hover{color:#F5F0E8;border-color:var(--m3);background:var(--m4)}
+  .loading{display:flex;flex-direction:column;align-items:center;padding:8rem 0;gap:1rem;color:rgba(245,240,232,.55);font-size:13px}
+
+  /* product layout */
+  .product-layout{display:grid;grid-template-columns:1fr 380px;gap:56px;align-items:start}
+
+  /* mockup col */
+  .product-mockup{
+    background:var(--bg-2);border:1px solid var(--m4);
+    border-radius:16px;overflow:hidden;
+    aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+    position:relative;margin-bottom:16px;
+  }
+  .product-mockup img{width:100%;height:100%;object-fit:cover}
+  .mockup-placeholder{
+    width:100%;height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:10px;
+    background:linear-gradient(135deg,var(--bg-2) 0%,var(--bg-3) 100%);
+    padding:32px;text-align:center;
+  }
+  .guide-price{font-family:var(--font-display);font-size:2.5rem;font-weight:300;color:var(--orange);letter-spacing:-.04em}
+  .guide-title{font-family:var(--font-display);font-size:1.2rem;font-weight:400;color:#F5F0E8;letter-spacing:-.02em}
+  .guide-creator{font-size:11px;font-weight:300;color:rgba(245,240,232,.4)}
+
+  /* creator strip */
+  .creator-strip{background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:12px}
+  .creator-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange-dim);border:1px solid rgba(232,84,26,.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .creator-name{font-size:13px;font-weight:500;color:#F5F0E8}
+  .creator-role{font-size:11px;font-weight:300;color:rgba(245,240,232,.45)}
+  .creator-link{margin-left:auto;font-size:12px;font-weight:400;color:var(--orange);text-decoration:none;transition:opacity .2s}
+  .creator-link:hover{opacity:.75}
+
+  /* info col */
+  .product-eyebrow{font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;display:block}
+  .product-title{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:300;letter-spacing:-.04em;color:#F5F0E8;line-height:1.05;margin-bottom:12px}
+  .product-price-display{font-family:var(--font-display);font-size:2rem;font-weight:300;letter-spacing:-.04em;color:#F5F0E8;margin-bottom:20px}
+  .product-price-display.free{color:var(--orange)}
+  .product-description{font-size:15px;font-weight:300;color:rgba(245,240,232,.65);line-height:1.8;margin-bottom:28px}
+
+  /* includes */
+  .includes-title{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,232,.45);margin-bottom:14px}
+  .feature-list{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+  .feature-item{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:300;color:rgba(245,240,232,.75)}
+  .feature-check{width:18px;height:18px;border-radius:50%;background:rgba(114,200,140,.12);border:1px solid rgba(114,200,140,.2);display:flex;align-items:center;justify-content:center;font-size:9px;color:#72C88C;flex-shrink:0;margin-top:1px}
+
+  /* purchase box */
+  .purchase-box{background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;padding:24px}
+  .purchase-box-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(245,240,232,.45);margin-bottom:16px}
+  .auth-note{background:rgba(232,84,26,.07);border:1px solid rgba(232,84,26,.15);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13px;font-weight:300;color:rgba(245,240,232,.65);display:flex;align-items:flex-start;gap:8px}
+  .auth-note a{color:var(--orange);cursor:pointer;text-decoration:underline}
+  .buy-button{
+    width:100%;padding:14px;border-radius:100px;border:none;
+    background:var(--orange);color:white;
+    font-family:var(--font-display);font-size:15px;font-weight:500;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:opacity .2s,transform .15s;margin-bottom:16px;
+  }
+  .buy-button:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+  .buy-button:disabled{opacity:.35;cursor:not-allowed;transform:none}
+  .trust-row{display:flex;gap:16px;flex-wrap:wrap}
+  .trust-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:300;color:rgba(245,240,232,.4)}
+  .trust-dot{width:5px;height:5px;border-radius:50%;background:rgba(114,200,140,.6);flex-shrink:0}
+
+  body.light .product-mockup{background:#f0ece8;border-color:rgba(200,180,160,.25)}
+  body.light .creator-strip{background:#fff;border-color:rgba(200,180,160,.25)}
+  body.light .creator-name{color:#141412}
+  body.light .product-title{color:#141412}
+  body.light .product-price-display{color:#141412}
+  body.light .product-description{color:#4A4844}
+  body.light .feature-item{color:#4A4844}
+  body.light .purchase-box{background:#fff;border-color:rgba(200,180,160,.25)}
+
+  @media(max-width:900px){.product-layout{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
 
 <header class="nd-header" id="ndHeader">
-  <a href="landing.html" class="nd-logo">Noodrop</a>
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-    <div class="nd-nav-header">
-      <span class="nd-nav-title">Noodrop</span>
-      <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
-    </div>
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
     <div class="nd-nav-links">
-    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-    <a href="index.html" class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
-    <a href="stack.html" class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
-    <a href="marketplace.html" class="nd-nav__link active">Marketplace<span class="nav-arrow">›</span></a>
-    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-    <a href="faq.html" class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-      <a href="nooai.html" class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link active">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
     <button class="auth-btn" id="authBtn">Login</button>
-    <div class="theme-toggle" id="themeToggle"><div class="toggle-knob"></div></div>
-    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
+<div class="container">
+  <a href="marketplace.html" class="back-link">← Back to Marketplace</a>
 
+  <div class="loading" id="loadingIndicator"><div class="spinner"></div><span>Loading product…</span></div>
 
-  
-
-  <div class="container">
-
-    <a href="marketplace.html" class="back-link">← Back to Marketplace</a>
-
-    <!-- Loading -->
-    <div class="loading" id="loadingIndicator">
-      <div class="spinner"></div>
-      <span style="font-size:0.85rem;">Loading product...</span>
-    </div>
-
-    <!-- Product Layout -->
-    <div class="product-layout" id="productLayout" style="display:none;">
-
-      <!-- LEFT: Visual -->
-      <div class="visual-col">
-        <div class="product-mockup" id="mockupArea">
-          <!-- Filled by JS -->
-        </div>
-        <div class="creator-strip">
-          <div class="creator-avatar">🧠</div>
-          <div class="creator-info">
-            <div class="creator-name">hann369</div>
-            <div class="creator-role">Founder · Noodrop</div>
-          </div>
-          <a href="about.html" class="creator-link">View profile →</a>
-        </div>
-      </div>
-
-      <!-- RIGHT: Info -->
-      <div class="info-col">
-        <div class="product-eyebrow" id="productCategory">Guide</div>
-        <h1 class="product-title" id="productName">–</h1>
-        <div class="product-price-display" id="productPrice">–</div>
-        <p class="product-description" id="productDescription">–</p>
-
-        <div class="includes-title">What's included</div>
-        <ul class="feature-list" id="featureList"></ul>
-
-        <div class="purchase-box">
-          <div class="purchase-box-title">Get instant access</div>
-
-          <!-- Auth note (shown when not logged in) -->
-          <div class="auth-note" id="authNote" style="display:none;">
-            <p>You need an account to download. <a onclick="openAuthModal()">Login or sign up</a> – it's free.</p>
-          </div>
-
-          <button class="buy-button" id="buyButton" onclick="initiatePurchase()">
-            <span id="buyLabel">Get It Now</span>
-            <span id="buttonPrice"></span>
-          </button>
-
-          <div class="trust-row">
-            <div class="trust-item"><div class="trust-dot"></div>Instant delivery</div>
-            <div class="trust-item"><div class="trust-dot"></div>Secure checkout</div>
-            <div class="trust-item"><div class="trust-dot"></div>Educational use</div>
-          </div>
-        </div>
+  <div class="product-layout" id="productLayout" style="display:none;">
+    <!-- LEFT: visual -->
+    <div>
+      <div class="product-mockup nd-r" id="mockupArea"></div>
+      <div class="creator-strip nd-r nd-d1">
+        <div class="creator-avatar">🧠</div>
+        <div><div class="creator-name">hann369</div><div class="creator-role">Founder · Noodrop</div></div>
+        <a href="about.html" class="creator-link">View profile →</a>
       </div>
     </div>
 
-    <footer>© 2026 Noodrop · For educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></footer>
-  </div>
+    <!-- RIGHT: info -->
+    <div class="nd-r nd-d1">
+      <span class="product-eyebrow" id="productCategory">Guide</span>
+      <h1 class="product-title" id="productName">–</h1>
+      <div class="product-price-display" id="productPrice">–</div>
+      <p class="product-description" id="productDescription">–</p>
 
-  <!-- Auth Modal -->
-  <div class="modal-overlay" id="authModal">
-    <div class="modal-box">
-      <div class="modal-header">
-        <h2 id="authTitle">Login</h2>
-        <button class="modal-close" onclick="closeAuthModal()">×</button>
-      </div>
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="loginEmail" required>
+      <div class="includes-title">What's included</div>
+      <ul class="feature-list" id="featureList"></ul>
+
+      <div class="purchase-box">
+        <div class="purchase-box-title">Get instant access</div>
+        <div class="auth-note" id="authNote" style="display:none;">
+          <span>You need an account to download. <a onclick="openAuthModal()">Login or sign up</a> — it's free.</span>
         </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="loginPassword" required minlength="6">
+        <button class="buy-button" id="buyButton" onclick="initiatePurchase()">
+          <span id="buyLabel">Get It Now</span>
+          <span id="buttonPrice"></span>
+        </button>
+        <div class="trust-row">
+          <div class="trust-item"><div class="trust-dot"></div>Instant delivery</div>
+          <div class="trust-item"><div class="trust-dot"></div>Secure checkout</div>
+          <div class="trust-item"><div class="trust-dot"></div>Educational use</div>
         </div>
-        <div class="form-error" id="loginError"></div>
-        <button type="submit" class="btn-orange">Login</button>
-      </form>
-      <form id="signupForm" style="display:none;">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="signupEmail" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="signupPassword" required minlength="6">
-        </div>
-        <div class="form-error" id="signupError"></div>
-        <button type="submit" class="btn-orange">Create Account</button>
-      </form>
-      <div class="switch-auth">
-        <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
       </div>
     </div>
   </div>
 
-  <script>
-    // Firebase config loaded from firebase-config.js (single source of truth)
-    const db = firebase.firestore();
-    const stripe = Stripe('pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'); // ← Replace with your Stripe publishable key
+  <footer style="margin-top:64px;padding-top:24px;border-top:1px solid var(--m4);text-align:center;color:rgba(245,240,232,.4);font-size:12px">
+    © 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp;
+    <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a>
+  </footer>
+</div>
 
-    function getParam(name) {
-      return new URLSearchParams(window.location.search).get(name) || '';
-    }
+<!-- Auth Modal -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header"><h2 id="authTitle">Login</h2><button class="modal-close" onclick="closeAuthModal()">×</button></div>
+    <form id="loginForm">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="loginEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" required minlength="6"></div>
+      <div class="form-error" id="loginError"></div>
+      <button type="submit" class="btn-full">Login</button>
+    </form>
+    <form id="signupForm" style="display:none;">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="signupEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="signupPassword" required minlength="6"></div>
+      <div class="form-error" id="signupError"></div>
+      <button type="submit" class="btn-full">Create Account</button>
+    </form>
+    <div class="switch-auth"><span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span></div>
+  </div>
+</div>
 
-    function initPage() {
-      const productId = getParam('id');
-      if (!productId) {
-        document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Product not found.</p>';
-        return;
-      }
-      loadProduct(productId);
-    }
-
-    async function loadProduct(productId) {
-      try {
-        const doc = await db.collection('products').doc(productId).get();
-        if (!doc.exists) {
-          document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Product not found.</p>';
-          return;
-        }
-        const product = { id: doc.id, ...doc.data() };
-        const isFree = !product.price || product.price === 0;
-
-        // Populate text
-        document.getElementById('productCategory').textContent = product.category || 'Guide';
-        document.getElementById('productName').textContent = product.name;
-        document.getElementById('productPrice').textContent = isFree ? '€0' : product.priceFormatted;
-        if (isFree) document.getElementById('productPrice').classList.add('free');
-        document.getElementById('productDescription').textContent = product.description;
-        document.getElementById('buttonPrice').textContent = isFree ? '– Free' : `– ${product.priceFormatted}`;
-        document.getElementById('buyLabel').textContent = isFree ? 'Download Free' : 'Purchase Now';
-
-        // Mockup area
-        const mockup = document.getElementById('mockupArea');
-        if (product.image) {
-          mockup.innerHTML = `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">`;
-        } else {
-          mockup.innerHTML = `
-            <div class="mockup-placeholder">
-              <div class="guide-price">${isFree ? '€0' : product.priceFormatted}</div>
-              <div class="guide-title">${product.name}</div>
-              <div class="guide-creator">hann369</div>
-            </div>`;
-        }
-
-        // Features
-        const featureList = document.getElementById('featureList');
-        featureList.innerHTML = '';
-        (product.features || ['Instant PDF download', 'Research-backed content', 'by hann369']).forEach(f => {
-          const li = document.createElement('li');
-          li.className = 'feature-item';
-          li.innerHTML = `<div class="feature-check">✓</div>${f}`;
-          featureList.appendChild(li);
-        });
-
-        // Auth state
-        firebase.auth().onAuthStateChanged(user => {
-          if (user) {
-            document.getElementById('authNote').style.display = 'none';
-            document.getElementById('buyButton').disabled = false;
-          } else {
-            document.getElementById('authNote').style.display = 'flex';
-            document.getElementById('buyButton').disabled = true;
-          }
-          document.getElementById('loadingIndicator').style.display = 'none';
-          document.getElementById('productLayout').style.display = 'grid';
-        });
-
-      } catch (err) {
-        document.getElementById('loadingIndicator').innerHTML = '<p style="color:#8a9ab0">Error loading product.</p>';
-      }
-    }
-
-    async function initiatePurchase() {
-      const user = firebase.auth().currentUser;
-      if (!user) { openAuthModal(); return; }
-      const productId = getParam('id');
-      try {
-        const doc = await db.collection('products').doc(productId).get();
-        if (!doc.exists) return;
-        const product = { id: doc.id, ...doc.data() };
-
-        // Free product – direct download
-        if (!product.price || product.price === 0) {
-          if (product.downloadUrl) window.open(product.downloadUrl, '_blank');
-          else alert('Download will be available shortly.');
-          return;
-        }
-
-        // Paid product – Stripe checkout
-        const response = await fetch('/create-checkout-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId: product.id, productName: product.name, amount: product.price, userId: user.uid })
-        });
-        const session = await response.json();
-        const result = await stripe.redirectToCheckout({ sessionId: session.id });
-        if (result.error) alert('Payment error: ' + result.error.message);
-      } catch (err) {
-        console.error(err);
-        alert('An error occurred. Please try again.');
-      }
-    }
-
-    function openAuthModal() { document.getElementById('authModal').classList.add('open'); }
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.remove('open');
-      document.getElementById('loginError').textContent = '';
-      document.getElementById('signupError').textContent = '';
-    }
-    function switchAuthMode() {
-      const isLogin = document.getElementById('loginForm').style.display !== 'none';
-      document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
-      document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
-      document.getElementById('switchText').innerHTML = isLogin
-        ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
-        : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
-    }
-    document.getElementById('loginForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
-        closeAuthModal();
-      } catch (err) { document.getElementById('loginError').textContent = err.message; }
-    });
-    document.getElementById('signupForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      try {
-        const cred = await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
-        await db.collection('users').doc(cred.user.uid).set({ email: cred.user.email, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
-        closeAuthModal();
-      } catch (err) { document.getElementById('signupError').textContent = err.message; }
-    });
-
-    document.readyState === 'loading' ? document.addEventListener('DOMContentLoaded', initPage) : initPage();
-  </script>
-  
-
-
-
-
+<div id="cookieConsent" style="display:none;"><span>We use cookies to improve your experience.</span><button onclick="acceptCookies()">Accept</button></div>
 
 <script>
-/* ── Noodrop unified header JS ── */
-(function () {
-  var burger = document.getElementById('ndBurger');
-  var nav    = document.getElementById('ndNav');
-  var header = document.getElementById('ndHeader');
-  if (!burger || !nav) return;
+// ── All product JS preserved exactly ──
+const db=firebase.firestore();
+const stripe=Stripe('pk_test_XXXXXXXXXXXXXXXXXXXXXXXX');
 
-  function openMenu() {
-    nav.classList.add('is-open');
-    burger.classList.add('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.add('is-open');
-    burger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu() {
-    nav.classList.remove('is-open');
-    burger.classList.remove('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
+function getParam(name){return new URLSearchParams(window.location.search).get(name)||'';}
 
-  burger.addEventListener('click', function () {
-    nav.classList.contains('is-open') ? closeMenu() : openMenu();
-  });
-  var closeBtn = document.getElementById('ndNavClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  var backdrop = document.getElementById('ndNavBackdrop');
-  if (backdrop) backdrop.addEventListener('click', closeMenu);
-  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
-    a.addEventListener('click', closeMenu);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeMenu();
-  });
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) closeMenu();
-  });
-  if (header) {
-    window.addEventListener('scroll', function () {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
-  }
-})();
-</script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
+function initPage(){
+  const productId=getParam('id');
+  if(!productId){document.getElementById('loadingIndicator').innerHTML='<p style="color:rgba(245,240,232,.55)">Product not found.</p>';return;}
+  loadProduct(productId);
+}
+
+async function loadProduct(productId){
+  try{
+    const doc=await db.collection('products').doc(productId).get();
+    if(!doc.exists){document.getElementById('loadingIndicator').innerHTML='<p style="color:rgba(245,240,232,.55)">Product not found.</p>';return;}
+    const product={id:doc.id,...doc.data()};
+    const isFree=!product.price||product.price===0;
+
+    document.getElementById('productCategory').textContent=product.category||'Guide';
+    document.getElementById('productName').textContent=product.name;
+    document.getElementById('productPrice').textContent=isFree?'Free':product.priceFormatted;
+    if(isFree)document.getElementById('productPrice').classList.add('free');
+    document.getElementById('productDescription').textContent=product.description;
+    document.getElementById('buttonPrice').textContent=isFree?'— Free':'— '+( product.priceFormatted||'€'+product.price);
+    document.getElementById('buyLabel').textContent=isFree?'Download Free':'Purchase Now';
+    document.title=(product.name||'Product')+' – Noodrop';
+
+    const mockup=document.getElementById('mockupArea');
+    if(product.image){mockup.innerHTML=`<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">`;}
+    else{mockup.innerHTML=`<div class="mockup-placeholder"><div class="guide-price">${isFree?'Free':product.priceFormatted}</div><div class="guide-title">${product.name}</div><div class="guide-creator">hann369</div></div>`;}
+
+    const fl=document.getElementById('featureList');fl.innerHTML='';
+    (product.features||['Instant PDF download','Research-backed content','by hann369']).forEach(f=>{const li=document.createElement('li');li.className='feature-item';li.innerHTML=`<div class="feature-check">✓</div>${f}`;fl.appendChild(li);});
+
+    firebase.auth().onAuthStateChanged(user=>{
+      if(user){document.getElementById('authNote').style.display='none';document.getElementById('buyButton').disabled=false;}
+      else{document.getElementById('authNote').style.display='flex';document.getElementById('buyButton').disabled=true;}
+      document.getElementById('loadingIndicator').style.display='none';
+      document.getElementById('productLayout').style.display='grid';
     });
-  }
+  }catch(err){document.getElementById('loadingIndicator').innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading product.</p>';}
+}
+
+async function initiatePurchase(){
+  const user=firebase.auth().currentUser;if(!user){openAuthModal();return;}
+  const productId=getParam('id');
+  try{
+    const doc=await db.collection('products').doc(productId).get();
+    if(!doc.exists)return;
+    const product={id:doc.id,...doc.data()};
+    if(!product.price||product.price===0){if(product.downloadUrl)window.open(product.downloadUrl,'_blank');else alert('Download will be available shortly.');return;}
+    const response=await fetch('/create-checkout-session',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId:product.id,productName:product.name,amount:product.price,userId:user.uid})});
+    const session=await response.json();
+    const result=await stripe.redirectToCheckout({sessionId:session.id});
+    if(result.error)alert('Payment error: '+result.error.message);
+  }catch(err){console.error(err);alert('An error occurred. Please try again.');}
+}
+
+function openAuthModal(){document.getElementById('authModal').classList.add('open');}
+function closeAuthModal(){document.getElementById('authModal').classList.remove('open');document.getElementById('loginError').textContent='';document.getElementById('signupError').textContent='';}
+function switchAuthMode(){const isLogin=document.getElementById('loginForm').style.display!=='none';document.getElementById('loginForm').style.display=isLogin?'none':'block';document.getElementById('signupForm').style.display=isLogin?'block':'none';document.getElementById('authTitle').textContent=isLogin?'Sign Up':'Login';document.getElementById('switchText').innerHTML=isLogin?'Already have an account? <a onclick="switchAuthMode()">Log in</a>':'No account? <a onclick="switchAuthMode()">Sign up</a>';}
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();try{await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value,document.getElementById('loginPassword').value);closeAuthModal();}catch(err){document.getElementById('loginError').textContent=err.message;}});
+document.getElementById('signupForm').addEventListener('submit',async e=>{e.preventDefault();try{const cred=await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value,document.getElementById('signupPassword').value);await db.collection('users').doc(cred.user.uid).set({email:cred.user.email,createdAt:firebase.firestore.FieldValue.serverTimestamp()});closeAuthModal();}catch(err){document.getElementById('signupError').textContent=err.message;}});
+
+const authBtn=document.getElementById('authBtn');
+firebase.auth().onAuthStateChanged(user=>{if(authBtn)authBtn.textContent=user?'Profile':'Login';});
+if(authBtn)authBtn.addEventListener('click',()=>{firebase.auth().currentUser?window.location.href='profile.html':openAuthModal();});
+
+function acceptCookies(){localStorage.setItem('cookiesAccepted','yes');document.getElementById('cookieConsent').style.display='none';}
+window.addEventListener('load',()=>{if(!localStorage.getItem('cookiesAccepted'))document.getElementById('cookieConsent').style.display='flex';});
+
+document.readyState==='loading'?document.addEventListener('DOMContentLoaded',initPage):initPage();
 </script>
-<script>
-  // ── Dark mode ──
-  (function() {
-    var toggle = document.getElementById('themeToggle');
-    var isDark = localStorage.getItem('darkMode') === 'true';
-    function applyTheme(dark) {
-      document.body.classList.toggle('dark', dark);
-      if (toggle) toggle.classList.toggle('active', dark);
-    }
-    applyTheme(isDark);
-    if (toggle) {
-      toggle.addEventListener('click', function() {
-        isDark = !isDark;
-        localStorage.setItem('darkMode', isDark);
-        applyTheme(isDark);
-        if (window.reinitParticles) window.reinitParticles(isDark);
-      });
-    }
-  })();
-</script>
+
+<script>var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('nd-in');io.unobserve(x.target);}});},{threshold:.08});document.querySelectorAll('.nd-r').forEach(function(el){io.observe(el);});</script>
+<script>(function(){var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');if(!b||!n)return;function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});window.addEventListener('resize',function(){if(window.innerWidth>768)c();});if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});})();</script>
+<script>(function(){var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';function apply(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);}apply(isLight);if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);});})();</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
 </body>
 </html>

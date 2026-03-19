@@ -1,1086 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.fontshare.com">
   <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="global.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f3701e">
+  <meta name="theme-color" content="#E8541A">
+  <title>FAQ – Noodrop</title>
+  <meta name="description" content="Clear answers about nootropics, stacks, safety, payments, and how Noodrop works.">
+  <style>
+  .wrap{max-width:720px;margin:0 auto;padding:0 5%}
 
-<title>FAQ – Noodrop | Smart Nootropics & Cognitive Optimization</title>
-<meta name="description" content="Clear answers about nootropics, stacks, safety, payments, and how Noodrop works. Research-backed cognitive optimization insights.">
+  /* hero */
+  .faq-hero{padding:80px 0 56px}
+  .faq-hero .eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);display:block;margin-bottom:18px}
+  .faq-hero h1{font-family:var(--font-display);font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:300;letter-spacing:-.045em;line-height:.96;color:#F5F0E8;margin-bottom:16px}
+  .faq-hero h1 em{font-style:normal;font-weight:600}
+  .faq-hero p{font-size:15px;font-weight:300;color:rgba(245,240,232,.6);line-height:1.75;max-width:460px}
+  body.light .faq-hero h1{color:#141412}
+  body.light .faq-hero p{color:#4A4844}
 
-<!-- Open Graph -->
-<meta property="og:title" content="Noodrop FAQ – Smarter Focus Starts Here">
-<meta property="og:description" content="Everything you need to know about nootropics and cognitive enhancement.">
-<meta property="og:type" content="website">
+  /* faq list */
+  .faq-list{display:flex;flex-direction:column;gap:2px;margin-bottom:72px}
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Noodrop FAQ">
-<meta name="twitter:description" content="Expert answers about nootropics, stacks and performance optimization.">
-<style>
-:root{
---bg:#ffffff;
---primary:#f3701e;
---slate:#4b607f;
---dark:#1f2a36;
---cream:#e8d8c9;
---shadow:0 20px 50px rgba(0,0,0,0.08);
---glass:rgba(255,255,255,0.75);
-}
-
-*{box-sizing:border-box;margin:0;padding:0}
-
-body{
-      padding-top: 64px;
-font-family:'Tabular',sans-serif;
-background:var(--bg);
-color:var(--dark);
-line-height:1.6;
-}
-
-.container{
-max-width:1100px;
-margin:auto;
-padding:2rem;
-}
-
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding-bottom:1.5rem;
-border-bottom:1px solid var(--cream);
-}
-
-.logo{
-font-weight:700;
-font-size:1.6rem;
-color:var(--slate);
-}
-
-nav a{
-margin-left:1.8rem;
-text-decoration:none;
-color:var(--slate);
-font-weight:500;
-position:relative;
-}
-
-nav a:after{
-content:"";
-position:absolute;
-width:0;
-height:2px;
-background:var(--primary);
-left:0;
-bottom:-4px;
-transition:0.3s;
-}
-
-nav a:hover:after,
-nav a.active:after{
-width:100%;
-}
-
-.hero{
-text-align:center;
-padding:4rem 0 3rem;
-}
-
-.hero h1{
-font-size:2.8rem;
-margin-bottom:1rem;
-color:var(--slate);
-}
-
-.hero p{
-max-width:700px;
-margin:auto;
-opacity:0.85;
-}
-
-.faq{
-max-width:850px;
-margin:3rem auto;
-}
-
-.faq-item{
-background:var(--glass);
-backdrop-filter:blur(8px);
-border-radius:18px;
-margin-bottom:1.5rem;
-box-shadow:var(--shadow);
-border:1px solid var(--cream);
-overflow:hidden;
-transition:0.3s ease;
-}
-
-.faq-item:hover{
-transform:translateY(-4px);
-box-shadow:0 25px 60px rgba(0,0,0,0.12);
-}
-
-.faq-question{
-width:100%;
-padding:1.6rem;
-background:none;
-border:none;
-text-align:left;
-font-weight:600;
-font-size:1.05rem;
-display:flex;
-justify-content:space-between;
-align-items:center;
-cursor:pointer;
-color:var(--slate);
-}
-
-.faq-toggle{
-font-size:1.5rem;
-transition:transform 0.3s ease;
-}
-
-.faq-question[aria-expanded="true"] .faq-toggle{
-transform:rotate(45deg);
-}
-
-.faq-answer{
-max-height:0;
-overflow:hidden;
-transition:max-height 0.4s cubic-bezier(.77,0,.18,1);
-padding:0 1.6rem;
-}
-
-.faq-answer p{
-margin:0 0 1.6rem;
-opacity:0.9;
-}
-
-.cta{
-margin:5rem auto;
-max-width:650px;
-padding:3rem;
-text-align:center;
-background:linear-gradient(135deg,#fff,#fdf7f2);
-border-radius:22px;
-box-shadow:var(--shadow);
-border:1px solid var(--cream);
-}
-
-.cta h2{
-margin-bottom:1rem;
-color:var(--slate);
-}
-
-.cta p{
-margin-bottom:2rem;
-}
-
-.cta form{
-display:flex;
-flex-direction:column;
-gap:1rem;
-}
-
-.cta input{
-padding:1rem;
-border-radius:12px;
-border:1px solid var(--cream);
-font-size:1rem;
-}
-
-.cta input:focus{
-outline:none;
-border-color:var(--primary);
-box-shadow:0 0 0 3px rgba(243,112,30,0.2);
-}
-
-.cta button{
-padding:1rem;
-border-radius:12px;
-border:none;
-background:var(--primary);
-color:white;
-font-weight:600;
-cursor:pointer;
-transition:0.3s;
-}
-
-.cta button:hover{
-transform:translateY(-3px);
-box-shadow:0 10px 30px rgba(243,112,30,0.3);
-}
-
-footer{
-margin-top:5rem;
-text-align:center;
-padding-top:2rem;
-border-top:1px solid var(--cream);
-color:var(--slate);
-}
-
-.social{
-display:flex;
-justify-content:center;
-gap:1.5rem;
-margin-bottom:1rem;
-}
-
-.social a{
-display:flex;
-align-items:center;
-justify-content:center;
-width:40px;
-height:40px;
-border-radius:50%;
-background:var(--cream);
-color:var(--slate);
-text-decoration:none;
-transition:0.3s;
-}
-
-.social a:hover{
-background:var(--primary);
-color:white;
-transform:translateY(-3px);
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--slate);
-}
-
-@media(max-width:768px){
-  .menu-toggle { display: block; }
-  nav {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0; right: 0;
-    background: var(--bg);
-    flex-direction: column;
-    align-items: center;
-    padding: 1rem 0;
+  .faq-item{background:var(--bg-2);border:1px solid var(--m4);border-radius:10px;overflow:hidden;transition:border-color .2s}
+  .faq-item:hover{border-color:var(--m3)}
+  .faq-question{
+    width:100%;background:none;border:none;text-align:left;
+    padding:20px 22px;cursor:pointer;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    font-family:var(--font-display);font-size:15px;font-weight:400;
+    color:#F5F0E8;letter-spacing:-.01em;line-height:1.35;
+    transition:color .2s;
   }
-  nav.open { display: flex; }
-  nav a { margin: 0.8rem 0; }
-  .hero h1{font-size:2rem}
-}
+  .faq-question:hover{color:var(--orange)}
+  .faq-question[aria-expanded="true"]{color:var(--orange)}
+  .faq-toggle{
+    width:24px;height:24px;border-radius:50%;flex-shrink:0;
+    background:var(--m4);border:1px solid var(--m3);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;line-height:1;color:rgba(245,240,232,.55);
+    transition:background .2s,color .2s,transform .3s;
+  }
+  .faq-question[aria-expanded="true"] .faq-toggle{transform:rotate(45deg);background:var(--orange-dim);color:var(--orange);border-color:rgba(232,84,26,.25)}
+  .faq-answer{max-height:0;overflow:hidden;transition:max-height .38s cubic-bezier(0,1,.3,1)}
+  .faq-answer.open{max-height:600px}
+  .faq-answer-inner{padding:0 22px 20px;border-top:1px solid var(--m4)}
+  .faq-answer-inner p{font-size:14px;font-weight:300;color:rgba(245,240,232,.7);line-height:1.8;padding-top:16px}
+  body.light .faq-item{background:#fff;border-color:rgba(200,180,160,.2)}
+  body.light .faq-question{color:#141412}
+  body.light .faq-answer-inner{border-top-color:rgba(200,180,160,.2)}
+  body.light .faq-answer-inner p{color:#4A4844}
 
-    
+  /* newsletter CTA */
+  .faq-cta{background:var(--bg-2);border:1px solid var(--m4);border-radius:16px;padding:56px 48px;text-align:center;margin-bottom:64px}
+  .faq-cta .eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);display:block;margin-bottom:16px}
+  .faq-cta h2{font-family:var(--font-display);font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:300;letter-spacing:-.04em;color:#F5F0E8;margin-bottom:12px}
+  .faq-cta h2 em{font-style:normal;font-weight:600}
+  .faq-cta p{font-size:14px;font-weight:300;color:rgba(245,240,232,.6);line-height:1.7;margin-bottom:28px}
+  #kitEmbedWrapper{max-width:420px;margin:0 auto}
+  body.light .faq-cta{background:#fff;border-color:rgba(200,180,160,.2)}
+  body.light .faq-cta h2{color:#141412}
+  body.light .faq-cta p{color:#4A4844}
 
-    /* Prevent text from ever overflowing horizontally */
-    html { overflow-x: hidden; }
-    body  { overflow-x: hidden; -webkit-text-size-adjust: 100%; }
-
-    /* Make images responsive by default */
-    img { max-width: 100%; height: auto; }
-
-    /* Buttons / links: comfortable touch targets */
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ── Hamburger nav shared base ──────── */
-    .menu-toggle {
-      display: none;
-      background: none;
-      border: none;
-      font-size: 1.6rem;
-      cursor: pointer;
-      color: var(--slate, #4b607f);
-      padding: 0.25rem 0.4rem;
-      line-height: 1;
-      z-index: 200;
-      flex-shrink: 0;
-    }
-
-    @media (max-width: 768px) {
-      .menu-toggle { display: block; }
-
-      /* Slide-down nav overlay */
-      nav {
-        display: none;
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important; right: 0 !important;
-        bottom: 0 !important;
-        background: rgba(255,255,255,0.97) !important;
-        backdrop-filter: blur(16px) !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 0.25rem !important;
-        padding: 2rem 1rem !important;
-        z-index: 500 !important;
-      }
-      nav.open { display: flex !important; }
-
-      /* Big tap targets for nav items on mobile */
-      nav a {
-        margin: 0 !important;
-        font-size: 1.3rem !important;
-        font-weight: 600 !important;
-        padding: 0.9rem 1.5rem !important;
-        width: 100% !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        transition: background 0.2s !important;
-      }
-      nav a:hover, nav a.active {
-        background: rgba(243,112,30,0.08) !important;
-      }
-
-      /* Close button inside open menu */
-      nav.open::before {
-        content: "✕";
-        position: fixed;
-        top: 1.2rem; right: 1.4rem;
-        font-size: 1.4rem;
-        color: var(--slate, #4b607f);
-        cursor: pointer;
-        z-index: 600;
-        pointer-events: none; /* closed by JS */
-      }
-
-      /* General layout helpers for mobile */
-      .container, [class*="container"] {
-        padding-left: 1.1rem !important;
-        padding-right: 1.1rem !important;
-      }
-
-      /* Typography scale */
-      h1 { font-size: clamp(1.8rem, 7vw, 2.4rem) !important; }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem) !important; }
-
-      /* Full-width CTAs */
-      .hero-cta, .cta-buttons, .quick-links {
-        flex-direction: column !important;
-        width: 100% !important;
-      }
-      .btn-primary, .btn-ghost, .btn-orange, .btn-secondary {
-        width: 100% !important;
-        text-align: center !important;
-        justify-content: center !important;
-        box-sizing: border-box !important;
-      }
-
-      /* Stack panels / grids → single column */
-      .grid, .reviews-grid, .products-grid, .purchased-grid,
-      .available-grid, .layout, .product-layout, .content-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      /* Auth banner wrap */
-      .auth-banner {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        text-align: center !important;
-      }
-      .auth-banner .btn-orange { width: 100% !important; }
-
-      /* Auth/saved-stack modals – full-screen on small screens */
-      .modal-box {
-        max-width: 100% !important;
-        margin: 0 1rem !important;
-        padding: 1.8rem 1.4rem !important;
-        border-radius: 16px !important;
-      }
-
-      /* Purchased cards wrap */
-      .purchased-card {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.75rem !important;
-      }
-      .download-btn { width: 100% !important; justify-content: center !important; }
-
-      /* Stack panel: no sticky on mobile */
-      .stack-panel { position: static !important; }
-
-      /* Stack actions vertical */
-      .stack-actions { flex-direction: column !important; }
-      .stack-actions .btn-reset,
-      .stack-actions .btn-save { width: 100% !important; flex: none !important; }
-
-      /* Profile card */
-      .profile-header {
-        flex-direction: column !important;
-        gap: 1rem !important;
-        align-items: flex-start !important;
-      }
-      .logout-btn { width: 100% !important; }
-
-      /* Card actions */
-      .card-actions { flex-direction: column !important; }
-      .card-actions .btn { width: 100% !important; }
-
-      /* Footer */
-      footer { padding: 1.5rem 1rem !important; font-size: .8rem !important; }
-
-      /* Page heroes */
-      .page-hero {
-        flex-direction: column !important;
-        gap: 1.5rem !important;
-        align-items: flex-start !important;
-        padding: 2rem 1.1rem !important;
-      }
-      .hero-right { align-items: flex-start !important; width: 100% !important; }
-
-      /* Cookie banner */
-      #cookieConsent {
-        flex-direction: column !important;
-        gap: 0.75rem !important;
-        text-align: center !important;
-        padding: 1rem !important;
-      }
-    }
-
-    /* ── Extra-small phones ──────────────── */
-    @media (max-width: 375px) {
-      .faq-question { font-size: 0.95rem !important; padding: 1.2rem !important; }
-      .product-mockup { padding: 1.5rem 1rem !important; min-height: 220px !important; }
-      .purchase-box { padding: 1.2rem !important; }
-      .cta-box { padding: 1.8rem 1rem !important; }
-      .trust-row { flex-direction: column !important; gap: 0.5rem !important; align-items: center !important; }
-    }
-
-    @media (max-width: 768px) {
-      .hero { padding: 2.5rem 0 1.5rem !important; }
-      .faq { margin: 1.5rem auto !important; }
-      .faq-item { border-radius: 12px !important; }
-      .cta { padding: 2rem 1.2rem !important; margin: 2.5rem auto !important; }
-      header { position: relative !important; }
-    }
-
-
-
-
-/* ── Transition foundation ── */
-a, button, [class*="btn"], [class*="card"],
-[class*="chip"], [class*="pill"], [class*="link"],
-.category-btn, .compound-card, .product-card,
-.review-card, .highlight-card, .philosophy-card,
-.stack-item, .faq-item, .social-link, .social-pill,
-.back-link, .bookmark-btn, .ctrl-btn, .add-btn,
-.suggest-chip, .research-link {
-  transition-property: color, background, border-color,
-                        box-shadow, transform, opacity;
-  transition-duration: 0.22s;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ── Primary buttons ── */
-.btn-primary:hover,
-.btn-orange:hover,
-.buy-button:hover:not(:disabled),
-.add-btn:hover:not(:disabled) {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 6px 22px rgba(243,112,30,0.38),
-              0 2px 8px  rgba(243,112,30,0.18) !important;
-  filter: brightness(1.06);
-}
-
-/* ── Ghost / secondary buttons ── */
-.btn-ghost:hover,
-.btn-secondary:hover,
-.btn-load:hover,
-.btn-save:hover:not(:disabled) {
-  border-color: rgba(243,112,30,0.55) !important;
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.06) !important;
-  transform: translateY(-2px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.12) !important;
-}
-
-/* ── Auth button ── */
-.auth-btn:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 16px rgba(243,112,30,0.32) !important;
-  filter: brightness(1.05);
-}
-
-/* ── Cards – lift + orange accent border glow ── */
-.card:hover,
-.compound-card:hover,
-.product-card:hover,
-.review-card:hover,
-.highlight-card:hover,
-.philosophy-card:hover {
-  transform: translateY(-5px) !important;
-  border-color: rgba(243,112,30,0.28) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.09),
-              0 0  0 1.5px rgba(243,112,30,0.14) !important;
-}
-
-/* ── Stack items ── */
-.stack-item:hover {
-  border-color: rgba(243,112,30,0.35) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.10) !important;
-}
-
-/* ── FAQ items ── */
-.faq-item:hover {
-  border-color: rgba(243,112,30,0.3) !important;
-  box-shadow: 0 4px 18px rgba(243,112,30,0.08) !important;
-}
-
-/* ── Social links (circle icons) ── */
-.social-link:hover {
-  background: #f3701e !important;
-  color: white !important;
-  transform: translateY(-3px) !important;
-  box-shadow: 0 6px 18px rgba(243,112,30,0.30) !important;
-}
-
-/* ── Social pills ── */
-.social-pill:hover {
-  background: rgba(243,112,30,0.09) !important;
-  border-color: rgba(243,112,30,0.4) !important;
-  color: #f3701e !important;
-  transform: translateY(-2px) !important;
-}
-
-/* ── Suggest chips / category chips ── */
-.suggest-chip:hover,
-.category-btn:hover,
-.category-btn.active {
-  background: rgba(243,112,30,0.08) !important;
-  border-color: rgba(243,112,30,0.40) !important;
-  color: #f3701e !important;
-  transform: translateY(-1px) !important;
-}
-
-/* ── Back / nav text links ── */
-.back-link:hover,
-.nd-back-btn:hover {
-  color: #f3701e !important;
-  background: rgba(243,112,30,0.07) !important;
-  border-color: rgba(243,112,30,0.3) !important;
-}
-
-/* ── Bookmark & ctrl buttons ── */
-.bookmark-btn:hover,
-.ctrl-btn:hover {
-  background: #f3701e !important;
-  color: white !important;
-  border-color: #f3701e !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Research / external links ── */
-.research-link:hover {
-  color: #f3701e !important;
-  border-color: rgba(243,112,30,0.5) !important;
-  background: rgba(243,112,30,0.05) !important;
-}
-
-/* ── Download / load stack btn ── */
-.download-btn:hover,
-.load-this-btn:hover {
-  background: #3a4a63 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.15) !important;
-}
-
-/* ── Dark mode card hover ── */
-body.dark .card:hover,
-body.dark .compound-card:hover {
-  border-color: rgba(243,112,30,0.45) !important;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.3),
-              0 0 0 1.5px rgba(243,112,30,0.22) !important;
-}
-
-/* ── Cookie consent button ── */
-#cookieConsent button:hover {
-  background: #e2661a !important;
-  box-shadow: 0 4px 14px rgba(243,112,30,0.28) !important;
-}
-
-/* ── Remove / reset (red) – keep red, just smooth it ── */
-.remove-btn:hover {
-  background: rgba(239,68,68,0.10) !important;
-  color: #ef4444 !important;
-  border-color: rgba(239,68,68,0.3) !important;
-}
-.btn-reset:hover {
-  border-color: #ef4444 !important;
-  color: #ef4444 !important;
-  background: rgba(239,68,68,0.05) !important;
-}
-
-
-
-
-  /* Backdrop */
-  
-  
-
-  /* Modal panel slides up from bottom */
-  
-  body.dark 
-  
-
-  /* Drag handle */
-  
-  body.dark 
-
-  /* Modal header row */
-  
-  body.dark 
-  
-  body.dark 
-  
-  body.dark 
-  
-
-  /* Nav links */
-  
-  
-  body.dark 
-  
-  
-  
-  
-  
-
-  /* Bottom padding for safe area */
-  
-}
-
-</style>
-
-<!-- Structured Data -->
-<script type="application/ld+json">
-{
-"@context":"https://schema.org",
-"@type":"FAQPage",
-"mainEntity":[
-{"@type":"Question","name":"What are nootropics?","acceptedAnswer":{"@type":"Answer","text":"Nootropics are substances that may improve cognitive functions such as memory, creativity, motivation, and attention."}},
-{"@type":"Question","name":"Are nootropics safe?","acceptedAnswer":{"@type":"Answer","text":"Most nootropics are considered safe when used responsibly. Always consult a healthcare professional."}},
-{"@type":"Question","name":"How do I create a nootropic stack?","acceptedAnswer":{"@type":"Answer","text":"Use complementary compounds such as caffeine and L-theanine. Start low and monitor response."}},
-{"@type":"Question","name":"Can I take nootropics with my medication?","acceptedAnswer":{"@type":"Answer","text":"Consult a healthcare professional before combining supplements with medication."}},
-{"@type":"Question","name":"How long until I see results?","acceptedAnswer":{"@type":"Answer","text":"Some compounds work immediately, others may take weeks of consistent use."}},
-{"@type":"Question","name":"Are your products FDA approved?","acceptedAnswer":{"@type":"Answer","text":"Dietary supplements are not evaluated by the FDA for safety or effectiveness."}},
-{"@type":"Question","name":"What payment methods do you accept?","acceptedAnswer":{"@type":"Answer","text":"We accept all major credit cards via secure payment processing."}},
-{"@type":"Question","name":"How do I access purchased content?","acceptedAnswer":{"@type":"Answer","text":"Purchased digital products are available in your account immediately after checkout."}}
-]
-}
-</script>
-
+  @media(max-width:600px){.faq-cta{padding:36px 24px}}
+  </style>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What are nootropics?","acceptedAnswer":{"@type":"Answer","text":"Nootropics are substances that may improve cognitive functions such as memory, creativity, motivation, and attention."}},{"@type":"Question","name":"Are nootropics safe?","acceptedAnswer":{"@type":"Answer","text":"Most widely used nootropics have established safety profiles at recommended dosages. Always consult a healthcare professional."}}]}</script>
 </head>
-
 <body>
 
 <header class="nd-header" id="ndHeader">
-  <a href="landing.html" class="nd-logo">Noodrop</a>
+  <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-    <div class="nd-nav-header">
-      <span class="nd-nav-title">Noodrop</span>
-      <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
-    </div>
+    <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
     <div class="nd-nav-links">
-    <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-    <a href="index.html" class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
-    <a href="stack.html" class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
-    <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
-    <a href="about.html" class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-    <a href="faq.html" class="nd-nav__link active">FAQ<span class="nav-arrow">›</span></a>
-    <a href="nooai.html" class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="faq.html"     class="nd-nav__link active">FAQ<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
     <button class="auth-btn" id="authBtn">Login</button>
-    <div class="theme-toggle" id="themeToggle"><div class="toggle-knob"></div></div>
-    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
   </div>
 </header>
 
+<div class="wrap">
+  <div class="faq-hero nd-r">
+    <span class="eyebrow">FAQ</span>
+    <h1>Your questions.<br><em>Answered clearly.</em></h1>
+    <p>Everything you need to know about nootropics, safety, stacks, and cognitive optimization.</p>
+  </div>
 
-<div class="container">
+  <div class="faq-list">
+    <div class="faq-item nd-r">
+      <button class="faq-question" aria-expanded="false">What are nootropics?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>Nootropics are substances — natural or synthetic — that may improve cognitive functions such as memory, creativity, motivation, and attention. The term was coined in 1972 by Romanian chemist Corneliu Giurgea. Today the category spans everything from well-studied herbs like Bacopa monnieri to racetams and peptide-based compounds. Noodrop focuses exclusively on compounds with credible scientific literature backing their mechanisms of action.</p></div></div>
+    </div>
+    <div class="faq-item nd-r nd-d1">
+      <button class="faq-question" aria-expanded="false">Are nootropics safe?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>Most widely used nootropics — such as caffeine, L-theanine, and lion's mane mushroom — have well-established safety profiles when used at recommended dosages. Safety varies significantly between compounds, however, and long-term data is lacking for many newer substances. Individual responses also differ based on genetics, health conditions, and other medications. Always consult a qualified healthcare professional before beginning any supplementation protocol.</p></div></div>
+    </div>
+    <div class="faq-item nd-r nd-d2">
+      <button class="faq-question" aria-expanded="false">How do I create a nootropic stack?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>A stack is a combination of compounds chosen to work synergistically toward a specific goal, such as focus, memory, or stress resilience. The classic starting point is caffeine paired with L-theanine. From there, you can layer in adaptogens or cholinergics — always introducing one compound at a time to isolate effects. Use Noodrop's Stack Builder to check interactions automatically before committing to a new combination.</p></div></div>
+    </div>
+    <div class="faq-item nd-r nd-d3">
+      <button class="faq-question" aria-expanded="false">Can I take nootropics with my medication?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>Some nootropics interact with prescription medications — for example, racetams can potentiate stimulants, and certain adaptogens affect liver enzymes responsible for drug metabolism. Always disclose your full supplement list to your prescribing physician or pharmacist before making any changes. Never adjust or discontinue a prescription medication based on information found on this website.</p></div></div>
+    </div>
+    <div class="faq-item nd-r">
+      <button class="faq-question" aria-expanded="false">How long until I see results?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>Timeline varies greatly. Stimulant-based nootropics like caffeine act within 30–60 minutes, while adaptogens such as Ashwagandha typically require 4–8 weeks. Compounds that support neurogenesis — like lion's mane — may take 2–3 months. Keeping a daily log of mood, focus, and sleep quality is the most reliable way to track your personal response.</p></div></div>
+    </div>
+    <div class="faq-item nd-r">
+      <button class="faq-question" aria-expanded="false">Are your products FDA approved?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>No. Dietary supplements are not evaluated or approved by the U.S. Food and Drug Administration for safety or effectiveness prior to sale. This is an industry-wide reality. All information provided on this platform is strictly educational and not intended to diagnose, treat, cure, or prevent any disease.</p></div></div>
+    </div>
+    <div class="faq-item nd-r">
+      <button class="faq-question" aria-expanded="false">What payment methods do you accept?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>We accept all major credit and debit cards — Visa, Mastercard, American Express, and Discover — processed securely through Stripe. Stripe is a PCI-DSS Level 1 certified payment provider, meaning your card data is encrypted and never stored on our servers.</p></div></div>
+    </div>
+    <div class="faq-item nd-r">
+      <button class="faq-question" aria-expanded="false">How do I access purchased content?<span class="faq-toggle">+</span></button>
+      <div class="faq-answer"><div class="faq-answer-inner"><p>All digital products — stack guides, research reports, and protocol PDFs — become available in your account dashboard immediately after a successful payment. Simply log in, navigate to "My Purchases," and download at any time. Updates to content you've bought are provided free of charge.</p></div></div>
+    </div>
+  </div>
 
-
-
-<section class="hero">
-<h1>Your Questions. Answered Clearly.</h1>
-<p>Everything you need to know about nootropics, safety, stacks and cognitive optimization.</p>
-</section>
-
-<section class="faq">
-
-<!-- ALL QUESTIONS RESTORED -->
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">What are nootropics?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>Nootropics are substances — natural or synthetic — that may improve cognitive functions such as memory, creativity, motivation, and attention. The term was coined in 1972 by Romanian chemist Corneliu Giurgea, who defined them as compounds that enhance learning and protect the brain from harm. Today the category spans everything from well-studied herbs like Bacopa monnieri to racetams and peptide-based compounds. Noodrop focuses exclusively on compounds with credible scientific literature backing their mechanisms of action.</p></div>
+  <div class="faq-cta nd-r">
+    <span class="eyebrow">Newsletter</span>
+    <h2>Unlock smarter <em>focus.</em></h2>
+    <p>Join high performers receiving research-backed stack insights.</p>
+    <div id="kitEmbedWrapper">
+      <script async data-uid="4ab7c26359" src="https://hann369.kit.com/4ab7c26359/index.js"></script>
+    </div>
+  </div>
 </div>
 
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">Are nootropics safe?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>Most widely used nootropics — such as caffeine, L-theanine, and lion's mane mushroom — have well-established safety profiles when used at recommended dosages. Safety varies significantly between compounds, however, and long-term data is lacking for many newer substances. Individual responses also differ based on genetics, existing health conditions, and other medications. Always consult a qualified healthcare professional before beginning any supplementation protocol, especially if you have a pre-existing condition.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">How do I create a nootropic stack?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>A stack is simply a combination of compounds chosen to work synergistically toward a specific goal, such as focus, memory, or stress resilience. The classic starting point is caffeine paired with L-theanine — each counterbalances the other's downsides for a smooth, sustained boost. From there, you can layer in adaptogens or cholinergics, but always introduce one compound at a time to isolate effects and watch for reactions. Use Noodrop's Stack Builder to check interactions automatically before committing to a new combination.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">Can I take nootropics with my medication?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>Some nootropics interact with prescription medications — for example, racetams can potentiate stimulants, and certain adaptogens affect liver enzymes responsible for drug metabolism. This means a compound that is generally considered safe can alter the effectiveness or side-effect profile of your medication. Always disclose your full supplement list to your prescribing physician or pharmacist before making any changes. Never adjust or discontinue a prescription medication based on information found on this website.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">How long until I see results?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>Timeline varies greatly depending on the compound and the outcome you're measuring. Stimulant-based nootropics like caffeine act within 30–60 minutes, while adaptogens such as Ashwagandha typically require 4–8 weeks of consistent use before measurable stress-reduction effects emerge. Compounds that support neurogenesis or structural brain health — like lion's mane — may take 2–3 months to show meaningful impact. Keeping a daily log of mood, focus, and sleep quality is the most reliable way to track your personal response.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">Are your products FDA approved?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>No. Dietary supplements are not evaluated or approved by the U.S. Food and Drug Administration for safety or effectiveness prior to sale. This is an industry-wide reality, not specific to Noodrop — the FDA regulates supplements differently from pharmaceutical drugs. All information provided on this platform is strictly educational and not intended to diagnose, treat, cure, or prevent any disease. We strongly encourage consulting a licensed healthcare provider before acting on anything you read here.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">What payment methods do you accept?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>We accept all major credit and debit cards — Visa, Mastercard, American Express, and Discover — processed securely through Stripe. Stripe is a PCI-DSS Level 1 certified payment provider, meaning your card data is encrypted and never stored on our servers. You'll receive an email receipt immediately after checkout confirming your purchase. If you encounter any issues during payment, please reach out via the contact form and we'll resolve it promptly.</p></div>
-</div>
-
-<div class="faq-item">
-<button class="faq-question" aria-expanded="false">How do I access purchased content?<span class="faq-toggle">+</span></button>
-<div class="faq-answer"><p>All digital products — stack guides, research reports, and protocol PDFs — become available in your account dashboard immediately after a successful payment. Simply log in, navigate to "My Purchases," and download or view your content at any time. There are no limits on how many times you can access your purchases, and updates to content you've bought are provided free of charge. If a file isn't showing up after checkout, try refreshing your dashboard or clearing your browser cache before contacting support.</p></div>
-</div>
-
-</section>
-
-<section class="cta" id="newsletterCta">
-<h2>Unlock Smarter Focus</h2>
-<p>Join high performers receiving research-backed stack insights.</p>
-
-<!-- Kit embed wrapper – anime.js intercepts the submit button inside -->
-<div id="kitEmbedWrapper">
-  <script async data-uid="4ab7c26359" src="https://hann369.kit.com/4ab7c26359/index.js"></script>
-</div>
-</section>
-
-<!-- anime.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
-<script>
-(function () {
-  /* ── Anime.js button animation for Kit newsletter embed ── */
-
-  /* Particle burst helper */
-  function burstParticles(btn) {
-    var rect = btn.getBoundingClientRect();
-    var cx = rect.left + rect.width / 2;
-    var cy = rect.top + rect.height / 2 + window.scrollY;
-
-    var colors = ['#f3701e', '#ffb347', '#e8d8c9', '#4b607f', '#fff'];
-    var container = document.createElement('div');
-    container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;z-index:9999;';
-    document.body.appendChild(container);
-
-    var dots = [];
-    for (var i = 0; i < 14; i++) {
-      var dot = document.createElement('div');
-      dot.style.cssText = [
-        'position:fixed',
-        'width:8px',
-        'height:8px',
-        'border-radius:50%',
-        'background:' + colors[i % colors.length],
-        'left:' + cx + 'px',
-        'top:' + cy + 'px',
-        'transform:translate(-50%,-50%)',
-        'pointer-events:none',
-        'z-index:9999'
-      ].join(';');
-      document.body.appendChild(dot);
-      dots.push(dot);
-    }
-
-    anime({
-      targets: dots,
-      translateX: function () { return anime.random(-90, 90); },
-      translateY: function () { return anime.random(-90, 90); },
-      scale: [1, 0],
-      opacity: [1, 0],
-      duration: 700,
-      easing: 'easeOutExpo',
-      delay: anime.stagger(30),
-      complete: function () { dots.forEach(function (d) { d.parentNode && d.parentNode.removeChild(d); }); }
-    });
-  }
-
-  /* Ripple inside the button */
-  function rippleEffect(btn) {
-    var ripple = document.createElement('span');
-    var size = Math.max(btn.offsetWidth, btn.offsetHeight) * 2;
-    ripple.style.cssText = [
-      'position:absolute',
-      'border-radius:50%',
-      'width:' + size + 'px',
-      'height:' + size + 'px',
-      'background:rgba(255,255,255,0.35)',
-      'top:50%',
-      'left:50%',
-      'transform:translate(-50%,-50%) scale(0)',
-      'pointer-events:none'
-    ].join(';');
-    btn.style.position = 'relative';
-    btn.style.overflow = 'hidden';
-    btn.appendChild(ripple);
-
-    anime({
-      targets: ripple,
-      scale: [0, 1],
-      opacity: [0.6, 0],
-      duration: 600,
-      easing: 'easeOutExpo',
-      complete: function () { ripple.parentNode && ripple.parentNode.removeChild(ripple); }
-    });
-  }
-
-  /* Press-and-bounce animation */
-  function bounceBtn(btn) {
-    anime({
-      targets: btn,
-      scale: [1, 0.93, 1.04, 1],
-      duration: 420,
-      easing: 'easeOutElastic(1, 0.6)'
-    });
-  }
-
-  /* Text morphs to ✓ then back */
-  function confirmText(btn) {
-    var original = btn.textContent;
-    anime({
-      targets: btn,
-      opacity: [1, 0],
-      duration: 160,
-      easing: 'easeInQuad',
-      complete: function () {
-        btn.textContent = '✓ Subscribed!';
-        btn.style.background = '#4b607f';
-        anime({
-          targets: btn,
-          opacity: [0, 1],
-          duration: 200,
-          easing: 'easeOutQuad',
-          complete: function () {
-            setTimeout(function () {
-              anime({
-                targets: btn,
-                opacity: [1, 0],
-                duration: 160,
-                complete: function () {
-                  btn.textContent = original;
-                  btn.style.background = '';
-                  anime({ targets: btn, opacity: [0, 1], duration: 200 });
-                }
-              });
-            }, 2200);
-          }
-        });
-      }
-    });
-  }
-
-  /* Attach to Kit's submit button once it renders */
-  function attachAnimation() {
-    var wrapper = document.getElementById('kitEmbedWrapper');
-    if (!wrapper) return;
-
-    /* Kit renders inside an iframe OR directly into the DOM –
-       we watch for any <button type="submit"> or [data-element="submit"] */
-    var observer = new MutationObserver(function () {
-      var btns = wrapper.querySelectorAll(
-        'button[type="submit"], input[type="submit"], [data-element="submit"], button.formkit-submit'
-      );
-      if (!btns.length) return;
-
-      btns.forEach(function (btn) {
-        if (btn._noodropAnimated) return;
-        btn._noodropAnimated = true;
-
-        /* Idle shimmer */
-        anime({
-          targets: btn,
-          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-          duration: 3200,
-          easing: 'easeInOutSine',
-          loop: true
-        });
-
-        /* Hover lift */
-        btn.addEventListener('mouseenter', function () {
-          anime({ targets: btn, translateY: -3, boxShadow: '0 10px 28px rgba(243,112,30,0.38)', duration: 220, easing: 'easeOutQuad' });
-        });
-        btn.addEventListener('mouseleave', function () {
-          anime({ targets: btn, translateY: 0, boxShadow: '0 0px 0px rgba(243,112,30,0)', duration: 300, easing: 'easeOutQuad' });
-        });
-
-        /* Click: ripple + bounce + particles + confirm */
-        btn.addEventListener('click', function () {
-          rippleEffect(btn);
-          bounceBtn(btn);
-          burstParticles(btn);
-          confirmText(btn);
-        });
-      });
-    });
-
-    observer.observe(wrapper, { childList: true, subtree: true });
-
-    /* Also try immediately (if Kit already rendered synchronously) */
-    var btns = wrapper.querySelectorAll(
-      'button[type="submit"], input[type="submit"], [data-element="submit"], button.formkit-submit'
-    );
-    btns.forEach(function (btn) {
-      if (btn._noodropAnimated) return;
-      btn._noodropAnimated = true;
-      btn.addEventListener('mouseenter', function () {
-        anime({ targets: btn, translateY: -3, duration: 220, easing: 'easeOutQuad' });
-      });
-      btn.addEventListener('mouseleave', function () {
-        anime({ targets: btn, translateY: 0, duration: 300, easing: 'easeOutQuad' });
-      });
-      btn.addEventListener('click', function () {
-        rippleEffect(btn);
-        bounceBtn(btn);
-        burstParticles(btn);
-        confirmText(btn);
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', attachAnimation);
-  } else {
-    attachAnimation();
-  }
-})();
-</script>
-
-<footer>
-
-<div class="social">
-<a href="https://x.com/hann_369" target="_blank" rel="noopener noreferrer">X</a>
-<a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener noreferrer">YT</a>
-</div>
-
-<p>© 2026 Noodrop – Educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s;" onmouseover="this.style.color='#f3701e'" onmouseout="this.style.color='inherit'">Impressum</a></p>
-
+<footer style="padding:2rem 5%;border-top:1px solid var(--m4);text-align:center;color:rgba(245,240,232,.35);font-size:12px">
+  <div class="social-links">
+    <a href="https://x.com/hann_369" target="_blank" rel="noopener" class="social-link" aria-label="X"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+    <a href="https://www.youtube.com/@hann.369" target="_blank" rel="noopener" class="social-link" aria-label="YouTube"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg></a>
+  </div>
+  <p>© 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp; <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a></p>
 </footer>
 
-</div>
-
+<!-- accordion -->
 <script>
-const questions=document.querySelectorAll(".faq-question");
-questions.forEach(q=>{
-q.addEventListener("click",()=>{
-const answer=q.nextElementSibling;
-const open=q.getAttribute("aria-expanded")==="true";
-document.querySelectorAll(".faq-answer").forEach(a=>a.style.maxHeight=null);
-document.querySelectorAll(".faq-question").forEach(b=>b.setAttribute("aria-expanded","false"));
-if(!open){
-q.setAttribute("aria-expanded","true");
-answer.style.maxHeight=answer.scrollHeight+"px";
-}
-});
+document.querySelectorAll('.faq-question').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var expanded=this.getAttribute('aria-expanded')==='true';
+    document.querySelectorAll('.faq-question').forEach(function(b){b.setAttribute('aria-expanded','false');});
+    document.querySelectorAll('.faq-answer').forEach(function(a){a.classList.remove('open');});
+    if(!expanded){this.setAttribute('aria-expanded','true');this.nextElementSibling.classList.add('open');}
+  });
 });
 </script>
-
-  
-
-
-
-
-
+<!-- reveal -->
+<script>var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('nd-in');io.unobserve(x.target);}});},{threshold:.08});document.querySelectorAll('.nd-r').forEach(function(el){io.observe(el);});</script>
+<!-- anime.js newsletter (preserved) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.0/anime.min.js"></script>
 <script>
-/* ── Noodrop unified header JS ── */
-(function () {
-  var burger = document.getElementById('ndBurger');
-  var nav    = document.getElementById('ndNav');
-  var header = document.getElementById('ndHeader');
-  if (!burger || !nav) return;
-
-  function openMenu() {
-    nav.classList.add('is-open');
-    burger.classList.add('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.add('is-open');
-    burger.setAttribute('aria-expanded', 'true');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMenu() {
-    nav.classList.remove('is-open');
-    burger.classList.remove('is-open');
-    var bd = document.getElementById('ndNavBackdrop');
-    if (bd) bd.classList.remove('is-open');
-    burger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
-  }
-
-  burger.addEventListener('click', function () {
-    nav.classList.contains('is-open') ? closeMenu() : openMenu();
-  });
-  var closeBtn = document.getElementById('ndNavClose');
-  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-  var backdrop = document.getElementById('ndNavBackdrop');
-  if (backdrop) backdrop.addEventListener('click', closeMenu);
-  nav.querySelectorAll('.nd-nav__link').forEach(function (a) {
-    a.addEventListener('click', closeMenu);
-  });
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeMenu();
-  });
-  window.addEventListener('resize', function () {
-    if (window.innerWidth > 768) closeMenu();
-  });
-  if (header) {
-    window.addEventListener('scroll', function () {
-      header.classList.toggle('scrolled', window.scrollY > 10);
-    }, { passive: true });
-  }
+(function(){
+function burstParticles(btn){var rect=btn.getBoundingClientRect(),cx=rect.left+rect.width/2,cy=rect.top+rect.height/2+window.scrollY,colors=['#E8541A','#ffb347','#F5F0E8','#4b607f','#fff'],dots=[];for(var i=0;i<14;i++){var d=document.createElement('div');d.style.cssText='position:fixed;width:8px;height:8px;border-radius:50%;background:'+colors[i%colors.length]+';left:'+cx+'px;top:'+cy+'px;transform:translate(-50%,-50%);pointer-events:none;z-index:9999';document.body.appendChild(d);dots.push(d);}anime({targets:dots,translateX:function(){return anime.random(-90,90);},translateY:function(){return anime.random(-90,90);},scale:[1,0],opacity:[1,0],duration:700,easing:'easeOutExpo',delay:anime.stagger(30),complete:function(){dots.forEach(function(d){d.parentNode&&d.parentNode.removeChild(d);});}});}
+function rippleEffect(btn){var r=document.createElement('span'),size=Math.max(btn.offsetWidth,btn.offsetHeight)*2;r.style.cssText='position:absolute;border-radius:50%;width:'+size+'px;height:'+size+'px;background:rgba(255,255,255,0.35);top:50%;left:50%;transform:translate(-50%,-50%) scale(0);pointer-events:none';btn.style.position='relative';btn.style.overflow='hidden';btn.appendChild(r);anime({targets:r,scale:[0,1],opacity:[0.6,0],duration:600,easing:'easeOutExpo',complete:function(){r.parentNode&&r.parentNode.removeChild(r);}});}
+function bounceBtn(btn){anime({targets:btn,scale:[1,.93,1.04,1],duration:420,easing:'easeOutElastic(1,0.6)'});}
+function confirmText(btn){var orig=btn.textContent;anime({targets:btn,opacity:[1,0],duration:160,easing:'easeInQuad',complete:function(){btn.textContent='✓ Subscribed!';btn.style.background='#4b607f';anime({targets:btn,opacity:[0,1],duration:200,easing:'easeOutQuad',complete:function(){setTimeout(function(){anime({targets:btn,opacity:[1,0],duration:160,complete:function(){btn.textContent=orig;btn.style.background='';anime({targets:btn,opacity:[0,1],duration:200});}});},2200);}});}});}
+function attachAnimation(){var w=document.getElementById('kitEmbedWrapper');if(!w)return;var btn=w.querySelector('button[type="submit"],input[type="submit"]');if(!btn){setTimeout(attachAnimation,400);return;}if(btn._animated)return;btn._animated=true;btn.addEventListener('click',function(){bounceBtn(btn);rippleEffect(btn);burstParticles(btn);confirmText(btn);});}
+setTimeout(attachAnimation,600);
 })();
 </script>
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
-    });
-  }
-</script>
-<script>
-  // ── Dark mode ──
-  (function() {
-    var toggle = document.getElementById('themeToggle');
-    var isDark = localStorage.getItem('darkMode') === 'true';
-    function applyTheme(dark) {
-      document.body.classList.toggle('dark', dark);
-      if (toggle) toggle.classList.toggle('active', dark);
-    }
-    applyTheme(isDark);
-    if (toggle) {
-      toggle.addEventListener('click', function() {
-        isDark = !isDark;
-        localStorage.setItem('darkMode', isDark);
-        applyTheme(isDark);
-        if (window.reinitParticles) window.reinitParticles(isDark);
-      });
-    }
-  })();
-</script>
+<script>(function(){var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');if(!b||!n)return;function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});window.addEventListener('resize',function(){if(window.innerWidth>768)c();});if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});})();</script>
+<script>(function(){var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';function apply(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);}apply(isLight);if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);});})();</script>
+<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
 </body>
 </html>
