@@ -1,7 +1,6 @@
-/* Noodrop Service Worker – v2 */
-/* ⚠️  Bump the version string (v2 → v3 etc.) on every deploy
-        so returning users get fresh files immediately.          */
-const CACHE = 'noodrop-v2';
+/* Noodrop Service Worker — v4 */
+/* Bump version string on every deploy so users get fresh files. */
+const CACHE = 'noodrop-v4';
 const OFFLINE_URL = '/404.html';
 
 const PRECACHE = [
@@ -16,8 +15,12 @@ const PRECACHE = [
   '/nooai.html',
   '/profile.html',
   '/impressum.html',
+  '/blog.html',
+  '/post.html',
+  '/skillmaxxing.html',
   '/global.css',
   '/data.js',
+  '/i18n.js',
   '/firebase-config.js',
   '/manifest.json',
   OFFLINE_URL
@@ -42,7 +45,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
   const url = new URL(event.request.url);
-  // Only cache same-origin requests
   if (url.origin !== location.origin) return;
 
   event.respondWith(
