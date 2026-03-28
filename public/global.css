@@ -343,34 +343,51 @@ body.light .toggle-knob { transform: translateX(18px); background: var(--orange)
   .nd-header { padding: 0 20px; }
   .nd-burger { display: flex; }
 
+  /* Backdrop — must be outside header in HTML (fixed to viewport) */
   .nd-nav-backdrop {
-    display: block; position: fixed; inset: 0;
+    display: block;
+    position: fixed; inset: 0;
     background: rgba(0,0,0,0.55);
     backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-    z-index: 799; opacity: 0; pointer-events: none;
+    z-index: 799;
+    opacity: 0;
+    pointer-events: none;
     transition: opacity 0.3s ease;
   }
-  .nd-nav-backdrop.is-open { opacity: 1; pointer-events: all; }
+  .nd-nav-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
 
+  /* Nav sheet — fixed to bottom of viewport, NOT clipped by header */
   .nd-nav {
-    position: fixed; bottom: 0; left: 0; right: 0; top: auto;
+    position: fixed !important;
+    bottom: 0; left: 0; right: 0; top: auto !important;
     flex-direction: column; align-items: stretch;
     background: rgba(17,17,16,0.98);
     backdrop-filter: blur(32px);
     -webkit-backdrop-filter: blur(32px);
-    z-index: 800; padding: 0; margin: 0;
+    z-index: 800;
+    padding: 0; margin: 0;
     border-radius: 20px 20px 0 0;
     box-shadow: 0 -8px 48px rgba(0,0,0,0.4);
     border-top: 1px solid var(--m4);
     transform: translateY(100%);
     transition: transform 0.36s cubic-bezier(0.32,0.72,0,1);
-    pointer-events: none; max-height: 85svh; overflow-y: auto;
+    pointer-events: none;
+    max-height: 85svh;
+    overflow-y: auto;
+    /* critical: break out of any parent stacking context */
+    will-change: transform;
   }
   body.light .nd-nav {
     background: rgba(250,250,248,0.98);
     border-top-color: rgba(200,180,160,0.3);
   }
-  .nd-nav.is-open { transform: translateY(0); pointer-events: all; }
+  .nd-nav.is-open {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
   .nd-nav::before {
     content: ''; display: block; width: 36px; height: 3px;
     background: var(--m3); border-radius: 2px;
@@ -388,13 +405,17 @@ body.light .toggle-knob { transform: translateX(18px); background: var(--orange)
   }
   body.light .nd-nav-title { color: #1C1C1A; }
   .nd-nav-close {
-    display: flex; width: 34px; height: 34px; border-radius: 50%;
+    display: flex; width: 44px; height: 44px; border-radius: 50%;
     background: var(--m4); border: none; cursor: pointer;
     align-items: center; justify-content: center;
-    color: var(--m2); font-size: 1rem;
+    color: var(--m2); font-size: 1.1rem;
     transition: background 0.2s, color 0.2s;
+    /* ensure it's always tappable */
+    position: relative; z-index: 1;
+    -webkit-tap-highlight-color: transparent;
   }
-  .nd-nav-close:hover { background: var(--orange-dim); color: var(--orange); }
+  .nd-nav-close:hover,
+  .nd-nav-close:active { background: var(--orange-dim); color: var(--orange); }
 
   .nd-nav__link {
     font-size: 15px; font-weight: 400;
@@ -403,10 +424,13 @@ body.light .toggle-knob { transform: translateX(18px); background: var(--orange)
     justify-content: space-between;
     border-bottom: 1px solid var(--m4);
     color: var(--m2);
+    min-height: 52px; /* generous touch target */
+    -webkit-tap-highlight-color: transparent;
   }
   .nd-nav__link:last-of-type { border-bottom: none; }
   .nd-nav__link.active { color: var(--cream); background: rgba(245,240,232,0.03); }
-  .nd-nav__link:hover { background: var(--m4); color: var(--cream); }
+  .nd-nav__link:hover,
+  .nd-nav__link:active { background: var(--m4); color: var(--cream); }
   .nd-nav__link .nav-arrow { font-size: 0.85rem; opacity: 0.3; transition: opacity 0.2s, transform 0.2s; }
   .nd-nav__link.active .nav-arrow,
   .nd-nav__link:hover .nav-arrow { opacity: 0.7; transform: translateX(3px); }
