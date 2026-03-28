@@ -916,41 +916,104 @@ a, button, [class*="btn"], [class*="card"],
 /* ── 22. Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
   body { padding-top: 60px; }
-  .container, [class*="container"] { padding-left: 1.2rem; padding-right: 1.2rem; }
+  .container, [class*="container"] { padding-left: 1.1rem; padding-right: 1.1rem; }
   h1 { font-size: clamp(1.8rem, 7vw, 2.4rem); }
   h2 { font-size: clamp(1.2rem, 5vw, 1.7rem); }
+
+  /* Page hero */
   .page-hero {
     flex-direction: column; align-items: flex-start;
-    gap: 1.5rem; padding: 2rem 1.2rem;
+    gap: 1.2rem; padding: 1.8rem 1.1rem 1.4rem;
   }
   .hero-right { width: 100%; align-items: flex-start; }
-  .hero-cta { flex-direction: column; width: 100%; gap: 0.8rem; }
-  .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+  .hero-cta { flex-direction: column; width: 100%; gap: 0.7rem; }
+  .btn-primary, .btn-secondary { width: 100%; text-align: center; justify-content: center; }
+
+  /* Grids */
   .grid, .reviews-grid, .products-grid, .purchased-grid,
   .available-grid, .product-layout, .content-grid {
-    grid-template-columns: 1fr; gap: 1rem;
+    grid-template-columns: 1fr; gap: 0.8rem;
   }
+
+  /* Cards */
   .card-actions, .stack-actions { flex-direction: column; }
   .card-actions .btn, .stack-actions .btn, .download-btn { width: 100%; }
   .stack-actions .btn-reset, .stack-actions .btn-save { width: 100% !important; flex: none !important; }
   .purchased-card { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+
+  /* Profile */
   .profile-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .logout-btn { width: 100%; }
-  .modal-box { width: 100%; max-width: 100%; margin: 0; padding: 1.8rem 1.4rem; border-radius: 16px; }
+
+  /* Modal — bottom sheet style on mobile */
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal-box {
+    width: 100%; max-width: 100%; margin: 0;
+    padding: 1.8rem 1.2rem 2rem;
+    border-radius: 20px 20px 0 0;
+    border-bottom: none;
+    padding-bottom: calc(1.8rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Cookie */
   #cookieConsent { flex-direction: column; text-align: center; gap: 0.75rem; padding: 1rem; }
-  footer { padding: 1.6rem 1rem; font-size: 0.82rem; }
-  .filter-bar { padding: 0.9rem 1rem; gap: 0.6rem; }
+
+  /* Footer */
+  footer { padding: 1.4rem 1rem; font-size: 0.82rem; }
+
+  /* Filter bar */
+  .filter-bar { padding: 0.8rem 0.9rem; gap: 0.5rem; flex-direction: column; align-items: stretch; }
   .filter-group { min-width: 100%; }
   .results-count { margin-left: 0; }
+
+  /* Grids with special mobile layout */
   .pharma-grid { grid-template-columns: 1fr 1fr !important; }
   .pharma-grid > :last-child:nth-child(odd) { grid-column: 1/-1; }
-  .available-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; }
+  .available-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.7rem; }
+
+  /* Compound hero */
   .compound-hero { flex-direction: column !important; gap: 1rem !important; }
   .compound-hero-right { justify-content: flex-start !important; }
+
+  /* Category pills — horizontal scroll instead of wrap */
+  .category-pills-wrap, [class*="category-filter"] {
+    display: flex; overflow-x: auto; flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; gap: 0.4rem;
+    padding-bottom: 2px;
+  }
+  .category-pills-wrap::-webkit-scrollbar { display: none; }
+  .category-btn { white-space: nowrap; flex-shrink: 0; }
+
+  /* Search input — full width */
+  #search, #stackSearch {
+    width: 100%; font-size: 16px; /* prevents iOS zoom */
+  }
+
+  /* Stack panel adjustments */
+  .stack-item { gap: 0.6rem; }
+
+  /* Compound description page */
+  .compound-desc { padding: 1rem; }
+  .evidence-panel { padding: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .page-hero { padding: 1.4rem 1rem 1.2rem; }
+  .modal-box { padding: 1.5rem 1rem 2rem; }
+  .available-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Nav login button — hide on very small screens to save space */
+  .nd-header__right .nav-login-text { display: none; }
+
+  /* Card grid forced 1-col */
+  .pharma-grid { grid-template-columns: 1fr !important; }
+  .pharma-grid > :last-child:nth-child(odd) { grid-column: auto; }
 }
 
 @media (max-width: 380px) {
-  .page-hero { padding: 1.8rem 1rem; }
-  .modal-box { padding: 1.6rem 1.2rem; }
+  .page-hero { padding: 1.2rem 0.9rem; }
+  .modal-box { padding: 1.4rem 0.9rem 1.8rem; }
   .available-grid { grid-template-columns: 1fr; }
+  h1 { font-size: clamp(1.6rem, 8vw, 2rem); }
 }

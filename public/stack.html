@@ -157,6 +157,7 @@
     .stack-panel-mobile-wrap.is-open{pointer-events:all}
   }
   </style>
+  <script src="i18n.js"></script>
 </head>
 <body>
 
@@ -167,18 +168,18 @@
   <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
     <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
     <div class="nd-nav-links">
-      <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
-      <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
-      <a href="stack.html"   class="nd-nav__link active">Stacks<span class="nav-arrow">›</span></a>
-      <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
-      <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
-      <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-      <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
+      <a href="landing.html"      class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"        class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"        class="nd-nav__link active" data-i18n="nav.stacks" aria-current="page">Stacks<span class="nav-arrow">›</span></a>
+      <a href="skillmaxxing.html" class="nd-nav__link" data-i18n="nav.skillmaxxing">Skillmaxxing<span class="nav-arrow">›</span></a>
+      <a href="blog.html"         class="nd-nav__link" data-i18n="nav.blog">Blog<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html"  class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"        class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
     </div>
   </nav>
   <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
   <div class="nd-header__right">
-    <button class="auth-btn" id="authBtn">Login</button>
+    <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
     <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
     <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
   </div>
@@ -326,10 +327,32 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 // unified header
 (function(){var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');if(!b||!n)return;function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});window.addEventListener('resize',function(){if(window.innerWidth>768)c();});if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});})();
 </script>
-<script>if('serviceWorker'in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){});});}</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+      reg.addEventListener('updatefound', function() {
+        var newSW = reg.installing;
+        newSW.addEventListener('statechange', function() {
+          if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+            window.location.reload();
+          }
+        });
+      });
+    }).catch(function() {});
+    navigator.serviceWorker.addEventListener('controllerchange', function() {
+      window.location.reload();
+    });
+    navigator.serviceWorker.addEventListener('message', function(e) {
+      if (e.data && e.data.type === 'SW_UPDATED') window.location.reload();
+    });
+  });
+}
+</script>
 <script>
 // mobile FAB
 (function(){var fab=document.getElementById('viewStackFab'),panel=document.querySelector('.stack-panel'),backdrop=document.getElementById('stackBackdrop'),wrap=document.getElementById('stackPanelWrap');if(!fab||!panel)return;function isMob(){return window.innerWidth<=768;}function openSheet(){panel.classList.add('sheet-open');if(backdrop)backdrop.classList.add('is-open');if(wrap)wrap.classList.add('is-open');document.body.style.overflow='hidden';}function closeSheet(){panel.classList.remove('sheet-open');if(backdrop)backdrop.classList.remove('is-open');if(wrap)wrap.classList.remove('is-open');document.body.style.overflow='';}fab.addEventListener('click',function(){isMob()&&(panel.classList.contains('sheet-open')?closeSheet():openSheet());});if(backdrop)backdrop.addEventListener('click',closeSheet);function hookFab(){var count=(window.currentStack||[]).length;var badge=document.getElementById('fabCount');if(badge)badge.textContent=count;fab.style.display=(isMob()&&count>0)?'flex':'none';if(count===0)closeSheet();}var interval=setInterval(function(){if(typeof window.currentStack!=='undefined'){['addToStack','removeFromStack','clearStack'].forEach(function(fn){var orig=window[fn];if(orig&&!orig._fabHooked){window[fn]=function(){orig.apply(this,arguments);hookFab();};window[fn]._fabHooked=true;}});hookFab();clearInterval(interval);}},200);window.addEventListener('resize',hookFab);})();
 </script>
+<script>document.addEventListener("DOMContentLoaded",function(){i18n.init();});</script>
 </body>
 </html>
