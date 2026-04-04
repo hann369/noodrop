@@ -26,18 +26,18 @@
     <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
       <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
       <div class="nd-nav-links">
-        <a href="landing.html" class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
-        <a href="index.html"   class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
-        <a href="stack.html"   class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
-        <a href="marketplace.html" class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+        <a href="landing.html" class="nd-nav__link">Home<span class="nav-arrow">›</span></a>
+        <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
+        <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
+        <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
         <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
         <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
-        <a href="nooai.html"   class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
+        <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
       </div>
     </nav>
     <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
     <div class="nd-header__right">
-      <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
+      <button class="auth-btn" id="authBtn">Login</button>
       <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
       <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
     </div>
@@ -47,12 +47,12 @@
   <button class="quiz-back" id="backBtn" aria-label="Zurück" style="display:none">← Zurück</button>
 
   <!-- Step counter -->
-  <div class="quiz-step-label" id="stepLabel">Schritt 1 von 5</div>
+  <div class="quiz-step-label" id="stepLabel">Frage 1 von 11</div>
 
   <!-- Quiz container -->
   <main class="quiz-container" id="quizContainer">
 
-    <!-- Step 1: Goal -->
+    <!-- 1: Hauptziel -->
     <div class="quiz-step active" data-step="1">
       <h1 class="quiz-headline">Was ist dein<br><em>Hauptziel?</em></h1>
       <p class="quiz-desc">Wähle das, was dir gerade am wichtigsten ist.</p>
@@ -85,10 +85,10 @@
       </div>
     </div>
 
-    <!-- Step 2: Experience -->
+    <!-- 2: Erfahrungslevel -->
     <div class="quiz-step" data-step="2">
       <h1 class="quiz-headline">Wie erfahren bist du<br><em>mit Nootropics?</em></h1>
-      <p class="quiz-desc">Das beeinflusst welche Compounds wir empfehlen.</p>
+      <p class="quiz-desc">Das beeinflusst welche Compounds und Dosierungen wir empfehlen.</p>
       <div class="quiz-options" data-key="experience">
         <button class="quiz-option" data-value="beginner">
           <span class="option-icon">🌱</span>
@@ -108,7 +108,7 @@
       </div>
     </div>
 
-    <!-- Step 3: Problem -->
+    <!-- 3: Größtes Problem -->
     <div class="quiz-step" data-step="3">
       <h1 class="quiz-headline">Was ist dein<br><em>größtes Problem?</em></h1>
       <p class="quiz-desc">Sei ehrlich — das macht dein Protokoll präziser.</p>
@@ -141,7 +141,7 @@
       </div>
     </div>
 
-    <!-- Step 4: Lifestyle -->
+    <!-- 4: Lifestyle -->
     <div class="quiz-step" data-step="4">
       <h1 class="quiz-headline">Wie sieht dein<br><em>Alltag aus?</em></h1>
       <p class="quiz-desc">Verschiedene Lifestyles brauchen verschiedene Stacks.</p>
@@ -169,7 +169,7 @@
       </div>
     </div>
 
-    <!-- Step 5: Medication -->
+    <!-- 5: Medikamente/Supplemente -->
     <div class="quiz-step" data-step="5">
       <h1 class="quiz-headline">Nimmst du aktuell<br><em>andere Mittel?</em></h1>
       <p class="quiz-desc">Wichtig für Sicherheit und Interaktions-Check.</p>
@@ -192,16 +192,116 @@
       </div>
     </div>
 
+    <!-- 6: Koffein-Konsum -->
+    <div class="quiz-step" data-step="6">
+      <h1 class="quiz-headline">Wie viel Koffein<br><em>nimmst du täglich?</em></h1>
+      <p class="quiz-desc">Beeinflusst ob und wie wir Koffein in deinen Stack integrieren.</p>
+      <div class="quiz-options" data-key="caffeine">
+        <button class="quiz-option" data-value="none">
+          <span class="option-icon">🚫</span>
+          <span class="option-label">Kein Koffein</span>
+          <span class="option-sub">Ich trinke keinen Kaffee oder Energy Drinks</span>
+        </button>
+        <button class="quiz-option" data-value="low">
+          <span class="option-icon">☕</span>
+          <span class="option-label">1–2 Tassen/Tag</span>
+          <span class="option-sub">Leichter Kaffee-Konsum</span>
+        </button>
+        <button class="quiz-option" data-value="moderate">
+          <span class="option-icon">☕☕</span>
+          <span class="option-label">3–4 Tassen/Tag</span>
+          <span class="option-sub">Regelmäßiger Konsum über den Tag</span>
+        </button>
+        <button class="quiz-option" data-value="high">
+          <span class="option-icon">☕☕☕</span>
+          <span class="option-label">5+ Tassen/Tag</span>
+          <span class="option-sub">Hoher Konsum — wir prüfen ob das sinnvoll ist</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 7: Budget -->
+    <div class="quiz-step" data-step="7">
+      <h1 class="quiz-headline">Was ist dir dein Stack<br><em>pro Monat wert?</em></h1>
+      <p class="quiz-desc">Wir optimieren für dein Budget — gute Stacks gibt es in jeder Preisklasse.</p>
+      <div class="quiz-options" data-key="budget">
+        <button class="quiz-option" data-value="low">
+          <span class="option-icon">💰</span>
+          <span class="option-label">Unter €20/Monat</span>
+          <span class="option-sub">Budget-optimiert — die effektivsten Basics</span>
+        </button>
+        <button class="quiz-option" data-value="medium">
+          <span class="option-icon">💰💰</span>
+          <span class="option-label">€20–50/Monat</span>
+          <span class="option-sub">Ausgewogen — Qualität + Preis-Leistung</span>
+        </button>
+        <button class="quiz-option" data-value="high">
+          <span class="option-icon">💰💰💰</span>
+          <span class="option-label">€50+/Monat</span>
+          <span class="option-sub">Premium — beste Qualität, volle Palette</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 8: Schlafqualität (Slider) -->
+    <div class="quiz-step" data-step="8">
+      <h1 class="quiz-headline">Wie bewertest du<br><em>deinen Schlaf?</em></h1>
+      <p class="quiz-desc">1 = fühlst dich gerädert, 10 = perfekt erholt.</p>
+      <div class="quiz-slider-wrap">
+        <div class="quiz-slider-labels">
+          <span>😫 Gerädert</span>
+          <span>😴 Perfekt erholt</span>
+        </div>
+        <input type="range" min="1" max="10" value="5" class="quiz-slider" id="sleepSlider" data-key="sleep_quality">
+        <div class="quiz-slider-value" id="sleepValue">5 / 10</div>
+      </div>
+      <p class="quiz-hint">Wie fühlst du dich morgens nach dem Aufwachen?</p>
+    </div>
+
+    <!-- 9: Stresslevel (Slider) -->
+    <div class="quiz-step" data-step="9">
+      <h1 class="quiz-headline">Wie hoch ist dein<br><em>Stresslevel?</em></h1>
+      <p class="quiz-desc">1 = sehr entspannt, 10 = chronisch gestresst.</p>
+      <div class="quiz-slider-wrap">
+        <div class="quiz-slider-labels">
+          <span>😌 Entspannt</span>
+          <span>🤯 Chronisch gestresst</span>
+        </div>
+        <input type="range" min="1" max="10" value="5" class="quiz-slider" id="stressSlider" data-key="stress_level">
+        <div class="quiz-slider-value" id="stressValue">5 / 10</div>
+      </div>
+      <p class="quiz-hint">Denk an die letzten 2 Wochen — nicht nur heute.</p>
+    </div>
+
+    <!-- 10: Besonderheiten (Freitext) -->
+    <div class="quiz-step" data-step="10">
+      <h1 class="quiz-headline">Gibt es etwas<br><em>das wir wissen sollten?</em></h1>
+      <p class="quiz-desc">Vorerkrankungen, Allergien, aktuelle Beschwerden — alles was deinen Stack beeinflussen könnte.</p>
+      <textarea class="quiz-textarea" id="notesInput" data-key="notes" placeholder="z.B. Hashimoto, Reizdarm, häufige Kopfschmerzen, nehme seit 3 Monaten Ashwagandha..." maxlength="500"></textarea>
+      <div class="quiz-textarea-counter"><span id="notesCount">0</span>/500</div>
+      <p class="quiz-hint">Optional — aber hilfreich für ein präziseres Protokoll.</p>
+    </div>
+
+    <!-- 11: Erwartungen (Freitext optional) -->
+    <div class="quiz-step" data-step="11">
+      <h1 class="quiz-headline">Was erwartest du dir<br><em>von deinem Stack?</em></h1>
+      <p class="quiz-desc">Beschreibe in eigenen Worten was sich ändern soll.</p>
+      <textarea class="quiz-textarea" id="expectationsInput" data-key="expectations" placeholder="z.B. Ich möchte morgens klarer denken können, nachmittags keinen Crash mehr haben, und besser mit Stress umgehen..." maxlength="500"></textarea>
+      <div class="quiz-textarea-counter"><span id="expectationsCount">0</span>/500</div>
+      <p class="quiz-hint">Optional — hilft NooAI dein Protokoll noch persönlicher zu machen.</p>
+    </div>
+
     <!-- Loading screen -->
     <div class="quiz-step quiz-loading" data-step="loading">
       <div class="loading-orb"></div>
-      <h2 class="loading-headline">Dein Stack wird berechnet...</h2>
+      <h2 class="loading-headline">Dein persönlicher Stack wird erstellt...</h2>
       <div class="loading-steps" id="loadingSteps">
-        <p class="loading-step active" data-idx="0">Ziel analysiert: <strong id="loadGoal"></strong></p>
-        <p class="loading-step" data-idx="1">Erfahrungslevel berücksichtigt</p>
-        <p class="loading-step" data-idx="2">Compounds aus PubMed-Datenbank geprüft</p>
-        <p class="loading-step" data-idx="3">Interaktionen gecheckt</p>
-        <p class="loading-step" data-idx="4">Stack personalisiert ✓</p>
+        <p class="loading-step active" data-idx="0">Profil analysiert ✓</p>
+        <p class="loading-step" data-idx="1">NooAI generiert deinen Stack</p>
+        <p class="loading-step" data-idx="2">Interaktionen geprüft</p>
+        <p class="loading-step" data-idx="3">Dosierungen personalisiert</p>
+        <p class="loading-step" data-idx="4">Tagesplan erstellt</p>
+        <p class="loading-step" data-idx="5">Protokoll fertig ✓</p>
       </div>
     </div>
 
@@ -227,7 +327,7 @@
   <script>
   (function(){
     var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';
-    function apply(l){document.body.classList.toggle('light',l);document.body.classList.toggle('quiz-body',true);if(t)t.classList.toggle('active',l);}
+    function apply(l){document.body.classList.toggle('light',l);if(t)t.classList.toggle('active',l);isLight=l;}
     apply(isLight);
     if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);});
   })();

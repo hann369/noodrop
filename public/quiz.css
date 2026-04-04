@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz.css
-   Scoped styles for the Stack Quiz flow.
+   NOODROP — quiz.css  v2
+   11-Schritte Quiz mit Freitext-Feldern, Slidern und MC-Cards.
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Body reset ── */
+/* ── Body ── */
 .quiz-body {
   background: var(--color-bg);
   min-height: 100vh;
@@ -15,7 +15,7 @@
   padding-bottom: 100px;
 }
 
-/* ── Progress bar (fixed top) ── */
+/* ── Progress bar ── */
 .quiz-progress-track {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -84,20 +84,27 @@
 /* ── Headlines ── */
 .quiz-headline {
   font-family: var(--font-display);
-  font-size: clamp(28px, 5vw, 38px);
+  font-size: clamp(26px, 5vw, 36px);
   font-weight: 600;
   color: var(--color-cream);
   line-height: 1.2;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .quiz-headline em {
   font-style: normal;
   color: var(--color-orange);
 }
 .quiz-desc {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--color-muted);
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.quiz-hint {
+  font-size: 12px;
+  color: var(--color-muted);
+  margin-top: 12px;
+  font-style: italic;
   line-height: 1.5;
 }
 
@@ -175,6 +182,93 @@
   line-height: 1.4;
 }
 
+/* ── Slider ── */
+.quiz-slider-wrap {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+}
+.quiz-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.quiz-slider-labels span {
+  font-size: 11px;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.quiz-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--m4);
+  outline: none;
+  transition: background var(--transition-fast);
+}
+.quiz-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-orange);
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(232,84,26,0.4);
+  transition: transform var(--transition-fast);
+}
+.quiz-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.quiz-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-orange);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 12px rgba(232,84,26,0.4);
+}
+.quiz-slider-value {
+  text-align: center;
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-orange);
+}
+
+/* ── Freitext ── */
+.quiz-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+}
+.quiz-textarea:focus {
+  outline: none;
+  border-color: var(--color-border-glow);
+}
+.quiz-textarea::placeholder {
+  color: var(--color-muted);
+}
+.quiz-textarea-counter {
+  text-align: right;
+  font-size: 11px;
+  color: var(--color-muted);
+  margin-top: 8px;
+}
+
 /* ── Bottom bar ── */
 .quiz-bottom {
   position: fixed;
@@ -241,7 +335,7 @@
 
 /* ── Mobile ── */
 @media (max-width: 400px) {
-  .quiz-headline { font-size: 26px; }
+  .quiz-headline { font-size: 24px; }
   .quiz-option { padding: 14px 14px; }
   .option-label { font-size: 14px; }
 }
@@ -262,3 +356,8 @@ body.light .quiz-bottom { background: linear-gradient(to top, #fafaf8 70%, trans
 body.light .loading-headline { color: #1c1c1a; }
 body.light .loading-step { color: rgba(28,28,26,0.4); }
 body.light .loading-step.active { color: #2c2c2a; }
+body.light .quiz-slider-wrap { background: #fff; border-color: rgba(200,180,160,0.25); }
+body.light .quiz-slider { background: rgba(28,28,26,0.1); }
+body.light .quiz-textarea { background: #fff; border-color: rgba(200,180,160,0.25); color: #1c1c1a; }
+body.light .quiz-textarea::placeholder { color: rgba(28,28,26,0.35); }
+body.light .quiz-hint { color: rgba(28,28,26,0.4); }

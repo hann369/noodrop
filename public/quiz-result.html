@@ -78,13 +78,18 @@
       <section class="compounds-free">
         <div class="section-label">
           <span class="label-dot free"></span>
-          Deine 3 Kern-Compounds — kostenlos
+          <span id="compoundsLabel">Dein NooAI-Stack wird generiert…</span>
         </div>
-        <div class="compounds-list" id="compoundsList"></div>
+        <div class="compounds-list" id="compoundsList">
+          <div style="text-align:center;padding:2rem;">
+            <div class="spinner" style="margin:0 auto 0.5rem;width:24px;height:24px;"></div>
+            <p style="color:var(--color-muted);font-size:13px;">NooAI erstellt deinen personalisierten Stack…</p>
+          </div>
+        </div>
       </section>
 
-      <!-- Locked section -->
-      <section class="locked-section">
+      <!-- Locked section (hidden until AI is done) -->
+      <section class="locked-section" id="lockedSection" style="display:none;">
         <div class="section-label">
           <span class="label-dot locked"></span>
           Vollständiges Protokoll

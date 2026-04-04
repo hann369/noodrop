@@ -1,14 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz-result.js
-   Result page logic: email capture → render compounds → Stripe.
+   NOODROP — quiz-result.js  v2
+   Email Capture → NooAI generiert Stack → Stripe Paywall.
    ═══════════════════════════════════════════════════════════════ */
 
 const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 const goal = answers.goal || 'focus';
-const stack = STACKS[goal] || STACKS.focus;
-const experience = answers.experience || 'beginner';
-const lifestyle = answers.lifestyle || 'office';
-const medication = answers.medication || 'none';
 
 const GOAL_LABELS_MAP = {
   focus: 'Fokus & Konzentration',
@@ -18,10 +14,56 @@ const GOAL_LABELS_MAP = {
   memory: 'Gedächtnis & Lernen'
 };
 
-/* ── Library link helper ── */
-function makeLibraryLink(compound) {
-  if (compound.cid) return 'compound.html?cid=' + compound.cid;
-  return 'index.html?q=' + encodeURIComponent(compound.name);
+/* NooAI-generated Stack (wird asynchron geladen) */
+let aiStack = null;
+let aiError = null;
+
+/* ── NooAI Stack generieren ── */
+async function generateStack() {
+  try {
+    const res = await fetch('/api/generate-stack', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers: answers }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || 'NooAI Fehler');
+    }
+
+    aiStack = data.stack;
+    console.log('[NooAI] Generated stack:', aiStack);
+
+    /* Stack in sessionStorage speichern für die Unlock-Seite */
+    sessionStorage.setItem('noodrop_ai_stack', JSON.stringify(aiStack));
+
+    /* Label updaten */
+    const label = document.getElementById('compoundsLabel');
+    if (label) label.textContent = 'Dein personalisierter NooAI-Stack — ' + aiStack.compounds.length + ' Compounds';
+
+    /* Badge updaten */
+    const badge = document.getElementById('resultBadge');
+    if (badge) badge.textContent = 'Stack für: ' + (aiStack.reasoning ? 'Personalisiert' : GOAL_LABELS_MAP[goal]);
+
+    /* Compounds rendern */
+    renderCompounds();
+
+    /* Locked Section sichtbar machen */
+    const locked = document.getElementById('lockedSection');
+    if (locked) locked.style.display = 'block';
+
+  } catch (err) {
+    console.error('[NooAI] Generation failed:', err);
+    aiError = err.message;
+
+    /* Fallback: zeige Fehler */
+    const container = document.getElementById('compoundsList');
+    if (container) {
+      container.innerHTML = '<p style="color:var(--color-muted);padding:2rem;text-align:center;">NooAI konnte deinen Stack nicht generieren. Bitte versuche es erneut.</p>';
+    }
+  }
 }
 
 /* ── Email gate ── */
@@ -48,6 +90,7 @@ function saveEmailLead(email) {
       goal: goal,
       experience: answers.experience || '',
       problem: answers.problem || '',
+      lifestyle: answers.lifestyle || '',
       timestamp: firebase.firestore.FieldValue.serverTimestamp()
     }).catch(function(err) { console.error('Error saving lead:', err); });
   }
@@ -57,35 +100,35 @@ function revealResult() {
   document.getElementById('emailGate').style.display = 'none';
   document.getElementById('resultContent').style.display = 'block';
 
-  /* Update badge with goal */
-  const badge = document.getElementById('resultBadge');
-  if (badge) badge.textContent = 'Stack für: ' + (GOAL_LABELS_MAP[goal] || goal);
-
-  renderCompounds();
+  /* NooAI starten */
+  generateStack();
 
   /* Smooth scroll */
   document.getElementById('resultContent').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* ── Render compound cards — kostenloses Preview ── */
+/* ── Render compounds — kostenloses Preview ── */
 function renderCompounds() {
   const list = document.getElementById('compoundsList');
   if (!list) return;
 
-  list.innerHTML = stack.map(function(c, i) {
-    var dose = typeof c.dose === 'object' ? (c.dose[experience] || c.dose.beginner) : c.dose;
-    var link = makeLibraryLink(c);
+  if (!aiStack || !aiStack.compounds || !aiStack.compounds.length) {
+    list.innerHTML = '<p style="color:var(--color-muted);padding:2rem;">Compounds werden geladen…</p>';
+    return;
+  }
+
+  /* KOSTENLOS: Zeigt nur Namen + Benefit + Mechanismus */
+  list.innerHTML = aiStack.compounds.map(function(c, i) {
     return '<div class="compound-card" style="animation-delay: ' + (i * 80) + 'ms">' +
       '<div class="compound-header">' +
         '<span class="compound-name">' + c.name + '</span>' +
-        '<span class="compound-dose-badge">' + dose + '</span>' +
+        '<span class="compound-dose-badge">' + c.dose + '</span>' +
       '</div>' +
       '<p class="compound-benefit">' + c.benefit + '</p>' +
       '<button class="compound-mechanism-toggle" onclick="toggleMechanism(this)">' +
         '+ Wie es wirkt (Mechanismus)' +
       '</button>' +
       '<div class="mechanism-body">' + c.mechanism + '</div>' +
-      '<a href="' + link + '" class="compound-library-link">Im Compound-Archiv ansehen →</a>' +
     '</div>';
   }).join('');
 }
@@ -112,7 +155,6 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
     /* Login-Check */
     var user = firebase.auth().currentUser;
     if (!user) {
-      /* User muss eingeloggt sein */
       alert('Bitte melde dich an oder erstelle einen Account, um fortzufahren.');
       window.location.href = 'index.html';
       return;

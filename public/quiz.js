@@ -1,10 +1,15 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz.js
-   Stack Quiz flow logic.
+   NOODROP — quiz.js  v2
+   11-Schritte Quiz: MC, Slider, Freitext.
+   Sendet alle Antworten an NooAI API → personalisierter Stack.
    ═══════════════════════════════════════════════════════════════ */
 
-const STEPS = ['goal', 'experience', 'problem', 'lifestyle', 'medication'];
-const STEP_COUNT = STEPS.length;
+/* Alle 11 Schritte — welche brauchen Auswahl, welche nicht */
+const SELECT_STEPS = [1, 2, 3, 4, 5, 6, 7];  /* MC — Auswahl required */
+const SLIDER_STEPS = [8, 9];                  /* Slider — haben Default-Wert */
+const TEXT_STEPS = [10, 11];                   /* Freitext — optional */
+const STEP_COUNT = 11;
+
 const GOAL_LABELS = {
   focus: 'Fokus & Konzentration',
   energy: 'Energie & Ausdauer',
@@ -22,13 +27,61 @@ const backBtn      = document.getElementById('backBtn');
 const nextBtn      = document.getElementById('nextBtn');
 const quizBottom   = document.getElementById('quizBottom');
 
+/* ── Slider Setup ── */
+const sleepSlider = document.getElementById('sleepSlider');
+const sleepValue  = document.getElementById('sleepValue');
+const stressSlider = document.getElementById('stressSlider');
+const stressValue  = document.getElementById('stressValue');
+
+if (sleepSlider) {
+  sleepSlider.addEventListener('input', function() {
+    sleepValue.textContent = sleepSlider.value + ' / 10';
+    answers.sleep_quality = parseInt(sleepSlider.value);
+    refreshNextBtn();
+  });
+  answers.sleep_quality = parseInt(sleepSlider.value);
+}
+
+if (stressSlider) {
+  stressSlider.addEventListener('input', function() {
+    stressValue.textContent = stressSlider.value + ' / 10';
+    answers.stress_level = parseInt(stressSlider.value);
+    refreshNextBtn();
+  });
+  answers.stress_level = parseInt(stressSlider.value);
+}
+
+/* ── Freitext Counter ── */
+const notesInput = document.getElementById('notesInput');
+const notesCount = document.getElementById('notesCount');
+if (notesInput) {
+  notesInput.addEventListener('input', function() {
+    notesCount.textContent = notesInput.value.length;
+    answers.notes = notesInput.value.trim();
+    refreshNextBtn(); /* Freitext ist optional — Button immer aktiv ab Schritt 10 */
+  });
+  answers.notes = '';
+}
+
+const expectationsInput = document.getElementById('expectationsInput');
+const expectationsCount = document.getElementById('expectationsCount');
+if (expectationsInput) {
+  expectationsInput.addEventListener('input', function() {
+    expectationsCount.textContent = expectationsInput.value.length;
+    answers.expectations = expectationsInput.value.trim();
+  });
+  answers.expectations = '';
+}
+
+/* ── Progress ── */
 function setProgress(step) {
   const pct = ((step - 1) / STEP_COUNT) * 100;
   progressFill.style.width = pct + '%';
-  stepLabel.textContent = `Schritt ${step} von ${STEP_COUNT}`;
+  stepLabel.textContent = `Frage ${step} von ${STEP_COUNT}`;
   backBtn.style.display  = step > 1 ? 'block' : 'none';
 }
 
+/* ── Step Navigation ── */
 function showStep(n) {
   const current = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
   const next    = document.querySelector(`.quiz-step[data-step="${n}"]`);
@@ -45,18 +98,34 @@ function showStep(n) {
     next.classList.add('active');
     currentStep = n;
     setProgress(n);
-    quizBottom.style.display = 'flex';
+    quizBottom.style.display = TEXT_STEPS.includes(n) ? 'none' : 'flex';
     refreshNextBtn();
   }, 120);
 }
 
 function refreshNextBtn() {
-  const key = STEPS[currentStep - 1];
-  const hasAnswer = !!answers[key];
+  if (TEXT_STEPS.includes(currentStep)) {
+    /* Freitext ist optional — immer weiter */
+    nextBtn.disabled = false;
+    return;
+  }
+  if (SLIDER_STEPS.includes(currentStep)) {
+    /* Slider hat immer einen Wert */
+    nextBtn.disabled = false;
+    return;
+  }
+  /* MC steps — brauchen Auswahl */
+  const stepKey = getStepKey(currentStep);
+  const hasAnswer = !!answers[stepKey];
   nextBtn.disabled = !hasAnswer;
 }
 
-// ── Option selection ──
+function getStepKey(step) {
+  const keys = ['goal', 'experience', 'problem', 'lifestyle', 'medication', 'caffeine', 'budget', 'sleep_quality', 'stress_level', 'notes', 'expectations'];
+  return keys[step - 1];
+}
+
+/* ── MC Option Selection ── */
 document.querySelectorAll('.quiz-options').forEach(group => {
   group.addEventListener('click', e => {
     const btn = e.target.closest('.quiz-option');
@@ -73,29 +142,28 @@ document.querySelectorAll('.quiz-options').forEach(group => {
   });
 });
 
-// ── Next ──
+/* ── Next Button ── */
 nextBtn.addEventListener('click', () => {
   if (nextBtn.disabled) return;
 
   if (currentStep < STEP_COUNT) {
     showStep(currentStep + 1);
   } else {
-    startLoading();
+    startNooAIGeneration();
   }
 });
 
-// ── Back ──
+/* ── Back Button ── */
 backBtn.addEventListener('click', () => {
   if (currentStep > 1) showStep(currentStep - 1);
 });
 
-// ── Loading sequence ──
-function startLoading() {
+/* ── NooAI Generation ── */
+function startNooAIGeneration() {
   const loadingEl = document.querySelector('.quiz-step[data-step="loading"]');
   const current   = document.querySelector(`.quiz-step[data-step="${currentStep}"]`);
 
-  document.getElementById('loadGoal').textContent =
-    GOAL_LABELS[answers.goal] || answers.goal;
+  answers.goal_label = GOAL_LABELS[answers.goal] || answers.goal;
 
   current.classList.add('exit');
   quizBottom.style.display = 'none';
@@ -120,12 +188,13 @@ function animateLoadingSteps() {
       i++;
     } else {
       clearInterval(interval);
+      /* Quiz-Antworten speichern und zur Result-Seite */
       sessionStorage.setItem('noodrop_quiz', JSON.stringify(answers));
       setTimeout(() => { window.location.href = 'quiz-result.html'; }, 600);
     }
   }, 480);
 }
 
-// ── Init ──
+/* ── Init ── */
 setProgress(1);
 quizBottom.style.display = 'flex';
