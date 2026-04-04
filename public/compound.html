@@ -457,16 +457,48 @@ window.toggleFullscreen=function(){var el=document.getElementById('viewer');!doc
 // ── Bookmark ──
 function initBookmark(){
   var btn=document.getElementById('bookmarkBtn'),bookmarked=false;
-  firebase.auth().onAuthStateChanged(function(user){
-    if(!user){btn.style.opacity='0.4';btn.title='Login to bookmark';return;}
-    firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid)).get().then(function(snap){bookmarked=snap.exists;upBtn();}).catch(function(){});
-  });
-  function upBtn(){btn.classList.toggle('bookmarked',bookmarked);btn.innerHTML=bookmarked?'<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>':'<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';}
+  if(!btn){console.warn('[Bookmark] button not found');return;}
   btn.addEventListener('click',async function(){
-    var user=firebase.auth().currentUser;if(!user){alert('Please log in to bookmark.');return;}
+    var user=firebase.auth().currentUser;
+    if(!user){window.location.href='index.html';return;}
+    if(!comp||!comp.cid){alert('Compound nicht geladen.');return;}
     var ref=firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid));
-    try{if(bookmarked){await ref.delete();bookmarked=false;}else{await ref.set({cid:comp.cid,name:comp.name,category:comp.category,description:comp.description,benefits:comp.benefits,image:comp.image,dosage:comp.dosage,mechanisms:comp.mechanisms,sideEffects:comp.sideEffects,halfLife:comp.halfLife,onsetTime:comp.onsetTime,duration:comp.duration,warnings:comp.warnings,researchLinks:comp.researchLinks,bookmarkedAt:firebase.firestore.FieldValue.serverTimestamp()});bookmarked=true;}upBtn();}
-    catch(err){console.error(err);alert('Failed to save bookmark.');}
+    try{
+      if(bookmarked){
+        await ref.delete();
+        bookmarked=false;
+        console.log('[Bookmark] Removed:',comp.name);
+      }else{
+        await ref.set({
+          cid:comp.cid,name:comp.name,category:comp.category||'Nootropic',
+          description:comp.description||'',benefits:comp.benefits||[],
+          image:comp.image||'',dosage:comp.dosage||'',
+          mechanisms:comp.mechanisms||'',sideEffects:comp.sideEffects||[],
+          halfLife:comp.halfLife||'',onsetTime:comp.onsetTime||'',
+          duration:comp.duration||'',warnings:comp.warnings||[],
+          researchLinks:comp.researchLinks||[],
+          bookmarkedAt:firebase.firestore.FieldValue.serverTimestamp()
+        });
+        bookmarked=true;
+        console.log('[Bookmark] Saved:',comp.name);
+      }
+      upBtn();
+    }catch(err){console.error('[Bookmark] Error:',err);alert('Fehler: '+err.message);}
+  });
+  function upBtn(){
+    btn.classList.toggle('bookmarked',bookmarked);
+    btn.innerHTML=bookmarked
+      ?'<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="16" height="16"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>'
+      :'<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>';
+  }
+  /* Load bookmark state */
+  firebase.auth().onAuthStateChanged(function(user){
+    if(!user){btn.style.opacity='0.4';btn.title='Login zum Favorisieren';return;}
+    btn.style.opacity='1';
+    firebase.firestore().collection('users').doc(user.uid).collection('bookmarks').doc(String(comp.cid)).get().then(function(snap){
+      bookmarked=snap.exists;
+      upBtn();
+    }).catch(function(err){console.error('[Bookmark] Load error:',err);});
   });
 }
 

@@ -218,23 +218,28 @@ async function loadBookmarks(uid){
 async function loadSavedStacks(uid){
   const grid=document.getElementById('stacksGrid'),loading=document.getElementById('stacksLoading');
   try{
+    console.log('[Profile] Loading stacks for user:',uid);
     const snap=await db.collection('users').doc(uid).collection('stacks').orderBy('createdAt','desc').get();
+    console.log('[Profile] Stacks found:',snap.size);
     loading.style.display='none';
     if(snap.empty){
       grid.style.display='none';
-      grid.insertAdjacentHTML('afterend','<div class="empty-state nd-r">No saved stacks yet. <a href="stack.html">Build your first stack →</a></div>');
       return;
     }
     grid.innerHTML='';
     snap.forEach(doc=>{
       const d=doc.data(),count=d.compounds?d.compounds.length:0;
       const dateStr=d.createdAt?d.createdAt.toDate().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
+      console.log('[Profile] Stack:',d.name,'compounds:',count);
       const card=document.createElement('div');card.className='stack-card nd-r';
       card.innerHTML=`<div style="flex:1;min-width:0"><div class="stack-name">${escHtml(d.name||'Unnamed Stack')}</div><div class="stack-meta">${count} compound${count!==1?'s':''}${dateStr?' · '+dateStr:''}</div></div><div class="stack-btns"><button class="btn-load" onclick="loadStackIntoBuilder('${doc.id}')">Load in Builder</button><button class="btn-del" onclick="deleteStack('${doc.id}','${uid}')">Delete</button></div>`;
       grid.appendChild(card);
     });
     grid.style.display='flex';
-  }catch(e){loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading stacks.</p>';console.error(e);}
+  }catch(e){
+    loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading stacks.</p>';
+    console.error('[Profile] Stacks error:',e);
+  }
 }
 
 window.loadStackIntoBuilder=async function(stackId){
@@ -251,9 +256,10 @@ window.deleteStack=async function(stackId,uid){
 async function loadPurchases(uid){
   const grid=document.getElementById('purchasesGrid');
   const loading=document.getElementById('purchasesLoading');
+  if(loading)loading.style.display='flex';
   try{
     const snap=await db.collection('users').doc(uid).collection('purchases').orderBy('purchasedAt','desc').get();
-    loading.style.display='none';
+    if(loading)loading.style.display='none';
     if(snap.empty){
       grid.style.display='none';
       return;
@@ -261,22 +267,27 @@ async function loadPurchases(uid){
     grid.innerHTML='';
     snap.forEach(doc=>{
       const d=doc.data();
-      const goalLabel=d.goalLabel||d.goal||'Stack';
+      const goalLabel=d.goalLabel||d.goal||'Protokoll';
       const dateStr=d.purchasedAt?d.purchasedAt.toDate().toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'';
       const card=document.createElement('div');card.className='bookmark-card';
-      card.innerHTML=`<div class="bk-cat">Protokoll</div><div class="bk-name">${escHtml(goalLabel)}</div><div class="bk-desc">${dateStr?'Gekauft am '+dateStr:''}</div><div class="bk-footer"><button class="bk-view" onclick="window.location.href='quiz-result-unlocked.html?goal=${d.goal||'focus'}'">Ansehen →</button></div>`;
+      card.innerHTML=`<div class="bk-cat">Protokoll</div><div class="bk-name">${escHtml(goalLabel)}</div><div class="bk-desc">${dateStr?'Gekauft am '+dateStr:'Personalisiertes Protokoll'}</div><div class="bk-footer"><button class="bk-view" onclick="window.location.href='quiz-result-unlocked.html?goal=${d.goal||'focus'}'">Ansehen →</button></div>`;
       grid.appendChild(card);
     });
     grid.style.display='grid';
   }catch(e){
-    loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Fehler beim Laden.</p>';
-    console.error(e);
+    if(loading)loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Fehler beim Laden.</p>';
+    console.error('[Profile] Purchases error:',e);
   }
 }
 
 firebase.auth().onAuthStateChanged(function(user){
   const authBtn=document.getElementById('authBtn');
-  if(!user){setTimeout(()=>{window.location.href='index.html';},300);return;}
+  if(!user){
+    console.log('[Profile] No user, redirecting to index.html');
+    setTimeout(()=>{window.location.href='index.html';},300);
+    return;
+  }
+  console.log('[Profile] User logged in:',user.email);
   if(authBtn)authBtn.textContent='Profile';
   const email=user.email||'';
   document.getElementById('profileEmail').textContent=email;
