@@ -328,6 +328,56 @@
   .schedule-row { flex-wrap: wrap; }
   .schedule-time { min-width: auto; }
   .protocol-section-title { font-size: 18px; }
+
+  /* Fix details/dropdowns on mobile */
+  .cpc-summary { padding: 14px 0; min-height: 48px; display: flex; align-items: center; }
+  .cpc-summary::after { font-size: 18px; }
+  .cpc-detail[open] .cpc-summary { padding-bottom: 4px; }
+  .compound-protocol-card { padding: 16px; }
+
+  /* Fix NooAI chat on mobile */
+  #nooaiChat { bottom: 14px; right: 14px; }
+  #nooaiChat button#chatToggle { width: 50px; height: 50px; }
+  #chatWindow { width: calc(100vw - 28px); right: 0; bottom: 58px; }
+  #chatMessages { height: 240px; }
+}
+
+/* ── Print / PDF (keine mobile View) ── */
+@media print {
+  .nd-header, .nd-nav, #ndBurger, #ndNavBackdrop, #ndNavClose,
+  #nooaiChat, footer { display: none !important; }
+  .unlocked-body { background: #fff !important; color: #000 !important; }
+  .unlocked-wrapper { max-width: 800px; padding: 0; }
+  .result-badge { background: #333 !important; color: #fff !important; }
+  .result-headline { color: #000 !important; font-size: 24px !important; }
+  .result-headline em { color: #333 !important; }
+  .protocol-section { page-break-inside: avoid; border-bottom: 1px solid #ddd !important; }
+  .protocol-section-title { color: #000 !important; }
+  .protocol-subtitle { color: #555 !important; }
+  .summary-item { background: #f5f5f5 !important; border-color: #ddd !important; }
+  .summary-label { color: #555 !important; }
+  .summary-value { color: #000 !important; }
+  .schedule-time { color: #E8541A !important; }
+  .schedule-detail { color: #000 !important; }
+  .schedule-detail strong { color: #000 !important; }
+  .compound-protocol-card { background: #fff !important; border: 1px solid #ddd !important; page-break-inside: avoid; }
+  .cpc-name { color: #000 !important; }
+  .cpc-benefit { color: #333 !important; }
+  .cpc-body { color: #333 !important; }
+  .cpc-detail { border-top-color: #ddd !important; }
+  .cycling-row { border-bottom-color: #ddd !important; }
+  .cycling-name { color: #000 !important; }
+  .cycling-info { color: #333 !important; }
+  .warning-card { background: #fff3e0 !important; border-color: #ff9800 !important; color: #e65100 !important; }
+  .warning-disclaimer { background: #f5f5f5 !important; border-left-color: #999 !important; }
+  .shopping-item { background: #f5f5f5 !important; border-color: #ddd !important; }
+  .shopping-name { color: #000 !important; }
+  .shopping-detail { color: #555 !important; }
+  .shopping-quality { color: #333 !important; }
+  .shopping-link { color: #E8541A !important; }
+  .shopping-total { background: #f5f5f5 !important; border-color: #ddd !important; }
+  .shopping-total strong { color: #E8541A !important; }
+  .btn-primary { display: none !important; }
 }
 
 /* ── Light Mode ── */
