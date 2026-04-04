@@ -348,12 +348,14 @@
   #nooaiChat, footer { display: none !important; }
   .unlocked-body { background: #fff !important; color: #000 !important; }
   .unlocked-wrapper { max-width: 800px; padding: 0; }
-  .result-badge { background: #333 !important; color: #fff !important; }
-  .result-headline { color: #000 !important; font-size: 24px !important; }
-  .result-headline em { color: #333 !important; }
+  .unlocked-header { margin-bottom: 24px; }
+  .result-badge { background: #333 !important; color: #fff !important; font-size: 12px !important; }
+  .result-headline { color: #000 !important; font-size: 26px !important; }
+  .result-headline em { color: #E8541A !important; }
+  .result-sub { color: #333 !important; font-size: 14px !important; }
   .protocol-section { page-break-inside: avoid; border-bottom: 1px solid #ddd !important; }
-  .protocol-section-title { color: #000 !important; }
-  .protocol-subtitle { color: #555 !important; }
+  .protocol-section-title { color: #000 !important; font-size: 18px !important; }
+  .protocol-subtitle { color: #555 !important; font-size: 13px !important; }
   .summary-item { background: #f5f5f5 !important; border-color: #ddd !important; }
   .summary-label { color: #555 !important; }
   .summary-value { color: #000 !important; }
@@ -369,13 +371,13 @@
   .cycling-name { color: #000 !important; }
   .cycling-info { color: #333 !important; }
   .warning-card { background: #fff3e0 !important; border-color: #ff9800 !important; color: #e65100 !important; }
-  .warning-disclaimer { background: #f5f5f5 !important; border-left-color: #999 !important; }
+  .warning-disclaimer { background: #f5f5f5 !important; border-left-color: #999 !important; color: #555 !important; }
   .shopping-item { background: #f5f5f5 !important; border-color: #ddd !important; }
   .shopping-name { color: #000 !important; }
   .shopping-detail { color: #555 !important; }
   .shopping-quality { color: #333 !important; }
   .shopping-link { color: #E8541A !important; }
-  .shopping-total { background: #f5f5f5 !important; border-color: #ddd !important; }
+  .shopping-total { background: #f5f5f5 !important; border-color: #ddd !important; color: #000 !important; }
   .shopping-total strong { color: #E8541A !important; }
   .btn-primary { display: none !important; }
 }

@@ -1,8 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz-result-unlocked.js  v3
-   Rendert das NooAI-generierte Protokoll.
-   Speichert in Firestore unter users/{uid}/purchases.
-   PDF-Download via Browser-Print (einfachste Lösung).
+   NOODROP — quiz-result-unlocked.js  v4
+   Fixes: 1) Purchase speichern (warte auf Auth) 2) Print-Text dunkel
    ═══════════════════════════════════════════════════════════════ */
 
 const params = new URLSearchParams(window.location.search);
@@ -10,64 +8,69 @@ const sessionId = params.get('session_id');
 const goalParam = params.get('goal') || 'focus';
 const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 
-/* Debug */
-console.log('[Unlock] goal:', goalParam, 'answers:', answers);
+const GOAL_LABELS = {
+  focus: 'Fokus & Konzentration',
+  energy: 'Energie & Ausdauer',
+  sleep: 'Schlaf & Erholung',
+  mood: 'Stimmung & Resilienz',
+  memory: 'Gedächtnis & Lernen'
+};
 
-/* ── Kauf speichern ── */
+const EXPERIENCE_LABELS = { beginner: 'Anfänger', intermediate: 'Etwas Erfahrung', advanced: 'Fortgeschritten' };
+const LIFESTYLE_LABELS = { student: 'Student', office: 'Wissensarbeiter', athlete: 'Athlet', creative: 'Kreativer' };
+
+const experience = answers.experience || 'beginner';
+const lifestyle = answers.lifestyle || 'office';
+const medication = answers.medication || 'none';
+
+/* ── Kauf in Firestore speichern (wartet auf Auth) ── */
 function savePurchase() {
   if (!sessionId) return;
-  const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
-  if (!user) return;
   if (sessionStorage.getItem('purchase_saved_' + sessionId)) return;
 
-  const db = firebase.firestore();
-  const purchaseData = {
-    goal: goalParam,
-    goalLabel: answers.goal_label || goalParam,
-    experience: answers.experience || '',
-    problem: answers.problem || '',
-    lifestyle: answers.lifestyle || '',
-    caffeine: answers.caffeine || '',
-    budget: answers.budget || '',
-    sleep_quality: answers.sleep_quality || 5,
-    stress_level: answers.stress_level || 5,
-    notes: answers.notes || '',
-    expectations: answers.expectations || '',
-    stripeSessionId: sessionId,
-    productType: 'onetime',
-    purchasedAt: firebase.firestore.FieldValue.serverTimestamp(),
-  };
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) return;
 
-  db.collection('users').doc(user.uid).collection('purchases').add(purchaseData)
-    .then(function() {
-      sessionStorage.setItem('purchase_saved_' + sessionId, 'true');
-      console.log('[Unlock] Purchase saved for user:', user.uid);
-    })
-    .catch(function(err) { console.error('[Unlock] Error saving purchase:', err); });
+    const db = firebase.firestore();
+    const purchaseData = {
+      goal: goalParam,
+      goalLabel: answers.goal_label || GOAL_LABELS[goalParam] || goalParam,
+      experience: experience,
+      problem: answers.problem || '',
+      lifestyle: lifestyle,
+      caffeine: answers.caffeine || '',
+      budget: answers.budget || '',
+      sleep_quality: answers.sleep_quality || 5,
+      stress_level: answers.stress_level || 5,
+      notes: answers.notes || '',
+      expectations: answers.expectations || '',
+      stripeSessionId: sessionId,
+      productType: 'onetime',
+      purchasedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    db.collection('users').doc(user.uid).collection('purchases').add(purchaseData)
+      .then(function() {
+        sessionStorage.setItem('purchase_saved_' + sessionId, 'true');
+        console.log('[Unlock] Purchase saved:', user.uid);
+      })
+      .catch(function(err) { console.error('[Unlock] Save error:', err); });
+  });
 }
 
-/* ── PDF Download (Browser-Print) ── */
-function downloadPDF() {
-  window.print();
-}
+/* ── PDF Download ── */
+function downloadPDF() { window.print(); }
 
 /* ── Protokoll rendern ── */
 function renderProtocol(stack) {
   document.getElementById('unlockLoading').style.display = 'none';
   document.getElementById('unlockSuccess').style.display = 'block';
 
-  const goalLabel = answers.goal_label || goalParam;
+  const goalLabel = answers.goal_label || GOAL_LABELS[goalParam] || goalParam;
   document.getElementById('unlockBadge').textContent = '✓ ' + goalLabel;
 
   const container = document.getElementById('unlockProtocol');
   if (!container) return;
-
-  const experience = answers.experience || 'beginner';
-  const lifestyle = answers.lifestyle || 'office';
-  const medication = answers.medication || 'none';
-
-  const EXPERIENCE_LABELS = { beginner: 'Anfänger', intermediate: 'Etwas Erfahrung', advanced: 'Fortgeschritten' };
-  const LIFESTYLE_LABELS = { student: 'Student', office: 'Wissensarbeiter', athlete: 'Athlet', creative: 'Kreativer' };
 
   var html = '';
 
@@ -89,9 +92,7 @@ function renderProtocol(stack) {
   if (stack.reasoning) {
     html += '<div class="protocol-section">';
     html += '<h2 class="protocol-section-title">Warum dieser Stack für dich</h2>';
-    html += '<div style="background:var(--color-bg-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px;font-size:14px;color:var(--color-text);line-height:1.65;">';
-    html += stack.reasoning;
-    html += '</div></div>';
+    html += '<div style="background:var(--color-bg-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:20px;font-size:14px;color:var(--color-text);line-height:1.65;">' + stack.reasoning + '</div></div>';
   }
 
   /* ── Tagesplan ── */
@@ -119,16 +120,9 @@ function renderProtocol(stack) {
       html += '<div class="compound-protocol-card">';
       html += '<div class="cpc-header"><span class="cpc-name">' + comp.name + '</span><span class="cpc-dose">' + (comp.dose || '') + '</span></div>';
       html += '<div class="cpc-benefit">' + (comp.benefit || '') + '</div>';
-
-      if (comp.mechanism) {
-        html += '<details class="cpc-detail"><summary class="cpc-summary">Wirkmechanismus</summary><div class="cpc-body">' + comp.mechanism + '</div></details>';
-      }
-      if (comp.timing) {
-        html += '<details class="cpc-detail"><summary class="cpc-summary">Timing &amp; Einnahme</summary><div class="cpc-body">' + comp.timing + '</div></details>';
-      }
-      if (comp.cycling) {
-        html += '<details class="cpc-detail"><summary class="cpc-summary">Cycling-Protokoll</summary><div class="cpc-body">' + comp.cycling + '</div></details>';
-      }
+      if (comp.mechanism) html += '<details class="cpc-detail"><summary class="cpc-summary">Wirkmechanismus</summary><div class="cpc-body">' + comp.mechanism + '</div></details>';
+      if (comp.timing) html += '<details class="cpc-detail"><summary class="cpc-summary">Timing &amp; Einnahme</summary><div class="cpc-body">' + comp.timing + '</div></details>';
+      if (comp.cycling) html += '<details class="cpc-detail"><summary class="cpc-summary">Cycling-Protokoll</summary><div class="cpc-body">' + comp.cycling + '</div></details>';
       html += '</div>';
     });
     html += '</div>';
@@ -141,17 +135,15 @@ function renderProtocol(stack) {
     stack.warnings.forEach(function(w) {
       html += '<div class="warning-card">' + w + '</div>';
     });
-    html += '<div class="warning-disclaimer">Dies ist kein medizinischer Rat. Bei Unsicherheit oder Wechselwirkungen: Immer Rücksprache mit Arzt/Ärztin halten.</div>';
+    html += '<div class="warning-disclaimer">Dies ist kein medizinischer Rat. Bei Unsicherheit: Rücksprache mit Arzt/Ärztin.</div>';
     html += '</div>';
   }
 
-  /* ── Budget/Einkaufsliste ── */
+  /* ── Budget ── */
   if (stack.budget) {
     html += '<div class="protocol-section">';
     html += '<h2 class="protocol-section-title">Kostenschätzung</h2>';
-    if (stack.budget.total) {
-      html += '<div class="shopping-total">Geschätzte monatliche Kosten: <strong>' + stack.budget.total + ' EUR</strong></div>';
-    }
+    if (stack.budget.total) html += '<div class="shopping-total">Geschätzte monatliche Kosten: <strong>' + stack.budget.total + ' EUR</strong></div>';
     if (stack.budget.items && stack.budget.items.length) {
       stack.budget.items.forEach(function(item) {
         html += '<div style="padding:6px 0;font-size:13px;color:var(--color-text);border-bottom:1px solid var(--color-border);">' + item + '</div>';
@@ -173,7 +165,7 @@ function renderProtocol(stack) {
 function init() {
   try {
     if (sessionId) savePurchase();
-    /* Stack-Daten: entweder von NooAI (sessionStorage) oder aus quiz-result-data.js */
+
     const aiStackStr = sessionStorage.getItem('noodrop_ai_stack');
     if (aiStackStr) {
       try {
@@ -184,13 +176,14 @@ function init() {
         console.warn('[Unlock] Could not parse AI stack from sessionStorage');
       }
     }
-    /* Fallback: zeige Error */
+
     document.getElementById('unlockLoading').innerHTML =
       '<p style="color:var(--color-muted);font-size:15px;">Kein Protokoll gefunden.</p>' +
       '<p style="color:var(--color-muted);font-size:13px;margin-top:0.5rem;">Bitte kaufe zuerst ein Protokoll.</p>' +
       '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
+
   } catch (err) {
-    console.error('[Unlock] renderProtocol error:', err);
+    console.error('[Unlock] Init error:', err);
     document.getElementById('unlockLoading').innerHTML =
       '<p style="color:var(--color-muted);font-size:15px;">Fehler: ' + err.message + '</p>' +
       '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
