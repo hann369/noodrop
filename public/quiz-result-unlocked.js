@@ -48,8 +48,8 @@ const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 const goal = goalParam;
 const experience = answers.experience || 'beginner';
 const problem = answers.problem || '';
-const lifestyle = answers.lifestyle || 'office';
-const medication = answers.medication || 'none';
+const lifestyle = ['student', 'office', 'athlete', 'creative'].includes(answers.lifestyle) ? answers.lifestyle : 'office';
+const medication = ['none', 'basic', 'prescription'].includes(answers.medication) ? answers.medication : 'none';
 
 /* Debug-Log */
 console.log('[Unlock] goal:', goal, 'experience:', experience, 'lifestyle:', lifestyle, 'medication:', medication);
@@ -166,29 +166,30 @@ function renderDailySchedule() {
   var events = [];
 
   stack.forEach(function(comp) {
-    var timing = comp.timing[lifestyle] || comp.timing.office;
+    var timing = comp.timing[lifestyle] || comp.timing.office || 'Morgens zum Frühstück';
     var dose = comp.dose[experience] || comp.dose.beginner;
+    var timingLower = timing.toLowerCase();
 
-    if (timing.toLowerCase().indexOf('morgens') !== -1 || timing.toLowerCase().indexOf('morgens') !== -1) {
+    if (timingLower.indexOf('morgens') !== -1) {
       events.push({ time: wakeTime, icon: comp.name.charAt(0), name: comp.name, detail: dose + ' — ' + timing });
     }
-    if (timing.indexOf('90 Min nach dem Aufwachen') !== -1) {
+    if (timingLower.indexOf('90 min nach dem aufwachen') !== -1) {
       events.push({ time: '+90 Min', icon: '☕', name: 'Koffein + L-Theanin', detail: comp.dose[experience] + ' — ' + timing });
     }
-    if (timing.indexOf('vor Lernsessions') !== -1 || timing.indexOf('vor Deep-Work') !== -1 || timing.indexOf('vor dem Training') !== -1) {
+    if (timingLower.indexOf('vor lernsessions') !== -1 || timingLower.indexOf('vor deep-work') !== -1 || timingLower.indexOf('vor dem training') !== -1) {
       events.push({ time: 'Vor Session', icon: '⚡', name: comp.name, detail: dose + ' — ' + timing });
     }
-    if (timing.indexOf('Mittag') !== -1 || timing.indexOf('13:00') !== -1 || timing.indexOf('14:00') !== -1) {
+    if (timingLower.indexOf('mittag') !== -1 || timingLower.indexOf('13:00') !== -1 || timingLower.indexOf('14:00') !== -1) {
       events.push({ time: '13:00', icon: '🕐', name: comp.name, detail: dose + ' — Mittagstief-Booster' });
     }
-    if (timing.indexOf('abends') !== -1 || timing.indexOf('Abend') !== -1) {
+    if (timingLower.indexOf('abends') !== -1 || timingLower.indexOf('abend') !== -1) {
       events.push({ time: '19:00', icon: '🌆', name: comp.name, detail: dose + ' — ' + timing });
     }
-    if (timing.indexOf('Schlafen') !== -1 || timing.indexOf('60 Min') !== -1 || timing.indexOf('30 Min vor dem Schlafen') !== -1) {
-      var mins = timing.indexOf('30 Min') !== -1 ? 30 : 60;
+    if (timingLower.indexOf('schlafen') !== -1 || timingLower.indexOf('60 min') !== -1 || timingLower.indexOf('30 min vor dem schlafen') !== -1) {
+      var mins = timingLower.indexOf('30 min') !== -1 ? 30 : 60;
       events.push({ time: '-' + mins + ' Min', icon: '🌙', name: comp.name, detail: dose + ' — ' + timing });
     }
-    if (timing.indexOf('Frühstück') !== -1) {
+    if (timingLower.indexOf('frühstück') !== -1) {
       events.push({ time: wakeTime + '+30', icon: '🍳', name: comp.name, detail: dose + ' — Zum Frühstück' });
     }
   });
@@ -232,15 +233,15 @@ function renderCompoundDetails() {
 
   stack.forEach(function(comp) {
     var dose = comp.dose[experience] || comp.dose.beginner;
-    var timing = comp.timing[lifestyle] || comp.timing.office;
-    var cycling = comp.cycling[experience] || comp.cycling.beginner;
-    var warning = comp.warnings[medication] || comp.warnings.none;
+    var timing = comp.timing[lifestyle] || comp.timing.office || 'Morgens';
+    var cycling = comp.cycling[experience] || comp.cycling.beginner || 'Durchgängig einnehmen';
+    var warning = comp.warnings[medication] || comp.warnings.none || 'Keine bekannten Warnungen.';
 
     html += '<div class="compound-protocol-card">';
     html += '<div class="cpc-header"><span class="cpc-name">' + comp.name + '</span><span class="cpc-dose">' + dose + '</span></div>';
     html += '<div class="cpc-benefit">' + comp.benefit + '</div>';
 
-    html += '<details class="cpc-detail"><summary class="cpc-summary">Wirkmechanismus</summary><div class="cpc-body">' + comp.mechanism + '</div></details>';
+    html += '<details class="cpc-detail"><summary class="cpc-summary">Wirkmechanismus</summary><div class="cpc-body">' + (comp.mechanism || 'Wird ergänzt.') + '</div></details>';
     html += '<details class="cpc-detail"><summary class="cpc-summary">Timing &amp; Einnahme</summary><div class="cpc-body">' + timing + '</div></details>';
     html += '<details class="cpc-detail"><summary class="cpc-summary">Cycling-Protokoll</summary><div class="cpc-body">' + cycling + '</div></details>';
     html += '<details class="cpc-detail"><summary class="cpc-summary">Sicherheit &amp; Warnungen</summary><div class="cpc-body ' + (warning.indexOf('⚠') !== -1 ? 'cpc-warning' : '') + '">' + warning + '</div></details>';
@@ -259,8 +260,8 @@ function renderCyclingCalendar() {
   html += '<p class="protocol-subtitle">Wann du welche Compounds nimmst — basierend auf deinem Erfahrungslevel (' + (EXPERIENCE_LABELS[experience] || experience) + ')</p>';
 
   stack.forEach(function(comp) {
-    var cycling = comp.cycling[experience] || comp.cycling.beginner;
-    var dose = comp.dose[experience] || comp.dose.beginner;
+    var cycling = comp.cycling[experience] || comp.cycling.beginner || 'Durchgängig';
+    var dose = comp.dose[experience] || comp.dose.beginner || '';
 
     html += '<div class="cycling-row">';
     html += '<div class="cycling-name">' + comp.name + '</div>';
@@ -282,7 +283,7 @@ function renderWarnings() {
   html += '<p class="protocol-subtitle">Basierend auf: ' + (MEDICATION_LABELS[medication] || medication) + '</p>';
 
   stack.forEach(function(comp) {
-    var warning = comp.warnings[medication] || comp.warnings.none;
+    var warning = comp.warnings[medication] || comp.warnings.none || '';
     if (warning.indexOf('⚠') !== -1) {
       html += '<div class="warning-card">' + warning + '</div>';
     }
