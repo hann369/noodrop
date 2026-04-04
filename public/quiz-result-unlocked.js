@@ -51,8 +51,27 @@ const problem = answers.problem || '';
 const lifestyle = answers.lifestyle || 'office';
 const medication = answers.medication || 'none';
 
-/* ── Stack-Daten holen ── */
-const stack = (typeof STACKS !== 'undefined' ? STACKS[goal] : null) || (typeof STACKS !== 'undefined' ? STACKS.focus : []);
+/* Debug-Log */
+console.log('[Unlock] goal:', goal, 'experience:', experience, 'lifestyle:', lifestyle, 'medication:', medication);
+console.log('[Unlock] STACKS available:', typeof STACKS !== 'undefined' ? Object.keys(STACKS) : 'NOT LOADED');
+console.log('[Unlock] answers:', answers);
+
+/* ── Stack-Daten holen — mit Fallback ── */
+let stack = [];
+if (typeof STACKS !== 'undefined' && STACKS[goal]) {
+  stack = STACKS[goal];
+} else if (typeof STACKS !== 'undefined' && STACKS.focus) {
+  stack = STACKS.focus;
+  console.warn('[Unlock] Fallback to focus stack. goal "' + goal + '" not found.');
+} else {
+  console.error('[Unlock] STACKS not available!');
+}
+
+console.log('[Unlock] stack length:', stack ? stack.length : 0);
+if (stack && stack.length > 0) {
+  console.log('[Unlock] first compound:', stack[0].name);
+  console.log('[Unlock] dose keys:', typeof stack[0].dose, Object.keys(stack[0].dose || {}));
+}
 
 /* ── Kauf in Firestore speichern ── */
 function savePurchase() {
@@ -306,11 +325,25 @@ function renderShoppingList() {
 }
 
 /* ── Init ── */
-if (!stack || !stack.length) {
-  document.getElementById('unlockLoading').innerHTML =
-    '<p style="color:var(--color-muted);font-size:15px;">Protokoll konnte nicht geladen werden.</p>' +
-    '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
-} else {
-  if (sessionId) savePurchase();
-  renderProtocol();
+function init() {
+  if (!stack || !stack.length) {
+    document.getElementById('unlockLoading').innerHTML =
+      '<p style="color:var(--color-muted);font-size:15px;">Protokoll konnte nicht geladen werden.</p>' +
+      '<p style="color:var(--color-muted);font-size:13px;margin-top:0.5rem;">STACKS: ' + (typeof STACKS !== 'undefined' ? 'geladen' : 'NICHT geladen') + ' | goal: ' + goal + '</p>' +
+      '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
+    return;
+  }
+
+  try {
+    if (sessionId) savePurchase();
+    renderProtocol();
+  } catch (err) {
+    console.error('[Unlock] renderProtocol error:', err);
+    document.getElementById('unlockLoading').innerHTML =
+      '<p style="color:var(--color-muted);font-size:15px;">Fehler beim Laden des Protokolls.</p>' +
+      '<p style="color:var(--color-muted);font-size:12px;margin-top:0.5rem;">' + err.message + '</p>' +
+      '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
+  }
 }
+
+init();
