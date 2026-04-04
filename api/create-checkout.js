@@ -26,29 +26,29 @@ module.exports = async function handler(req, res) {
   const sessionMode = mode === 'subscription' ? 'subscription' : 'payment';
 
   try {
-    /* Body bauen — customer_email nur wenn vorhanden */
-    const body = {
-      mode: sessionMode,
-      line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${goal || 'focus'}`,
-      cancel_url: `${DOMAIN}/quiz-result.html`,
-      metadata: {
-        goal: goal || '',
-        email: email || '',
-        product_type: mode === 'subscription' ? 'pro' : 'onetime',
-      },
-    };
+    /* Stripe braucht x-www-form-urlencoded mit FLACHEN Keys */
+    const params = new URLSearchParams();
+    params.set('mode', sessionMode);
+    params.set('line_items[0][price]', priceId);
+    params.set('line_items[0][quantity]', '1');
+    params.set('success_url', `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${goal || 'focus'}`);
+    params.set('cancel_url', `${DOMAIN}/quiz-result.html`);
 
-    if (email) body.customer_email = email;
+    /* Metadata als flache keys */
+    params.set('metadata[goal]', goal || '');
+    params.set('metadata[email]', email || '');
+    params.set('metadata[product_type]', mode === 'subscription' ? 'pro' : 'onetime');
+
+    /* customer_email nur wenn vorhanden */
+    if (email) params.set('customer_email', email);
 
     const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${STRIPE_SECRET}`,
-        'Content-Type': 'application/json',
-        'Stripe-Version': '2024-12-18.acacia',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(body),
+      body: params.toString(),
     });
 
     const data = await stripeRes.json();
