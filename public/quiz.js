@@ -98,8 +98,15 @@ function showStep(n) {
     next.classList.add('active');
     currentStep = n;
     setProgress(n);
-    quizBottom.style.display = TEXT_STEPS.includes(n) ? 'none' : 'flex';
+    quizBottom.style.display = 'flex';
     refreshNextBtn();
+
+    /* Letzter Schritt: Button-Text ändern */
+    if (currentStep === 11) {
+      nextBtn.innerHTML = 'Deinen Stack generieren <span class="btn-arrow">→</span>';
+    } else {
+      nextBtn.innerHTML = 'Weiter <span class="btn-arrow">→</span>';
+    }
   }, 120);
 }
 
