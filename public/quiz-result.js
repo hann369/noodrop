@@ -6,6 +6,9 @@
 const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 const goal = answers.goal || 'focus';
 const stack = STACKS[goal] || STACKS.focus;
+const experience = answers.experience || 'beginner';
+const lifestyle = answers.lifestyle || 'office';
+const medication = answers.medication || 'none';
 
 const GOAL_LABELS_MAP = {
   focus: 'Fokus & Konzentration',
@@ -18,7 +21,6 @@ const GOAL_LABELS_MAP = {
 /* ── Library link helper ── */
 function makeLibraryLink(compound) {
   if (compound.cid) return 'compound.html?cid=' + compound.cid;
-  /* Fallback: search the library with compound name */
   return 'index.html?q=' + encodeURIComponent(compound.name);
 }
 
@@ -65,27 +67,24 @@ function revealResult() {
   document.getElementById('resultContent').scrollIntoView({ behavior: 'smooth' });
 }
 
-/* ── Render compound cards ── */
+/* ── Render compound cards — kostenloses Preview ── */
 function renderCompounds() {
   const list = document.getElementById('compoundsList');
   if (!list) return;
 
   list.innerHTML = stack.map(function(c, i) {
+    var dose = typeof c.dose === 'object' ? (c.dose[experience] || c.dose.beginner) : c.dose;
     var link = makeLibraryLink(c);
     return '<div class="compound-card" style="animation-delay: ' + (i * 80) + 'ms">' +
       '<div class="compound-header">' +
         '<span class="compound-name">' + c.name + '</span>' +
-        '<span class="compound-dose-badge">' + c.dose + '</span>' +
+        '<span class="compound-dose-badge">' + dose + '</span>' +
       '</div>' +
       '<p class="compound-benefit">' + c.benefit + '</p>' +
       '<button class="compound-mechanism-toggle" onclick="toggleMechanism(this)">' +
         '+ Wie es wirkt (Mechanismus)' +
       '</button>' +
       '<div class="mechanism-body">' + c.mechanism + '</div>' +
-      '<div class="compound-meta">' +
-        '<div class="compound-meta-item"><strong>Timing:</strong> ' + c.timing + '</div>' +
-      '</div>' +
-      '<div class="compound-pubmed">Studie: ' + c.pubmed + '</div>' +
       '<a href="' + link + '" class="compound-library-link">Im Compound-Archiv ansehen →</a>' +
     '</div>';
   }).join('');
@@ -126,7 +125,6 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
     var mode = productType === 'pro' ? 'subscription' : 'onetime';
     var emailInput = document.getElementById('emailInput');
     var email = emailInput ? emailInput.value.trim() : user.email || '';
-    var answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 
     try {
       var res = await fetch('/api/create-checkout', {
@@ -135,7 +133,7 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
         body: JSON.stringify({
           priceId: priceId,
           mode: mode,
-          goal: answers.goal || goal,
+          goal: goal,
           email: email,
           firebaseUid: user.uid,
         }),

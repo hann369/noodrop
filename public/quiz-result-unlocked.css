@@ -1,0 +1,366 @@
+/* ═══════════════════════════════════════════════════════════════
+   NOODROP — quiz-result-unlocked.css
+   Styling für das vollständige, dynamische Protokoll.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Body ── */
+.unlocked-body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.unlocked-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 20px 80px;
+}
+
+/* ── Header ── */
+.unlocked-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.unlocked-header .result-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--color-success);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-family: var(--font-display);
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.unlocked-header .result-headline {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 38px);
+  font-weight: 600;
+  color: var(--color-cream);
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.unlocked-header .result-sub {
+  font-size: 15px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* ── Sections ── */
+.protocol-section {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--color-border);
+}
+.protocol-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.protocol-section-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-cream);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.protocol-subtitle {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* ── Summary Grid ── */
+.protocol-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+.summary-item {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.summary-label {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-weight: 500;
+}
+.summary-value {
+  font-size: 14px;
+  color: var(--color-cream);
+  font-weight: 500;
+  font-family: var(--font-display);
+}
+
+/* ── Daily Schedule ── */
+.schedule-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.schedule-row:last-child { border-bottom: none; }
+.schedule-time {
+  font-size: 13px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-orange);
+  min-width: 70px;
+  flex-shrink: 0;
+}
+.schedule-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+.schedule-detail {
+  font-size: 13px;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+.schedule-detail strong {
+  display: block;
+  color: var(--color-cream);
+  font-family: var(--font-display);
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+/* ── Compound Protocol Cards ── */
+.compound-protocol-card {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 14px;
+}
+.compound-protocol-card:hover {
+  border-color: var(--color-border-glow);
+}
+.cpc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cpc-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-cream);
+}
+.cpc-dose {
+  font-size: 12px;
+  font-family: var(--font-display);
+  padding: 3px 10px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-orange);
+  font-weight: 500;
+}
+.cpc-benefit {
+  font-size: 13px;
+  color: var(--color-text);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+/* Collapsible details */
+.cpc-detail {
+  border-top: 1px solid var(--color-border);
+}
+.cpc-summary {
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: color var(--transition-fast);
+}
+.cpc-summary:hover { color: var(--color-orange); }
+.cpc-summary::-webkit-details-marker { display: none; }
+.cpc-summary::after { content: '+'; color: var(--color-orange); font-size: 15px; }
+.cpc-detail[open] .cpc-summary::after { content: '−'; }
+.cpc-body {
+  padding: 0 0 12px;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+.cpc-warning {
+  color: #e8a040 !important;
+  font-weight: 500;
+}
+
+/* ── Cycling Calendar ── */
+.cycling-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.cycling-row:last-child { border-bottom: none; }
+.cycling-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-cream);
+}
+.cycling-info {
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+.cycling-dose {
+  font-size: 12px;
+  color: var(--color-orange);
+  font-weight: 500;
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+/* ── Warning Cards ── */
+.warning-card {
+  background: rgba(232,160,64,0.06);
+  border: 1px solid rgba(232,160,64,0.2);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #e8a040;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.warning-disclaimer {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.5;
+  padding: 12px;
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--color-muted);
+}
+
+/* ── Shopping List ── */
+.shopping-item {
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.shopping-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-cream);
+  margin-bottom: 4px;
+}
+.shopping-detail {
+  font-size: 13px;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+.shopping-quality {
+  font-size: 12px;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+.shopping-link {
+  font-size: 12px;
+  color: var(--color-orange);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity var(--transition-fast);
+}
+.shopping-link:hover { opacity: 0.75; }
+.shopping-total {
+  text-align: center;
+  padding: 16px;
+  font-size: 15px;
+  color: var(--color-text);
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: 14px;
+}
+.shopping-total strong {
+  color: var(--color-orange);
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+/* ── Loading ── */
+.unlocked-loading {
+  text-align: center;
+  padding: 6rem 1rem;
+}
+
+/* ── Mobile ── */
+@media (max-width: 500px) {
+  .unlocked-wrapper { padding: 40px 16px 60px; }
+  .protocol-summary-grid { grid-template-columns: 1fr 1fr; }
+  .cycling-row { grid-template-columns: 1fr; gap: 6px; }
+  .cycling-dose { text-align: left; }
+  .schedule-row { flex-wrap: wrap; }
+  .schedule-time { min-width: auto; }
+  .protocol-section-title { font-size: 18px; }
+}
+
+/* ── Light Mode ── */
+body.light .unlocked-body { background: #fafaf8; color: #2c2c2a; }
+body.light .unlocked-header .result-headline { color: #1c1c1a; }
+body.light .unlocked-header .result-sub { color: rgba(28,28,26,0.4); }
+body.light .protocol-section { border-bottom-color: rgba(200,180,160,0.2); }
+body.light .protocol-section-title { color: #1c1c1a; }
+body.light .protocol-subtitle { color: rgba(28,28,26,0.4); }
+body.light .summary-item { background: #fff; border-color: rgba(200,180,160,0.2); }
+body.light .summary-label { color: rgba(28,28,26,0.4); }
+body.light .summary-value { color: #1c1c1a; }
+body.light .schedule-row { border-bottom-color: rgba(200,180,160,0.2); }
+body.light .schedule-time { color: var(--color-orange); }
+body.light .schedule-detail { color: #2c2c2a; }
+body.light .schedule-detail strong { color: #1c1c1a; }
+body.light .compound-protocol-card { background: #fff; border-color: rgba(200,180,160,0.2); }
+body.light .compound-protocol-card:hover { border-color: var(--color-border-glow); }
+body.light .cpc-name { color: #1c1c1a; }
+body.light .cpc-benefit { color: #2c2c2a; }
+body.light .cpc-summary { color: #2c2c2a; }
+body.light .cpc-summary:hover { color: var(--color-orange); }
+body.light .cpc-body { color: rgba(28,28,26,0.5); }
+body.light .cpc-detail { border-top-color: rgba(200,180,160,0.2); }
+body.light .cycling-row { border-bottom-color: rgba(200,180,160,0.2); }
+body.light .cycling-name { color: #1c1c1a; }
+body.light .cycling-info { color: rgba(28,28,26,0.5); }
+body.light .warning-card { background: rgba(232,160,64,0.05); border-color: rgba(232,160,64,0.15); }
+body.light .warning-disclaimer { background: #f5f2ef; border-left-color: rgba(28,28,26,0.3); }
+body.light .warning-disclaimer { color: rgba(28,28,26,0.4); }
+body.light .shopping-item { background: #fff; border-color: rgba(200,180,160,0.2); }
+body.light .shopping-name { color: #1c1c1a; }
+body.light .shopping-detail { color: rgba(28,28,26,0.5); }
+body.light .shopping-quality { color: #2c2c2a; }
+body.light .shopping-total { background: #fff; border-color: rgba(200,180,160,0.2); color: #2c2c2a; }
+body.light .shopping-total strong { color: var(--color-orange); }

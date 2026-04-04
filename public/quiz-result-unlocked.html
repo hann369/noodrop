@@ -11,9 +11,9 @@
   <meta name="theme-color" content="#E8541A">
   <title>Dein Protokoll — Noodrop</title>
 
-  <link rel="stylesheet" href="quiz-result.css">
+  <link rel="stylesheet" href="quiz-result-unlocked.css">
 </head>
-<body class="result-body">
+<body class="unlocked-body">
 
   <!-- NAV -->
   <header class="nd-header" id="ndHeader">
@@ -38,32 +38,26 @@
     </div>
   </header>
 
-  <div class="result-wrapper">
+  <div class="unlocked-wrapper">
 
     <!-- Loading state -->
-    <div id="unlockLoading" style="text-align:center;padding:6rem 1rem;">
+    <div id="unlockLoading" class="unlocked-loading">
       <div class="spinner" style="margin:0 auto 1rem;"></div>
       <p style="color:var(--color-muted);font-size:15px;">Protokoll wird geladen…</p>
     </div>
 
     <!-- Success: full protocol -->
     <div id="unlockSuccess" style="display:none;">
-      <div class="result-header">
+      <div class="unlocked-header">
         <div class="result-badge" id="unlockBadge">✓ Bezahlt</div>
         <h1 class="result-headline">Dein vollständiges<br><em>Nootropics-Protokoll</em></h1>
-        <p class="result-sub" id="unlockSub">Alles was du brauchst — Dosierung, Timing, Cycling, Quellen.</p>
+        <p class="result-sub">Personalisiert basierend auf deinen Quiz-Antworten — Dosierung, Timing, Cycling, Einkaufsliste und Warnungen.</p>
       </div>
 
-      <!-- Full protocol details -->
-      <section class="compounds-free">
-        <div class="section-label">
-          <span class="label-dot free"></span>
-          <span id="unlockSectionLabel">Dein personalisierter Stack</span>
-        </div>
-        <div class="compounds-list" id="unlockCompounds"></div>
-      </section>
+      <!-- Protocol content wird dynamisch generiert -->
+      <div id="unlockProtocol"></div>
 
-      <!-- Download / extras -->
+      <!-- Next steps -->
       <div style="margin-top:2rem;padding:1.5rem;background:var(--color-bg-raised);border:1px solid var(--color-border);border-radius:var(--radius-lg);">
         <h3 style="font-family:var(--font-display);font-size:15px;font-weight:500;color:var(--color-cream);margin-bottom:0.8rem;">Nächste Schritte</h3>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--color-text);line-height:1.5;">
