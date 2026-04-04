@@ -226,7 +226,7 @@ async function loadSavedStacks(uid){
   const grid=document.getElementById('stacksGrid'),loading=document.getElementById('stacksLoading');
   try{
     console.log('[Profile] Loading stacks for user:',uid);
-    const snap=await db.collection('users').doc(uid).collection('stacks').orderBy('createdAt','desc').get();
+    const snap=await db.collection('users').doc(uid).collection('stacks').get();
     console.log('[Profile] Stacks found:',snap.size);
     loading.style.display='none';
     if(snap.empty){
@@ -234,15 +234,25 @@ async function loadSavedStacks(uid){
       return;
     }
     grid.innerHTML='';
-    snap.forEach(doc=>{
-      const d=doc.data(),count=d.compounds?d.compounds.length:0;
-      const dateStr=d.createdAt?d.createdAt.toDate().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'';
-      console.log('[Profile] Stack:',d.name,'compounds:',count);
-      const card=document.createElement('div');card.className='stack-card nd-r';
-      card.innerHTML=`<div style="flex:1;min-width:0"><div class="stack-name">${escHtml(d.name||'Unnamed Stack')}</div><div class="stack-meta">${count} compound${count!==1?'s':''}${dateStr?' · '+dateStr:''}</div></div><div class="stack-btns"><button class="btn-load" onclick="loadStackIntoBuilder('${doc.id}')">Load in Builder</button><button class="btn-del" onclick="deleteStack('${doc.id}','${uid}')">Delete</button></div>`;
-      grid.appendChild(card);
-    });
     grid.style.display='flex';
+    snap.forEach(doc=>{
+      try{
+        const d=doc.data();
+        const count=d.compounds?d.compounds.length:0;
+        let dateStr='';
+        if(d.createdAt){
+          try{dateStr=d.createdAt.toDate().toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'});}
+          catch(e){dateStr='';}
+        }
+        const name=(d.name||'Unnamed Stack').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+        console.log('[Profile] Rendering stack:',name,'compounds:',count,'date:',dateStr);
+        const card=document.createElement('div');
+        card.className='stack-card nd-r';
+        card.innerHTML='<div style="flex:1;min-width:0"><div class="stack-name">'+name+'</div><div class="stack-meta">'+count+' compound'+(count!==1?'s':'')+(dateStr?' · '+dateStr:'')+'</div></div><div class="stack-btns"><button class="btn-load" onclick="loadStackIntoBuilder(\''+doc.id+'\')">Load in Builder</button><button class="btn-del" onclick="deleteStack(\''+doc.id+'\',\''+uid+'\')">Delete</button></div>';
+        grid.appendChild(card);
+      }catch(err){console.error('[Profile] Error rendering single stack:',err);}
+    });
+    console.log('[Profile] Grid children:',grid.children.length);
   }catch(e){
     loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading stacks.</p>';
     console.error('[Profile] Stacks error:',e);
