@@ -197,22 +197,29 @@ async function removeBookmark(uid,id){
 async function loadBookmarks(uid){
   const grid=document.getElementById('bookmarksGrid'),loading=document.getElementById('bookmarksLoading');
   try{
-    const snap=await db.collection('users').doc(uid).collection('bookmarks').orderBy('bookmarkedAt','desc').get();
+    console.log('[Profile] Loading bookmarks for user:',uid);
+    /* Ohne orderBy — falls Index fehlt */
+    const snap=await db.collection('users').doc(uid).collection('bookmarks').get();
+    console.log('[Profile] Bookmarks found:',snap.size);
     loading.style.display='none';
     if(snap.empty){
       grid.style.display='none';
-      document.getElementById('stacksLoading').insertAdjacentHTML('beforebegin','<div class="empty-state nd-r" style="margin-bottom:56px">No bookmarks yet. <a href="index.html">Browse the library →</a></div>');
+      document.querySelector('.s-eyebrow').insertAdjacentHTML('afterend','<div class="empty-state nd-r" style="margin-bottom:56px">No bookmarks yet. <a href="index.html">Browse the library →</a></div>');
       return;
     }
     grid.innerHTML='';
     snap.forEach(doc=>{
       const d=doc.data();
+      console.log('[Profile] Bookmark:',d.name,'cid:',d.cid);
       const card=document.createElement('div');card.className='bookmark-card';
-      card.innerHTML=`<div class="bk-cat">${d.category||'Nootropic'}</div><div class="bk-name">${d.name||'Compound'}</div><div class="bk-desc">${d.description||''}</div><div class="bk-footer"><button class="bk-view" onclick="viewCompound('${d.cid}')">View →</button><button class="bk-remove" onclick="removeBookmark('${uid}','${doc.id}')">Remove</button></div>`;
+      card.innerHTML=`<div class="bk-cat">${d.category||'Nootropic'}</div><div class="bk-name">${escHtml(d.name||'Compound')}</div><div class="bk-desc">${escHtml(d.description||'').substring(0,80)}</div><div class="bk-footer"><button class="bk-view" onclick="viewCompound('${d.cid}')">View →</button><button class="bk-remove" onclick="removeBookmark('${uid}','${doc.id}')">Remove</button></div>`;
       grid.appendChild(card);
     });
     grid.style.display='grid';
-  }catch(e){loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading bookmarks.</p>';console.error(e);}
+  }catch(e){
+    loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Error loading bookmarks.</p>';
+    console.error('[Profile] Bookmarks error:',e);
+  }
 }
 
 async function loadSavedStacks(uid){
