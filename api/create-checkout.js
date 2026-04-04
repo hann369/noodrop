@@ -26,31 +26,35 @@ module.exports = async function handler(req, res) {
   const sessionMode = mode === 'subscription' ? 'subscription' : 'payment';
 
   try {
+    /* Body bauen — customer_email nur wenn vorhanden */
+    const body = {
+      mode: sessionMode,
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${goal || 'focus'}`,
+      cancel_url: `${DOMAIN}/quiz-result.html`,
+      metadata: {
+        goal: goal || '',
+        email: email || '',
+        product_type: mode === 'subscription' ? 'pro' : 'onetime',
+      },
+    };
+
+    if (email) body.customer_email = email;
+
     const stripeRes = await fetch('https://api.stripe.com/v1/checkout/sessions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${STRIPE_SECRET}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
+        'Stripe-Version': '2024-12-18.acacia',
       },
-      body: new URLSearchParams({
-        mode: sessionMode,
-        line_items: JSON.stringify([{ price: priceId, quantity: 1 }]),
-        success_url: `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${goal || 'focus'}`,
-        cancel_url: `${DOMAIN}/quiz-result.html`,
-        customer_email: email || undefined,
-        // Metadata die im Webhook zurückkommt
-        metadata: JSON.stringify({
-          goal: goal || '',
-          email: email || '',
-          product_type: mode === 'subscription' ? 'pro' : 'onetime',
-        }),
-      }),
+      body: JSON.stringify(body),
     });
 
     const data = await stripeRes.json();
 
     if (!stripeRes.ok) {
-      console.error('[Stripe Create Error]', data);
+      console.error('[Stripe Create Error]', JSON.stringify(data));
       return res.status(stripeRes.status).json({ error: data?.error?.message || 'Stripe error' });
     }
 
