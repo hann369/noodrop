@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <script src="i18n.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E8541A">
+  <title>Finde deinen Stack — Noodrop</title>
+
+  <link rel="stylesheet" href="quiz.css">
+</head>
+<body class="quiz-body">
+
+  <!-- Progress bar -->
+  <div class="quiz-progress-track">
+    <div class="quiz-progress-fill" id="progressFill"></div>
+  </div>
+
+  <!-- NAV -->
+  <header class="nd-header" id="ndHeader">
+    <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
+    <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
+      <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
+      <div class="nd-nav-links">
+        <a href="landing.html" class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
+        <a href="index.html"   class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
+        <a href="stack.html"   class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
+        <a href="marketplace.html" class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+        <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+        <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
+        <a href="nooai.html"   class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
+      </div>
+    </nav>
+    <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
+    <div class="nd-header__right">
+      <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
+      <div class="theme-toggle" id="themeToggle"><div class="theme-toggle-inner"><div class="toggle-knob"></div></div></div>
+      <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- Back button -->
+  <button class="quiz-back" id="backBtn" aria-label="Zurück" style="display:none">← Zurück</button>
+
+  <!-- Step counter -->
+  <div class="quiz-step-label" id="stepLabel">Schritt 1 von 5</div>
+
+  <!-- Quiz container -->
+  <main class="quiz-container" id="quizContainer">
+
+    <!-- Step 1: Goal -->
+    <div class="quiz-step active" data-step="1">
+      <h1 class="quiz-headline">Was ist dein<br><em>Hauptziel?</em></h1>
+      <p class="quiz-desc">Wähle das, was dir gerade am wichtigsten ist.</p>
+      <div class="quiz-options" data-key="goal">
+        <button class="quiz-option" data-value="focus">
+          <span class="option-icon">⚡</span>
+          <span class="option-label">Fokus &amp; Konzentration</span>
+          <span class="option-sub">Tiefer arbeiten, weniger ablenken lassen</span>
+        </button>
+        <button class="quiz-option" data-value="energy">
+          <span class="option-icon">🔋</span>
+          <span class="option-label">Energie &amp; Ausdauer</span>
+          <span class="option-sub">Ganztägig leistungsfähig bleiben</span>
+        </button>
+        <button class="quiz-option" data-value="sleep">
+          <span class="option-icon">🌙</span>
+          <span class="option-label">Schlaf &amp; Erholung</span>
+          <span class="option-sub">Tiefer schlafen, besser regenerieren</span>
+        </button>
+        <button class="quiz-option" data-value="mood">
+          <span class="option-icon">🧠</span>
+          <span class="option-label">Stimmung &amp; Resilienz</span>
+          <span class="option-sub">Stressresistenter, ausgeglichener sein</span>
+        </button>
+        <button class="quiz-option" data-value="memory">
+          <span class="option-icon">💡</span>
+          <span class="option-label">Gedächtnis &amp; Lernen</span>
+          <span class="option-sub">Schneller lernen, länger behalten</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Experience -->
+    <div class="quiz-step" data-step="2">
+      <h1 class="quiz-headline">Wie erfahren bist du<br><em>mit Nootropics?</em></h1>
+      <p class="quiz-desc">Das beeinflusst welche Compounds wir empfehlen.</p>
+      <div class="quiz-options" data-key="experience">
+        <button class="quiz-option" data-value="beginner">
+          <span class="option-icon">🌱</span>
+          <span class="option-label">Anfänger</span>
+          <span class="option-sub">Ich nehme maximal Koffein oder Multivitamine</span>
+        </button>
+        <button class="quiz-option" data-value="intermediate">
+          <span class="option-icon">📈</span>
+          <span class="option-label">Etwas Erfahrung</span>
+          <span class="option-sub">Ich habe schon 2–3 Supplements ausprobiert</span>
+        </button>
+        <button class="quiz-option" data-value="advanced">
+          <span class="option-icon">🔬</span>
+          <span class="option-label">Fortgeschritten</span>
+          <span class="option-sub">Ich kenne Racetame, Adaptogene, Cycling-Protokolle</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Problem -->
+    <div class="quiz-step" data-step="3">
+      <h1 class="quiz-headline">Was ist dein<br><em>größtes Problem?</em></h1>
+      <p class="quiz-desc">Sei ehrlich — das macht dein Protokoll präziser.</p>
+      <div class="quiz-options" data-key="problem">
+        <button class="quiz-option" data-value="brainfog">
+          <span class="option-icon">🌫️</span>
+          <span class="option-label">Brain Fog</span>
+          <span class="option-sub">Gedanken fühlen sich langsam oder unklar an</span>
+        </button>
+        <button class="quiz-option" data-value="procrastination">
+          <span class="option-icon">⏳</span>
+          <span class="option-label">Prokrastination</span>
+          <span class="option-sub">Ich weiß was ich tun soll, tue es aber nicht</span>
+        </button>
+        <button class="quiz-option" data-value="sleep_quality">
+          <span class="option-icon">😴</span>
+          <span class="option-label">Schlechter Schlaf</span>
+          <span class="option-sub">Einschlafen oder durchschlafen fällt schwer</span>
+        </button>
+        <button class="quiz-option" data-value="low_energy">
+          <span class="option-icon">📉</span>
+          <span class="option-label">Niedriges Energieniveau</span>
+          <span class="option-sub">Nachmittags-Crash, ständige Müdigkeit</span>
+        </button>
+        <button class="quiz-option" data-value="motivation">
+          <span class="option-icon">🎯</span>
+          <span class="option-label">Fehlende Motivation</span>
+          <span class="option-sub">Antrieb da, aber der Funke fehlt</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4: Lifestyle -->
+    <div class="quiz-step" data-step="4">
+      <h1 class="quiz-headline">Wie sieht dein<br><em>Alltag aus?</em></h1>
+      <p class="quiz-desc">Verschiedene Lifestyles brauchen verschiedene Stacks.</p>
+      <div class="quiz-options" data-key="lifestyle">
+        <button class="quiz-option" data-value="student">
+          <span class="option-icon">📚</span>
+          <span class="option-label">Student / Learner</span>
+          <span class="option-sub">Viel Lernen, Deadlines, kognitive Ausdauer</span>
+        </button>
+        <button class="quiz-option" data-value="office">
+          <span class="option-icon">💻</span>
+          <span class="option-label">Wissensarbeiter</span>
+          <span class="option-sub">Meetings, Deep Work, lange Bildschirmzeit</span>
+        </button>
+        <button class="quiz-option" data-value="athlete">
+          <span class="option-icon">🏋️</span>
+          <span class="option-label">Athlet / Sportler</span>
+          <span class="option-sub">Training + mentale Performance kombinieren</span>
+        </button>
+        <button class="quiz-option" data-value="creative">
+          <span class="option-icon">🎨</span>
+          <span class="option-label">Kreativer / Gründer</span>
+          <span class="option-sub">Ideenfluss, Flow-States, Resilienz</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 5: Medication -->
+    <div class="quiz-step" data-step="5">
+      <h1 class="quiz-headline">Nimmst du aktuell<br><em>andere Mittel?</em></h1>
+      <p class="quiz-desc">Wichtig für Sicherheit und Interaktions-Check.</p>
+      <div class="quiz-options" data-key="medication">
+        <button class="quiz-option" data-value="none">
+          <span class="option-icon">✓</span>
+          <span class="option-label">Nein, nichts</span>
+          <span class="option-sub">Nur Essen und vielleicht Kaffee</span>
+        </button>
+        <button class="quiz-option" data-value="basic">
+          <span class="option-icon">💊</span>
+          <span class="option-label">Basis-Supplemente</span>
+          <span class="option-sub">Vitamin D, Magnesium, Omega-3 o.ä.</span>
+        </button>
+        <button class="quiz-option" data-value="prescription">
+          <span class="option-icon">🏥</span>
+          <span class="option-label">Rezeptpflichtige Medikamente</span>
+          <span class="option-sub">Ich werde Interaktionen besonders prüfen</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading screen -->
+    <div class="quiz-step quiz-loading" data-step="loading">
+      <div class="loading-orb"></div>
+      <h2 class="loading-headline">Dein Stack wird berechnet...</h2>
+      <div class="loading-steps" id="loadingSteps">
+        <p class="loading-step active" data-idx="0">Ziel analysiert: <strong id="loadGoal"></strong></p>
+        <p class="loading-step" data-idx="1">Erfahrungslevel berücksichtigt</p>
+        <p class="loading-step" data-idx="2">Compounds aus PubMed-Datenbank geprüft</p>
+        <p class="loading-step" data-idx="3">Interaktionen gecheckt</p>
+        <p class="loading-step" data-idx="4">Stack personalisiert ✓</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom bar with CTA -->
+  <div class="quiz-bottom" id="quizBottom" style="display:none">
+    <button class="btn-primary btn-quiz-next" id="nextBtn" disabled>
+      Weiter <span class="btn-arrow">→</span>
+    </button>
+  </div>
+
+  <!-- Cookie Banner -->
+  <div id="cookieConsent" style="display:none;"><span>We use cookies to improve your experience.</span><button onclick="acceptCookies()">Accept</button></div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="quiz.js"></script>
+
+  <!-- Theme -->
+  <script>
+  (function(){
+    var t=document.getElementById('themeToggle'),isLight=localStorage.getItem('ndTheme')==='light';
+    function apply(l){document.body.classList.toggle('light',l);document.body.classList.toggle('quiz-body',true);if(t)t.classList.toggle('active',l);}
+    apply(isLight);
+    if(t)t.addEventListener('click',function(){isLight=!isLight;localStorage.setItem('ndTheme',isLight?'light':'');apply(isLight);});
+  })();
+  </script>
+
+  <!-- Auth -->
+  <script>
+  var authBtn=document.getElementById('authBtn');
+  if(authBtn){
+    authBtn.addEventListener('click',function(){firebase.auth().currentUser?window.location.href='profile.html':openAuthModal();});
+    firebase.auth().onAuthStateChanged(function(user){authBtn.textContent=user?'Profile':'Login';});
+  }
+  function openAuthModal(){window.location.href='index.html';}
+  </script>
+
+  <!-- Cookie -->
+  <script>
+  function acceptCookies(){localStorage.setItem('cookiesAccepted','yes');document.getElementById('cookieConsent').style.display='none';}
+  window.addEventListener('load',function(){if(!localStorage.getItem('cookiesAccepted'))document.getElementById('cookieConsent').style.display='flex';});
+  </script>
+
+  <!-- Header JS -->
+  <script>
+  (function(){
+    var b=document.getElementById('ndBurger'),n=document.getElementById('ndNav'),h=document.getElementById('ndHeader');
+    if(!b||!n)return;
+    function o(){n.classList.add('is-open');b.classList.add('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.add('is-open');b.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';}
+    function c(){n.classList.remove('is-open');b.classList.remove('is-open');var bd=document.getElementById('ndNavBackdrop');if(bd)bd.classList.remove('is-open');b.setAttribute('aria-expanded','false');document.body.style.overflow='';}
+    b.addEventListener('click',function(){n.classList.contains('is-open')?c():o();});
+    var cb=document.getElementById('ndNavClose');if(cb)cb.addEventListener('click',c);
+    var bk=document.getElementById('ndNavBackdrop');if(bk)bk.addEventListener('click',c);
+    n.querySelectorAll('.nd-nav__link').forEach(function(a){a.addEventListener('click',c);});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')c();});
+    window.addEventListener('resize',function(){if(window.innerWidth>768)c();});
+    if(h)window.addEventListener('scroll',function(){h.classList.toggle('scrolled',scrollY>10);},{passive:true});
+  })();
+  </script>
+  <script>document.addEventListener("DOMContentLoaded",function(){i18n.init();});</script>
+</body>
+</html>

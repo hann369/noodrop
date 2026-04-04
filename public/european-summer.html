@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.fontshare.com">
+  <link href="https://fonts.fontshare.com/css2/3fcsn86ceiws4xky7ev64mf521.css" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@300,400,500,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="global.css">
+  <script src="i18n.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E8541A">
+  <title>European Summer Principle — Noodrop</title>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS  (fallbacks in case global.css varies)
+───────────────────────────────────────────── */
+:root {
+  --orange:      #E8541A;
+  --orange-dim:  rgba(232,84,26,.12);
+  --gold:        #C9A84C;
+  --gold-dim:    rgba(201,168,76,.12);
+  --cream:       #F5F0E8;
+  --sand:        #D4C5A9;
+  --azure:       #4A7FA5;
+  --slate:       #2C2C2C;
+  --slate-2:     #1A1A1A;
+  --bg-1:        #111110;
+  --bg-2:        #161614;
+  --bg-3:        #1e1e1b;
+  --m1:          #f0ece3;
+  --m2:          #9a9287;
+  --m3:          #3a3830;
+  --m4:          #252420;
+  --font-display:'ClashDisplay', 'Clash Display', sans-serif;
+  --font-body:   'Satoshi', sans-serif;
+  --ease-out:    cubic-bezier(.22,.68,0,1.2);
+}
+
+/* ─────────────────────────────────────────────
+   LOADER
+───────────────────────────────────────────── */
+#es-loader {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: #060a14;
+  transition: opacity .7s ease, visibility .7s ease;
+}
+#es-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.loader-sky {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    #060a14 0%,
+    #0d1a2e 30%,
+    #1a2a4a 50%,
+    #2d3a5c 62%,
+    #7a3a22 75%,
+    #c4561e 85%,
+    #e8831a 92%,
+    #f0c060 97%,
+    #fff8e0 100%);
+  animation: skyRise 2.8s ease forwards;
+}
+@keyframes skyRise {
+  0%   { opacity: 0; transform: translateY(60px); }
+  20%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 1; }
+}
+
+/* Sea silhouette */
+.loader-sea {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 38%;
+  background: #060a14;
+  clip-path: polygon(0 30%, 8% 22%, 18% 28%, 30% 18%, 42% 25%, 55% 15%, 68% 22%, 80% 16%, 92% 24%, 100% 18%, 100% 100%, 0 100%);
+  animation: seaFade 2.8s ease forwards;
+}
+@keyframes seaFade { from { opacity:0; } to { opacity:1; } }
+
+/* Sea reflection shimmer */
+.loader-reflection {
+  position: absolute; bottom: 38%; left: 35%; right: 35%;
+  height: 120px;
+  background: linear-gradient(180deg, rgba(248,180,80,.55) 0%, transparent 100%);
+  clip-path: polygon(30% 0%, 70% 0%, 95% 100%, 5% 100%);
+  animation: shimmer 2s 1.2s ease forwards; opacity: 0;
+}
+@keyframes shimmer {
+  0%  { opacity:0; transform: scaleY(.6); }
+  60% { opacity:.7; }
+  100%{ opacity:.5; transform: scaleY(1); }
+}
+
+/* Sun */
+.loader-sun {
+  position: absolute;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff8c0 0%, #f5c842 30%, #e8831a 65%, #c4561e 100%);
+  box-shadow:
+    0 0 0 12px rgba(248,180,80,.18),
+    0 0 0 28px rgba(248,180,80,.10),
+    0 0 80px 20px rgba(248,160,60,.35);
+  left: 50%; bottom: 35%;
+  transform: translateX(-50%) translateY(80px);
+  animation: sunRise 2.6s 0.4s var(--ease-out) forwards; opacity: 0;
+}
+@keyframes sunRise {
+  0%   { opacity:0; transform: translateX(-50%) translateY(80px) scale(.7); }
+  40%  { opacity:1; }
+  100% { opacity:1; transform: translateX(-50%) translateY(0px) scale(1); }
+}
+
+/* Sun rays */
+.loader-rays {
+  position: absolute;
+  width: 200px; height: 200px;
+  left: 50%; bottom: 35%;
+  transform: translateX(-50%) translateY(8px);
+  animation: raysIn 1s 1.8s ease forwards; opacity: 0;
+}
+.loader-rays::before, .loader-rays::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(248,180,80,.25);
+  animation: raysPulse 2s 1.8s ease infinite;
+}
+.loader-rays::after { width: 280px; height: 280px; inset: -40px; animation-delay: 2.2s; }
+@keyframes raysIn  { to { opacity:1; } }
+@keyframes raysPulse { 0%,100%{opacity:.25;} 50%{opacity:.55;} }
+
+/* Brand text under sun */
+.loader-brand {
+  position: absolute;
+  bottom: calc(38% + 130px);
+  left: 50%; transform: translateX(-50%);
+  text-align: center;
+  animation: brandIn .8s 2.4s ease forwards; opacity: 0;
+}
+.loader-brand .lb-title {
+  font-family: var(--font-display);
+  font-size: 1.9rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: #fff8e0;
+  text-shadow: 0 0 30px rgba(248,180,80,.6);
+}
+.loader-brand .lb-sub {
+  display: block; margin-top: .2rem;
+  font-family: var(--font-body);
+  font-size: .6rem; letter-spacing: .35em;
+  text-transform: uppercase;
+  color: rgba(255,248,224,.55);
+}
+@keyframes brandIn {
+  from { opacity:0; transform: translateX(-50%) translateY(10px); }
+  to   { opacity:1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ─────────────────────────────────────────────
+   PARTICLES
+───────────────────────────────────────────── */
+#particles-js { position: fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ─────────────────────────────────────────────
+   PAGE LAYOUT
+───────────────────────────────────────────── */
+.es-page { opacity:0; transition: opacity .8s ease; }
+.es-page.visible { opacity:1; }
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.es-hero {
+  position: relative; min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 0 3rem 5rem;
+  overflow: hidden; z-index: 1;
+}
+
+.es-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 55% 35%, rgba(201,168,76,.07) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 60% at 15% 65%, rgba(74,127,165,.05) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 35% at 82% 78%, rgba(232,84,26,.06) 0%, transparent 55%);
+  z-index: 0;
+}
+.es-hero-bg::before {
+  content:''; position:absolute; top:42%; left:0; right:0;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,.18) 25%, rgba(201,168,76,.38) 50%, rgba(201,168,76,.18) 75%, transparent);
+}
+
+.es-eyebrow {
+  font-family: var(--font-body); font-size: .62rem;
+  font-weight: 500; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 1.2rem;
+  display: flex; align-items: center; gap: 1rem;
+  position: relative; z-index:1;
+}
+.es-eyebrow::before { content:''; width:36px; height:1px; background:var(--orange); }
+
+.es-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 8.5rem);
+  font-weight: 300; line-height: .9; letter-spacing: -.02em;
+  position: relative; z-index:1;
+}
+.es-hero h1 em { font-style: italic; color: var(--gold); }
+.es-hero h1 span { display: block; }
+
+.es-hero-sub {
+  margin-top: 2rem;
+  font-family: var(--font-body); font-size: 1rem;
+  font-weight: 300; font-style: italic;
+  color: var(--sand); max-width: 400px;
+  line-height: 1.65; position: relative; z-index:1;
+}
+
+.es-hero-cta {
+  margin-top: 2.2rem; display: flex; gap: 1rem;
+  align-items: center; position: relative; z-index:1; flex-wrap:wrap;
+}
+.es-btn-primary {
+  font-family: var(--font-body); font-size: .62rem;
+  font-weight: 600; letter-spacing: .2em; text-transform: uppercase;
+  padding: .85rem 2rem; background: var(--orange);
+  color: #fff; border:none; cursor: pointer; text-decoration:none;
+  transition: background .25s, transform .2s;
+}
+.es-btn-primary:hover { background:#c4561e; transform: translateY(-2px); }
+.es-btn-ghost {
+  font-family: var(--font-body); font-size: .62rem;
+  font-weight: 500; letter-spacing: .2em; text-transform: uppercase;
+  padding: .85rem 2rem; background: transparent;
+  color: var(--sand); border:1px solid rgba(212,197,169,.25);
+  cursor:pointer; text-decoration:none;
+  transition: border-color .25s, color .25s;
+}
+.es-btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+.es-hero-side {
+  position:absolute; right:2.5rem; bottom:28%;
+  writing-mode: vertical-rl;
+  font-family: var(--font-body); font-size: .68rem;
+  font-style: italic; letter-spacing: .15em;
+  color: rgba(212,197,169,.28); user-select:none; z-index:1;
+}
+
+/* scroll cue */
+.es-scroll-cue {
+  position:absolute; bottom:2rem; left:50%;
+  transform: translateX(-50%);
+  display:flex; flex-direction:column; align-items:center;
+  gap:.5rem; z-index:1; opacity:.45;
+  animation: cueFloat 2.4s ease infinite;
+}
+.es-scroll-cue span {
+  font-family: var(--font-body); font-size:.55rem;
+  letter-spacing:.25em; text-transform:uppercase; color:var(--sand);
+}
+.es-scroll-cue svg { color: var(--sand); }
+@keyframes cueFloat { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(6px);} }
+
+/* ─────────────────────────────────────────────
+   SECTION HELPERS
+───────────────────────────────────────────── */
+.es-section { position:relative; z-index:1; }
+.es-container { max-width:1100px; margin:0 auto; padding:0 3rem; }
+.es-label {
+  font-family: var(--font-body); font-size:.58rem;
+  letter-spacing:.35em; text-transform:uppercase;
+  color:var(--orange); margin-bottom:2.5rem;
+  display:flex; align-items:center; gap:1rem;
+}
+.es-label::after { content:''; flex:0 0 50px; height:1px; background:var(--orange); }
+.es-divider {
+  border:none; border-top:1px solid rgba(201,168,76,.1);
+  margin:0;
+}
+
+/* reveal on scroll */
+.es-reveal {
+  opacity:0; transform: translateY(28px);
+  transition: opacity .8s ease, transform .8s ease;
+}
+.es-reveal.in { opacity:1; transform:none; }
+
+/* ─────────────────────────────────────────────
+   MANIFESTO
+───────────────────────────────────────────── */
+.es-manifesto { padding: 7rem 0; }
+.es-manifesto-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem; align-items: start;
+}
+.es-manifesto-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  font-weight: 300; line-height: 1.35;
+  color: var(--cream);
+}
+.es-manifesto-quote em { font-style:italic; color:var(--gold); }
+.es-manifesto-body {
+  font-family: var(--font-body); font-size: .82rem;
+  font-weight: 300; line-height: 1.95;
+  color: rgba(212,197,169,.8);
+}
+.es-manifesto-body p + p { margin-top:1.2rem; }
+
+/* ─────────────────────────────────────────────
+   PARALLAX JOURNEY — 6 TENETS
+───────────────────────────────────────────── */
+.es-journey { padding:0; }
+
+.es-journey-intro {
+  padding: 5rem 0 4rem;
+  text-align:center;
+}
+.es-journey-intro h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem,4vw,3.8rem);
+  font-weight:300; letter-spacing:-.02em;
+  color:var(--cream);
+}
+.es-journey-intro h2 em { font-style:italic; color:var(--gold); }
+.es-journey-intro p {
+  margin-top:1rem; font-family:var(--font-body);
+  font-size:.82rem; color:var(--sand); font-style:italic;
+}
+
+.es-tenet {
+  display:grid; grid-template-columns:1fr 1fr;
+  min-height:88vh; position:relative; overflow:hidden;
+  border-top:1px solid rgba(201,168,76,.07);
+}
+.es-tenet:nth-child(even) .es-tenet-visual { order:-1; }
+
+.es-tenet-visual {
+  position:relative; overflow:hidden;
+  background: var(--bg-2);
+}
+.es-tenet-visual-inner {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  transition: transform .1s linear; /* parallax updated via JS */
+}
+
+/* Each tenet gets a unique atmospheric gradient */
+.es-tenet--1 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(201,168,76,.13) 0%, rgba(26,26,26,.0) 70%), #131310;
+}
+.es-tenet--2 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(74,127,165,.14) 0%, transparent 70%), #10131a;
+}
+.es-tenet--3 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(196,94,58,.12) 0%, transparent 70%), #1a1210;
+}
+.es-tenet--4 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(232,84,26,.10) 0%, transparent 70%), #18110e;
+}
+.es-tenet--5 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(80,160,120,.10) 0%, transparent 70%), #0e1812;
+}
+.es-tenet--6 .es-tenet-visual-inner {
+  background: radial-gradient(ellipse 80% 70% at 50% 50%, rgba(140,100,200,.10) 0%, transparent 70%), #14101a;
+}
+
+.es-tenet-glyph {
+  font-size: clamp(6rem,12vw,11rem);
+  opacity:.08; user-select:none; line-height:1;
+  color:var(--cream);
+  font-family: var(--font-display); font-weight:600;
+}
+
+.es-tenet-content {
+  padding: 4rem 3.5rem;
+  display:flex; flex-direction:column; justify-content:center;
+  background: var(--bg-1);
+}
+.es-tenet-num {
+  font-family: var(--font-display); font-size:.62rem;
+  letter-spacing:.35em; color:var(--orange); margin-bottom:1.8rem;
+  display:flex; align-items:center; gap:.8rem;
+}
+.es-tenet-num::before { content:''; width:28px; height:1px; background:var(--orange); }
+
+.es-tenet-name {
+  font-family: var(--font-display);
+  font-size: clamp(2rem,4vw,3.5rem);
+  font-weight:400; letter-spacing:-.01em;
+  color:var(--cream); margin-bottom:1.2rem; line-height:1.05;
+}
+.es-tenet-name em { font-style:italic; color:var(--gold); }
+
+.es-tenet-body {
+  font-family:var(--font-body); font-size:.83rem;
+  font-weight:300; line-height:1.9;
+  color:rgba(212,197,169,.75); max-width:400px;
+  margin-bottom:2rem;
+}
+
+.es-tenet-keyword {
+  display:inline-flex; align-items:center; gap:.6rem;
+  font-family:var(--font-body); font-size:.6rem;
+  letter-spacing:.22em; text-transform:uppercase;
+  color:var(--gold); padding:.5rem 1rem;
+  border:1px solid rgba(201,168,76,.2);
+  background: rgba(201,168,76,.05);
+}
+
+/* ─────────────────────────────────────────────
+   MOOD BOARD
+───────────────────────────────────────────── */
+.es-moodboard { padding: 7rem 0; }
+.es-moodboard h2 {
+  font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:300; color:var(--cream); margin-bottom:.8rem;
+}
+.es-moodboard > .es-container > p {
+  font-family:var(--font-body); font-size:.8rem;
+  color:var(--sand); font-style:italic; margin-bottom:3rem;
+}
+
+.mb-grid {
+  display:grid;
+  grid-template-columns: repeat(4,1fr);
+  grid-template-rows: repeat(3, 160px);
+  gap: 2px;
+  background: var(--m4);
+  border:1px solid var(--m4); overflow:hidden;
+}
+
+.mb-tile {
+  position:relative; overflow:hidden;
+  background: var(--bg-2);
+  cursor:pointer;
+  transition: transform .3s var(--ease-out), z-index 0s;
+}
+.mb-tile:hover { z-index:10; transform:scale(1.04); }
+.mb-tile.span-2h { grid-column: span 2; }
+.mb-tile.span-2v { grid-row: span 2; }
+
+.mb-tile-bg {
+  position:absolute; inset:0;
+  transition: transform .5s ease;
+}
+.mb-tile:hover .mb-tile-bg { transform:scale(1.08); }
+
+/* Individual tile atmospheres */
+.mb-tile--dolce .mb-tile-bg { background: linear-gradient(135deg, #1a1208 0%, #2d2010 40%, #c4a040 100%); }
+.mb-tile--coast .mb-tile-bg { background: linear-gradient(160deg, #0a1628 0%, #1a3050 50%, #4a7fa5 100%); }
+.mb-tile--linen .mb-tile-bg { background: linear-gradient(145deg, #1a1814 0%, #2a2520 60%, rgba(245,240,232,.12) 100%); }
+.mb-tile--aperol .mb-tile-bg { background: linear-gradient(135deg, #1a0e08 0%, #5a2010 50%, #e8541a 100%); }
+.mb-tile--piazza .mb-tile-bg { background: linear-gradient(155deg, #0e0e0a 0%, #1c1c14 60%, rgba(201,168,76,.2) 100%); }
+.mb-tile--niente .mb-tile-bg { background: linear-gradient(140deg, #080a10 0%, #141c2a 60%, rgba(74,127,165,.2) 100%); }
+.mb-tile--ciao .mb-tile-bg   { background: linear-gradient(150deg, #140e0a 0%, #2a1810 60%, rgba(196,94,58,.25) 100%); }
+.mb-tile--sprezzatura .mb-tile-bg { background: linear-gradient(135deg, #0c0c08 0%, #1a1a12 60%, rgba(201,168,76,.15) 100%); }
+
+.mb-tile-overlay {
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.75) 100%);
+  opacity:0; transition: opacity .3s;
+}
+.mb-tile:hover .mb-tile-overlay { opacity:1; }
+
+.mb-tile-info {
+  position:absolute; bottom:0; left:0; right:0;
+  padding:1rem 1.2rem;
+  transform: translateY(8px); opacity:0;
+  transition: transform .3s ease, opacity .3s ease;
+}
+.mb-tile:hover .mb-tile-info { transform:none; opacity:1; }
+
+.mb-tile-word {
+  font-family: var(--font-display);
+  font-size: clamp(.9rem,1.8vw,1.4rem);
+  font-weight:400; color:var(--cream);
+  letter-spacing:-.01em; line-height:1;
+}
+.mb-tile-word em { font-style:italic; color:var(--gold); }
+.mb-tile-desc {
+  margin-top:.3rem;
+  font-family:var(--font-body); font-size:.65rem;
+  color:rgba(212,197,169,.7); font-weight:300;
+  letter-spacing:.04em; line-height:1.4;
+}
+
+/* Center icon */
+.mb-tile-icon {
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  font-size:clamp(1.5rem,3vw,2.5rem);
+  opacity:.22; user-select:none;
+  transition: opacity .3s, transform .3s;
+  pointer-events:none;
+}
+.mb-tile:hover .mb-tile-icon { opacity:.08; transform:translate(-50%,-50%) scale(1.3); }
+
+/* Detail panel */
+.mb-detail {
+  margin-top:2px; padding:2.5rem;
+  background: var(--bg-2);
+  border:1px solid rgba(201,168,76,.15);
+  display:none;
+}
+.mb-detail.active { display:grid; grid-template-columns:1fr auto; gap:2rem; align-items:start; }
+.mb-detail h3 {
+  font-family:var(--font-display); font-size:1.5rem;
+  font-weight:400; color:var(--cream); margin-bottom:.6rem;
+}
+.mb-detail h3 em { font-style:italic; color:var(--gold); }
+.mb-detail p {
+  font-family:var(--font-body); font-size:.8rem;
+  line-height:1.85; color:rgba(212,197,169,.8); font-weight:300;
+}
+.mb-detail-close {
+  background:none; border:1px solid rgba(212,197,169,.2);
+  color:var(--sand); padding:.4rem .9rem; cursor:pointer;
+  font-family:var(--font-body); font-size:.65rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  transition:border-color .2s, color .2s; white-space:nowrap;
+}
+.mb-detail-close:hover { border-color:var(--orange); color:var(--orange); }
+
+/* ─────────────────────────────────────────────
+   QUIZ
+───────────────────────────────────────────── */
+.es-quiz { padding: 7rem 0; border-top:1px solid rgba(201,168,76,.08); }
+.es-quiz .es-container { max-width:760px; }
+
+.quiz-header { text-align:center; margin-bottom:3rem; }
+.quiz-header h2 {
+  font-family:var(--font-display); font-size:clamp(1.8rem,3.5vw,3rem);
+  font-weight:300; color:var(--cream); margin-bottom:.8rem;
+}
+.quiz-header h2 em { font-style:italic; color:var(--gold); }
+.quiz-header p {
+  font-family:var(--font-body); font-size:.8rem;
+  color:var(--sand); font-style:italic;
+}
+
+.quiz-progress-bar {
+  height:2px; background:var(--m4);
+  border-radius:2px; overflow:hidden; margin-bottom:2.5rem;
+}
+.quiz-progress-fill {
+  height:100%; background:var(--orange);
+  transition: width .5s ease; width:0%;
+}
+
+.quiz-card {
+  background:var(--bg-2); border:1px solid var(--m4);
+  padding:2.5rem; min-height:320px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.quiz-q-num {
+  font-family:var(--font-body); font-size:.6rem;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--orange); margin-bottom:1.2rem;
+}
+.quiz-question {
+  font-family:var(--font-display); font-size:clamp(1.1rem,2.5vw,1.7rem);
+  font-weight:300; color:var(--cream); line-height:1.3;
+  margin-bottom:2rem; flex:1;
+}
+.quiz-options { display:flex; flex-direction:column; gap:.7rem; }
+.quiz-option {
+  padding:1rem 1.4rem; background:var(--bg-3);
+  border:1px solid var(--m4); cursor:pointer;
+  font-family:var(--font-body); font-size:.8rem;
+  color:var(--m2); text-align:left;
+  transition: border-color .2s, color .2s, background .2s;
+  display:flex; align-items:center; gap:1rem;
+}
+.quiz-option:hover { border-color:var(--gold); color:var(--cream); background:var(--m4); }
+.quiz-option.selected { border-color:var(--orange); color:var(--cream); background:var(--orange-dim); }
+.quiz-option-letter {
+  font-family:var(--font-display); font-weight:600;
+  font-size:.65rem; color:var(--m3); min-width:1.2rem;
+  transition: color .2s;
+}
+.quiz-option:hover .quiz-option-letter,
+.quiz-option.selected .quiz-option-letter { color:var(--orange); }
+
+.quiz-nav { display:flex; justify-content:flex-end; margin-top:1.5rem; gap:.8rem; }
+.quiz-btn {
+  font-family:var(--font-body); font-size:.62rem;
+  letter-spacing:.18em; text-transform:uppercase;
+  padding:.75rem 1.8rem; cursor:pointer;
+  transition: background .2s, color .2s, border-color .2s;
+}
+.quiz-btn-next { background:var(--orange); color:#fff; border:1px solid var(--orange); }
+.quiz-btn-next:hover { background:#c4561e; border-color:#c4561e; }
+.quiz-btn-next:disabled { opacity:.3; cursor:not-allowed; }
+
+/* Result */
+.quiz-result { display:none; text-align:center; padding:1.5rem 0; }
+.quiz-result.show { display:block; }
+.quiz-result-title {
+  font-family:var(--font-display); font-size:clamp(1.6rem,3vw,2.6rem);
+  font-weight:300; color:var(--gold); margin-bottom:.6rem;
+}
+.quiz-result-score {
+  font-family:var(--font-display); font-size:3.5rem;
+  font-weight:600; color:var(--orange); line-height:1;
+  margin:1rem 0;
+}
+.quiz-result-desc {
+  font-family:var(--font-body); font-size:.85rem;
+  color:var(--sand); line-height:1.7; max-width:500px; margin:0 auto 2rem;
+}
+.quiz-result-badge {
+  display:inline-block; padding:.5rem 1.4rem;
+  border:1px solid var(--gold); color:var(--gold);
+  font-family:var(--font-body); font-size:.6rem;
+  letter-spacing:.22em; text-transform:uppercase; margin-bottom:2rem;
+}
+.quiz-restart {
+  background:none; border:1px solid rgba(212,197,169,.2);
+  color:var(--sand); padding:.7rem 1.6rem; cursor:pointer;
+  font-family:var(--font-body); font-size:.62rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  transition: border-color .2s, color .2s;
+}
+.quiz-restart:hover { border-color:var(--orange); color:var(--orange); }
+
+/* ─────────────────────────────────────────────
+   STACK BUILDER
+───────────────────────────────────────────── */
+.es-stack { padding:7rem 0; border-top:1px solid rgba(201,168,76,.08); }
+.es-stack-header { margin-bottom:3rem; }
+.es-stack-header h2 {
+  font-family:var(--font-display); font-size:clamp(2rem,4vw,3.2rem);
+  font-weight:300; color:var(--cream); margin-bottom:.6rem;
+}
+.es-stack-header h2 em { font-style:italic; color:var(--orange); }
+.es-stack-header p {
+  font-family:var(--font-body); font-size:.8rem;
+  color:var(--sand); font-style:italic;
+}
+
+.sb-layout { display:grid; grid-template-columns:1fr 340px; gap:2rem; }
+
+.sb-compounds { display:flex; flex-direction:column; gap:2px; background:var(--m4); }
+
+.sb-compound {
+  background:var(--bg-2); padding:1.2rem 1.6rem;
+  display:flex; align-items:center; gap:1.2rem;
+  cursor:pointer; transition:background .2s;
+  position:relative;
+}
+.sb-compound:hover { background:var(--bg-3); }
+.sb-compound.active { background:var(--m4); }
+.sb-compound.active::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:2px; background:var(--orange);
+}
+
+.sb-compound-icon {
+  width:38px; height:38px; border-radius:50%;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem;
+}
+.sb-compound-info { flex:1; min-width:0; }
+.sb-compound-name {
+  font-family:var(--font-display); font-size:.95rem;
+  font-weight:400; color:var(--cream); margin-bottom:.2rem;
+}
+.sb-compound-role {
+  font-family:var(--font-body); font-size:.65rem;
+  color:var(--m2); letter-spacing:.04em;
+}
+.sb-compound-add {
+  width:28px; height:28px; border-radius:50%;
+  border:1px solid var(--m3); background:none;
+  color:var(--m2); cursor:pointer; font-size:1rem; line-height:1;
+  transition: border-color .2s, color .2s, background .2s;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.sb-compound-add:hover { border-color:var(--orange); color:var(--orange); }
+.sb-compound-add.added { background:var(--orange-dim); border-color:var(--orange); color:var(--orange); }
+
+/* Stack panel */
+.sb-panel { position:sticky; top:90px; }
+.sb-panel-box {
+  background:var(--bg-2); border:1px solid rgba(201,168,76,.15);
+  padding:1.8rem;
+}
+.sb-panel-title {
+  font-family:var(--font-body); font-size:.58rem;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:var(--orange); margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:.8rem;
+}
+.sb-panel-title::after { content:''; flex:1; height:1px; background:rgba(232,84,26,.3); }
+
+.sb-slots { display:flex; flex-direction:column; gap:.5rem; min-height:200px; }
+.sb-slot {
+  padding:.9rem 1rem; background:var(--bg-3);
+  border:1px dashed var(--m3);
+  font-family:var(--font-body); font-size:.72rem;
+  color:var(--m3); font-style:italic;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:border-color .2s;
+}
+.sb-slot.filled {
+  border-style:solid; border-color:rgba(201,168,76,.2);
+  color:var(--cream); font-style:normal; background:var(--m4);
+}
+.sb-slot-remove {
+  background:none; border:none; cursor:pointer;
+  color:var(--m2); font-size:.85rem;
+  transition: color .2s; display:none;
+}
+.sb-slot.filled .sb-slot-remove { display:block; }
+.sb-slot-remove:hover { color:var(--orange); }
+
+.sb-empty-msg {
+  font-family:var(--font-body); font-size:.7rem;
+  color:var(--m3); font-style:italic; text-align:center;
+  padding:1.5rem 0;
+}
+
+.sb-actions { margin-top:1.2rem; display:flex; flex-direction:column; gap:.6rem; }
+.sb-cta {
+  width:100%; padding:.85rem; text-align:center;
+  background:var(--orange); color:#fff;
+  font-family:var(--font-body); font-size:.62rem;
+  letter-spacing:.18em; text-transform:uppercase;
+  cursor:pointer; border:none;
+  transition: background .2s;
+  text-decoration:none; display:block;
+}
+.sb-cta:hover { background:#c4561e; }
+.sb-cta-ghost {
+  width:100%; padding:.75rem; text-align:center;
+  background:none; color:var(--sand);
+  font-family:var(--font-body); font-size:.6rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  cursor:pointer; border:1px solid rgba(212,197,169,.18);
+  transition: border-color .2s, color .2s;
+}
+.sb-cta-ghost:hover { border-color:var(--gold); color:var(--gold); }
+
+.sb-synergy {
+  margin-top:1rem; padding:.9rem;
+  background:var(--orange-dim); border:1px solid rgba(232,84,26,.2);
+  font-family:var(--font-body); font-size:.68rem;
+  color:var(--orange); line-height:1.5; display:none;
+}
+.sb-synergy.show { display:block; }
+
+/* ─────────────────────────────────────────────
+   LIFESTYLE STRIP
+───────────────────────────────────────────── */
+.es-strip {
+  border-top:1px solid rgba(201,168,76,.1);
+  border-bottom:1px solid rgba(201,168,76,.1);
+  background:rgba(245,240,232,.012);
+  padding:4rem 0; position:relative; z-index:1;
+}
+.es-strip-grid {
+  max-width:1100px; margin:0 auto; padding:0 3rem;
+  display:grid; grid-template-columns:repeat(3,1fr);
+}
+.es-strip-item {
+  padding:0 2.5rem;
+  border-right:1px solid rgba(201,168,76,.1);
+}
+.es-strip-item:first-child { padding-left:0; }
+.es-strip-item:last-child  { border-right:none; }
+.es-strip-word {
+  display:block; font-family:var(--font-display);
+  font-size:clamp(1.6rem,2.8vw,2.5rem);
+  font-weight:300; font-style:italic;
+  color:var(--gold); margin-bottom:.4rem;
+}
+.es-strip-desc {
+  font-family:var(--font-body); font-size:.62rem;
+  letter-spacing:.15em; text-transform:uppercase;
+  color:rgba(212,197,169,.45);
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+.es-footer {
+  position:relative; z-index:1;
+  padding:2.5rem 3rem;
+  border-top:1px solid rgba(245,240,232,.06);
+  display:flex; justify-content:space-between; align-items:center;
+  max-width:1100px; margin:0 auto;
+}
+.es-footer p {
+  font-family:var(--font-body); font-size:.58rem;
+  letter-spacing:.1em; color:rgba(212,197,169,.25);
+  text-transform:uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width:900px) {
+  .es-hero { padding:0 1.5rem 4rem; }
+  .es-container { padding:0 1.5rem; }
+  .es-manifesto-grid,
+  .sb-layout { grid-template-columns:1fr; gap:3rem; }
+  .es-tenet { grid-template-columns:1fr; min-height:auto; }
+  .es-tenet:nth-child(even) .es-tenet-visual { order:0; }
+  .es-tenet-visual { height:220px; }
+  .es-tenet-visual-inner { position:relative; height:100%; }
+  .mb-grid { grid-template-columns:repeat(2,1fr); grid-template-rows:repeat(4,140px); }
+  .mb-tile.span-2h { grid-column:span 1; }
+  .mb-tile.span-2v { grid-row:span 1; }
+  .es-strip-grid { grid-template-columns:1fr; padding:0 1.5rem; }
+  .es-strip-item { border-right:none; border-bottom:1px solid rgba(201,168,76,.1); padding:1.2rem 0; }
+  .es-strip-item:last-child { border-bottom:none; }
+  .es-hero-side { display:none; }
+  .sb-panel { position:static; }
+  .es-footer { flex-direction:column; gap:1rem; padding:2rem 1.5rem; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOADER
+══════════════════════════════════════ -->
+<div id="es-loader">
+  <div class="loader-sky"></div>
+  <div class="loader-sea"></div>
+  <div class="loader-reflection"></div>
+  <div class="loader-rays"></div>
+  <div class="loader-sun"></div>
+  <div class="loader-brand">
+    <div class="lb-title">noodrop</div>
+    <span class="lb-sub">European Summer Principle</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BACKGROUND
+══════════════════════════════════════ -->
+<div class="nd-orb nd-orb--1" aria-hidden="true"></div>
+<div class="nd-orb nd-orb--2" aria-hidden="true"></div>
+<div id="particles-js"></div>
+
+<!-- ══════════════════════════════════════
+     NAV  (identical to index.html)
+══════════════════════════════════════ -->
+<header class="nd-header" id="ndHeader">
+  <a href="landing.html" class="nd-logo">
+    <span class="nd-logo-pip"></span>noodrop
+  </a>
+  <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
+    <div class="nd-nav-header">
+      <span class="nd-nav-title">noodrop</span>
+      <button class="nd-nav-close" id="ndNavClose" aria-label="Close menu">✕</button>
+    </div>
+    <div class="nd-nav-links">
+      <a href="landing.html"          class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
+      <a href="index.html"            class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
+      <a href="stack.html"            class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
+      <a href="marketplace.html"      class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+      <a href="european-summer.html"  class="nd-nav__link active">European Summer<span class="nav-arrow">›</span></a>
+      <a href="about.html"            class="nd-nav__link">About<span class="nav-arrow">›</span></a>
+      <a href="nooai.html"            class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
+    </div>
+  </nav>
+  <div class="nd-nav-backdrop" id="ndNavBackdrop"></div>
+  <div class="nd-header__right">
+    <button class="auth-btn" id="authBtn" data-i18n="nav.login">Login</button>
+    <div class="theme-toggle" id="themeToggle">
+      <div class="theme-toggle-inner"><div class="toggle-knob"></div></div>
+    </div>
+    <button class="nd-burger" id="ndBurger" aria-label="Open menu" aria-expanded="false" aria-controls="ndNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════
+     PAGE
+══════════════════════════════════════ -->
+<div class="es-page" id="esPage">
+
+  <!-- HERO -->
+  <section class="es-hero">
+    <div class="es-hero-bg"></div>
+    <div class="es-eyebrow es-reveal">The Noodrop Lifestyle</div>
+    <h1 class="es-reveal">
+      <span>European</span>
+      <em>Summer</em>
+      <span>Principle</span>
+    </h1>
+    <p class="es-hero-sub es-reveal">
+      Dolce vita. Sprezzatura. The art of living fully — sun-drenched, sharp-minded, and entirely yourself.
+    </p>
+    <div class="es-hero-cta es-reveal">
+      <a href="#manifesto" class="es-btn-primary">The Manifesto</a>
+      <a href="#quiz" class="es-btn-ghost">Take the Quiz</a>
+    </div>
+    <span class="es-hero-side">Il bello di vivere — Noodrop</span>
+    <div class="es-scroll-cue">
+      <span>Scroll</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- MANIFESTO -->
+  <section class="es-section es-manifesto" id="manifesto">
+    <div class="es-container">
+      <div class="es-label es-reveal">Manifesto</div>
+      <div class="es-manifesto-grid">
+        <div class="es-manifesto-quote es-reveal">
+          <em>The European Summer</em> is not a holiday. It is a state of mind — earned by those who dare to live on their own terms.
+        </div>
+        <div class="es-manifesto-body es-reveal">
+          <p>For generations, the European Summer was an aristocratic rite. A migration south — Amalfi terraces, Algarve cliffs, Catalonian harbours — where time moved differently and the pursuit of beauty was obligation, not indulgence.</p>
+          <p>Mass tourism democratised the geography. But the <em>feeling</em>? That remains scarce. Dolce vita is not a resort wristband. It is a disposition: ease without sloppiness, elegance without effort, presence without performance.</p>
+          <p>Noodrop was built for those who want both the life <em>and</em> the cognition to match. This is our philosophy — sharpened by smart supplementation, made possible by a mind that is fully online.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="es-divider">
+
+  <!-- PARALLAX JOURNEY -->
+  <section class="es-section es-journey" id="journey">
+    <div class="es-container">
+      <div class="es-journey-intro es-reveal">
+        <h2>The <em>Six Tenets</em></h2>
+        <p>A philosophy in six movements</p>
+      </div>
+    </div>
+
+    <!-- TENET 1 -->
+    <div class="es-tenet es-tenet--1" data-tenet="1">
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">01 of 06</div>
+        <h2 class="es-tenet-name">Sprezzatura</h2>
+        <p class="es-tenet-body">The studied art of making difficulty look effortless. Style is not about trying hard — it is about having prepared so thoroughly that ease is the natural result. Dress well. Move well. Think well. The best performance is the one no one notices.</p>
+        <span class="es-tenet-keyword">← Effortless mastery</span>
+      </div>
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">01</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TENET 2 -->
+    <div class="es-tenet es-tenet--2" data-tenet="2">
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">02</div>
+        </div>
+      </div>
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">02 of 06</div>
+        <h2 class="es-tenet-name">Présence</h2>
+        <p class="es-tenet-body">To see and to be seen — but on your own terms. Not performance, not spectacle. Quiet confidence in a room. The kind that comes from knowing who you are and having the cognitive clarity to stay there, even when the room tries to move you.</p>
+        <span class="es-tenet-keyword">← Magnetic stillness</span>
+      </div>
+    </div>
+
+    <!-- TENET 3 -->
+    <div class="es-tenet es-tenet--3" data-tenet="3">
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">03 of 06</div>
+        <h2 class="es-tenet-name">Dolce Far <em>Niente</em></h2>
+        <p class="es-tenet-body">The sweetness of doing nothing. Not laziness — active rest. The capacity to sit with a glass of wine, a view, and no urgency, and call that productive. Recovery is a skill. Leisure is discipline. The brain that cannot rest cannot perform.</p>
+        <span class="es-tenet-keyword">← Strategic leisure</span>
+      </div>
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">03</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TENET 4 -->
+    <div class="es-tenet es-tenet--4" data-tenet="4">
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">04</div>
+        </div>
+      </div>
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">04 of 06</div>
+        <h2 class="es-tenet-name">Acuità</h2>
+        <p class="es-tenet-body">Sharp perception. The European Summer demands cultural literacy — art, architecture, language, gastronomy. A mind optimised to receive it all. This is where nootropics become lifestyle, not supplement. Clarity is the most underrated form of elegance.</p>
+        <span class="es-tenet-keyword">← Cognitive elegance</span>
+      </div>
+    </div>
+
+    <!-- TENET 5 -->
+    <div class="es-tenet es-tenet--5" data-tenet="5">
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">05 of 06</div>
+        <h2 class="es-tenet-name">Movimento</h2>
+        <p class="es-tenet-body">The body as an instrument of elegance. Calisthenics over machines. Movement that sculpts form and function alike. A lean physique does not merely look the part — it is the part, in linen, at dusk, on a terrace above the sea.</p>
+        <span class="es-tenet-keyword">← Embodied excellence</span>
+      </div>
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">05</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TENET 6 -->
+    <div class="es-tenet es-tenet--6" data-tenet="6">
+      <div class="es-tenet-visual" data-parallax>
+        <div class="es-tenet-visual-inner">
+          <div class="es-tenet-glyph">06</div>
+        </div>
+      </div>
+      <div class="es-tenet-content">
+        <div class="es-tenet-num">06 of 06</div>
+        <h2 class="es-tenet-name">Selezione</h2>
+        <p class="es-tenet-body">The ruthless curation of people, places, and experiences. The European Summer is not for everyone — not because of money, but because of standards. You become who you surround yourself with. Choose accordingly, and do not apologise for it.</p>
+        <span class="es-tenet-keyword">← Deliberate environment</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIFESTYLE STRIP -->
+  <div class="es-strip es-reveal">
+    <div class="es-strip-grid">
+      <div class="es-strip-item">
+        <span class="es-strip-word">Stile</span>
+        <span class="es-strip-desc">Natural Fabrics · Considered Cuts · Earned Tan</span>
+      </div>
+      <div class="es-strip-item">
+        <span class="es-strip-word">Mente</span>
+        <span class="es-strip-desc">Sharp Focus · Deep Memory · Clear Vision</span>
+      </div>
+      <div class="es-strip-item">
+        <span class="es-strip-word">Vita</span>
+        <span class="es-strip-desc">Slow Mornings · Refined Evenings · No Noise</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOOD BOARD -->
+  <section class="es-section es-moodboard" id="moodboard">
+    <div class="es-container">
+      <div class="es-label es-reveal">Mood Board</div>
+      <h2 class="es-reveal">The <em style="font-style:italic;color:var(--gold)">atmosphere</em></h2>
+      <p class="es-reveal">Click any concept to explore it</p>
+
+      <div class="mb-grid es-reveal">
+
+        <div class="mb-tile mb-tile--dolce span-2h span-2v" data-key="dolce">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">☀</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word"><em>Dolce Vita</em></div>
+            <div class="mb-tile-desc">The sweet life. The reason for all of it.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--coast" data-key="coast">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">🌊</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">Coastline</div>
+            <div class="mb-tile-desc">Horizon as context.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--aperol" data-key="aperol">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">🍊</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">Aperitivo</div>
+            <div class="mb-tile-desc">6pm. Orange light. No hurry.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--linen span-2v" data-key="linen">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">👔</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">Linen</div>
+            <div class="mb-tile-desc">The fabric of sprezzatura.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--piazza" data-key="piazza">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">🏛</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">La Piazza</div>
+            <div class="mb-tile-desc">Architecture as social theatre.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--niente" data-key="niente">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">∞</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word"><em>Far Niente</em></div>
+            <div class="mb-tile-desc">Doing nothing, perfectly.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--ciao" data-key="ciao">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">🌿</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">Giardino</div>
+            <div class="mb-tile-desc">Green, fragrant, unhurried.</div>
+          </div>
+        </div>
+
+        <div class="mb-tile mb-tile--sprezzatura span-2h" data-key="sprezzatura">
+          <div class="mb-tile-bg"></div>
+          <div class="mb-tile-overlay"></div>
+          <div class="mb-tile-icon">✦</div>
+          <div class="mb-tile-info">
+            <div class="mb-tile-word">Sprezzatura</div>
+            <div class="mb-tile-desc">Effortless. Always earned.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Detail panel -->
+      <div class="mb-detail" id="mbDetail">
+        <div>
+          <h3 id="mbDetailTitle"></h3>
+          <p id="mbDetailBody"></p>
+        </div>
+        <button class="mb-detail-close" id="mbDetailClose">Close ✕</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="es-section es-quiz" id="quiz">
+    <div class="es-container">
+      <div class="quiz-header es-reveal">
+        <div class="es-label" style="justify-content:center">Quiz</div>
+        <h2>How <em>European Summer</em> are you?</h2>
+        <p>5 questions. Brutally honest results.</p>
+      </div>
+
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quizProgress"></div>
+      </div>
+
+      <div class="quiz-card" id="quizCard">
+        <div>
+          <div class="quiz-q-num" id="quizQNum">Question 1 of 5</div>
+          <div class="quiz-question" id="quizQuestion"></div>
+        </div>
+        <div class="quiz-options" id="quizOptions"></div>
+      </div>
+
+      <div class="quiz-nav">
+        <button class="quiz-btn quiz-btn-next" id="quizNext" disabled>Next →</button>
+      </div>
+
+      <div class="quiz-result" id="quizResult">
+        <div class="quiz-result-badge" id="quizBadge"></div>
+        <div class="quiz-result-title" id="quizResultTitle"></div>
+        <div class="quiz-result-score" id="quizScore"></div>
+        <p class="quiz-result-desc" id="quizResultDesc"></p>
+        <br>
+        <button class="quiz-restart" id="quizRestart">↺ Try Again</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STACK BUILDER -->
+  <section class="es-section es-stack" id="stack">
+    <div class="es-container">
+      <div class="es-stack-header es-reveal">
+        <div class="es-label">Stack Builder</div>
+        <h2>Build your <em>Summer Stack</em></h2>
+        <p>Curate the compounds that match your European Summer ambition</p>
+      </div>
+
+      <div class="sb-layout">
+        <div class="sb-compounds" id="sbCompounds"></div>
+        <div class="sb-panel">
+          <div class="sb-panel-box">
+            <div class="sb-panel-title">My Stack</div>
+            <div class="sb-slots" id="sbSlots">
+              <div class="sb-empty-msg">Add compounds from the left →</div>
+            </div>
+            <div class="sb-synergy" id="sbSynergy"></div>
+            <div class="sb-actions">
+              <a href="stack.html" class="sb-cta">Build Full Stack →</a>
+              <button class="sb-cta-ghost" id="sbClear">Clear Stack</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STRIP -->
+  <div class="es-strip es-reveal" style="margin-top:4rem">
+    <div class="es-strip-grid">
+      <div class="es-strip-item">
+        <span class="es-strip-word">Mattino</span>
+        <span class="es-strip-desc">Stack · Sunlight · Movement</span>
+      </div>
+      <div class="es-strip-item">
+        <span class="es-strip-word">Pomeriggio</span>
+        <span class="es-strip-desc">Deep Work · Culture · Language</span>
+      </div>
+      <div class="es-strip-item">
+        <span class="es-strip-word">Sera</span>
+        <span class="es-strip-desc">Aperitivo · Presence · Rest</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="es-footer">
+    <p>© 2026 Noodrop · European Summer Principle</p>
+    <p>Educational purposes only</p>
+  </div>
+
+</div><!-- /es-page -->
+
+<!-- Auth Modal (copy from index.html) -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="authTitle">Login</h2>
+      <button class="modal-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <form id="loginForm">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="loginEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="loginPassword" required minlength="6"></div>
+      <div class="form-error" id="loginError"></div>
+      <button type="submit" class="btn-full">Login</button>
+    </form>
+    <form id="signupForm" style="display:none;">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="signupEmail" required></div>
+      <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="signupPassword" required minlength="6"></div>
+      <div class="form-error" id="signupError"></div>
+      <button type="submit" class="btn-full">Create Account</button>
+    </form>
+    <div class="switch-auth">
+      <span id="switchText">No account? <a onclick="switchAuthMode()">Sign up</a></span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+//  LOADER
+// ══════════════════════════════════════
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    document.getElementById('es-loader').classList.add('hidden');
+    document.getElementById('esPage').classList.add('visible');
+    // trigger hero reveals
+    document.querySelectorAll('.es-hero .es-reveal').forEach(function(el, i) {
+      setTimeout(function() { el.classList.add('in'); }, i * 180);
+    });
+  }, 3200);
+});
+
+// ══════════════════════════════════════
+//  PARTICLES
+// ══════════════════════════════════════
+(function() {
+  var stored = localStorage.getItem('ndTheme');
+  var isLight = stored === 'light';
+  var toggle = document.getElementById('themeToggle');
+  function applyTheme(light) {
+    document.body.classList.toggle('light', light);
+    if (toggle) toggle.classList.toggle('active', light);
+    isLight = light;
+  }
+  applyTheme(isLight);
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      applyTheme(!isLight);
+      localStorage.setItem('ndTheme', isLight ? 'light' : '');
+      initParticles(isLight);
+    });
+  }
+  window.addEventListener('DOMContentLoaded', function() { initParticles(isLight); });
+})();
+
+function initParticles(light) {
+  if (window.pJSDom && window.pJSDom.length) {
+    window.pJSDom.forEach(function(p) { p.pJS.fn.vendors.destroypJS(); });
+    window.pJSDom = [];
+  }
+  particlesJS('particles-js', {
+    particles: {
+      number: { value: light ? 90 : 42, density: { enable:true, value_area:1000 } },
+      color: { value: light ? ['#1a1a1a','#2c3e50'] : '#E8541A' },
+      shape: { type: light ? 'star' : 'circle' },
+      opacity: { value: light ? .45 : .12, random:true, anim:{ enable:true, speed:.3, opacity_min:.02 } },
+      size: { value: light ? 2 : 1.5, random:true },
+      line_linked: { enable: !light, distance:155, color:'#E8541A', opacity:.05, width:.6 },
+      move: { enable:true, speed: light ? .32 : .35, direction:'none', random:true, out_mode:'out' }
+    },
+    interactivity: {
+      detect_on:'canvas',
+      events: { onhover:{ enable:true, mode: light ? 'bubble' : 'grab' }, resize:true },
+      modes: { grab:{ distance:180, line_linked:{ opacity:.14 } }, bubble:{ distance:130, size:3.5, duration:.4, opacity:.7 } }
+    },
+    retina_detect: true
+  });
+}
+
+// ══════════════════════════════════════
+//  SCROLL REVEAL
+// ══════════════════════════════════════
+var revealObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      revealObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.es-reveal').forEach(function(el) {
+  if (!el.closest('.es-hero')) revealObserver.observe(el);
+});
+
+// ══════════════════════════════════════
+//  PARALLAX
+// ══════════════════════════════════════
+if (window.innerWidth > 900) {
+  window.addEventListener('scroll', function() {
+    var scrollY = window.scrollY;
+    document.querySelectorAll('[data-parallax]').forEach(function(el) {
+      var rect = el.parentElement.getBoundingClientRect();
+      var center = rect.top + rect.height / 2 - window.innerHeight / 2;
+      el.querySelector('.es-tenet-visual-inner').style.transform = 'translateY(' + (center * 0.12) + 'px)';
+    });
+  }, { passive:true });
+}
+
+// ══════════════════════════════════════
+//  MOOD BOARD
+// ══════════════════════════════════════
+var mbData = {
+  dolce: {
+    title: 'Dolce Vita',
+    body: 'Federico Fellini gave it a name in 1960, but the feeling predates cinema. Dolce vita is the philosophical conviction that beauty, pleasure, and ease are not luxuries — they are necessities. The European Summer Principle takes this seriously: you optimise your cognition not to grind harder, but to perceive more fully. To taste the wine. To see the fresco. To be present in the piazza.'
+  },
+  coast: {
+    title: 'The Coastline',
+    body: 'The Mediterranean coastline is not just geography — it is a psychic landscape. The horizon resets the nervous system. Salt air, the rhythm of waves, the particular quality of southern light at 4pm: these are not mere aesthetics. They are signals to the body that the baseline is different here. The European Summer mind is calibrated to this frequency.'
+  },
+  aperol: {
+    title: 'Aperitivo Hour',
+    body: 'Six in the evening. The light turns orange. Work is over. What follows is not nothing — it is aperitivo culture: the deliberate transition between productivity and presence. A Spritz, olives, unhurried conversation. The Italian genius was to institutionalise this transition, to make switching off a social ritual rather than a private failure. Ashwagandha does the same for your cortisol.'
+  },
+  linen: {
+    title: 'The Linen Principle',
+    body: 'Linen is the fabric of sprezzatura. It wrinkles — and it does not apologise for it. Linen says: I have been somewhere, I have done something, I am not a mannequin. Natural fabrics only is not a fashion rule; it is a philosophy of authenticity. What you wear against your skin is a statement about what you value. The European Summer wardrobe is small, considered, and entirely without synthetic pretence.'
+  },
+  piazza: {
+    title: 'La Piazza',
+    body: 'The piazza is the original social architecture. No algorithm, no notification — just a shared space where you show up and see who is there. The European Summer Principle reclaims this: be in physical space with real people, with no agenda except presence. The piazza teaches you something the phone cannot: that you are more interesting in three dimensions.'
+  },
+  niente: {
+    title: 'Dolce Far Niente',
+    body: 'The sweetness of doing nothing. Not collapse, not distraction, not scrolling — actual stillness. The Italian tradition understands what neuroscience confirmed: the default mode network, active during rest, is where integration happens. Where insight emerges. Where memory consolidates. Far niente is not the opposite of productivity. It is its most sophisticated form.'
+  },
+  ciao: {
+    title: 'Il Giardino',
+    body: 'The garden as a philosophy of cultivation — of plants, yes, but also of oneself. The European garden tradition is not about wildness but about disciplined beauty: the olive grove, the lemon tree, the fig. Everything useful, everything beautiful, everything in its right place. Selezione applies here too. You curate your environment as carefully as your supplement stack.'
+  },
+  sprezzatura: {
+    title: 'Sprezzatura',
+    body: 'Baldassare Castiglione coined the term in 1528 in Il Libro del Cortegiano. The concept: to conceal all art and make whatever is done or said appear to be without effort. Five centuries later, it remains the most useful social philosophy ever articulated. The European Summer does not try. It has done the work — in the gym, at the desk, in the library — so that in the piazza, at the aperitivo, on the terrace, everything looks inevitable.'
+  }
+};
+
+document.querySelectorAll('.mb-tile').forEach(function(tile) {
+  tile.addEventListener('click', function() {
+    var key = tile.dataset.key;
+    var data = mbData[key];
+    if (!data) return;
+    var detail = document.getElementById('mbDetail');
+    document.getElementById('mbDetailTitle').innerHTML = data.title;
+    document.getElementById('mbDetailBody').textContent = data.body;
+    detail.classList.add('active');
+    detail.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  });
+});
+document.getElementById('mbDetailClose').addEventListener('click', function() {
+  document.getElementById('mbDetail').classList.remove('active');
+});
+
+// ══════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════
+var quizData = [
+  {
+    q: 'It\'s Saturday at 11am. What are you doing?',
+    options: [
+      { text: 'Checking emails and catching up on work', pts: 0 },
+      { text: 'Still in bed, phone in hand', pts: 1 },
+      { text: 'A slow breakfast, maybe a walk', pts: 3 },
+      { text: 'Espresso, journal, movement — then the day', pts: 4 }
+    ]
+  },
+  {
+    q: 'Someone asks why you dress the way you do. You say:',
+    options: [
+      { text: 'I just grab whatever\'s comfortable', pts: 0 },
+      { text: 'I follow what\'s trending right now', pts: 1 },
+      { text: 'I like looking good', pts: 2 },
+      { text: 'I\'ve stopped thinking about it. It just works.', pts: 4 }
+    ]
+  },
+  {
+    q: 'You have four free hours. No obligations, no plans. You feel:',
+    options: [
+      { text: 'Anxious. I should be doing something.', pts: 0 },
+      { text: 'Relieved, but I end up on my phone anyway', pts: 1 },
+      { text: 'Good — I have a book and that\'s enough', pts: 3 },
+      { text: 'Perfect. I have been waiting for this.', pts: 4 }
+    ]
+  },
+  {
+    q: 'When you think about what you want from life, the image is:',
+    options: [
+      { text: 'A big salary and a nice apartment', pts: 1 },
+      { text: 'Recognition and status', pts: 1 },
+      { text: 'Health, freedom, and interesting work', pts: 3 },
+      { text: 'A life so good it needs no justification', pts: 4 }
+    ]
+  },
+  {
+    q: 'Your relationship with your mind is:',
+    options: [
+      { text: 'It does its thing, I try to keep up', pts: 0 },
+      { text: 'Constantly overwhelmed', pts: 1 },
+      { text: 'Something I actively try to improve', pts: 3 },
+      { text: 'My primary instrument — I tune it daily', pts: 4 }
+    ]
+  }
+];
+
+var quizState = { current: 0, answers: [], score: 0 };
+
+var quizResults = [
+  { min:0,  max:5,  title:'Tourist',          badge:'Il Turista',     desc:'You have the passport but not yet the mindset. The European Summer is a philosophy before it is a destination. Start with the basics: slow your mornings, notice your surroundings, and stop apologising for wanting more.' },
+  { min:6,  max:10, title:'Almost There',     badge:'In Transizione',  desc:'You sense what the good life looks like. You have the instincts but not yet the habits. The gap between knowing and living is where the work happens. Noodrop can help close it.' },
+  { min:11, max:15, title:'Summer Ready',     badge:'Estate Pronto',   desc:'You understand the principle. Your lifestyle reflects a genuine commitment to quality — in how you spend your time, your attention, your body. The European Summer is your natural habitat.' },
+  { min:16, max:20, title:'La Dolce Vita',    badge:'Maestro',         desc:'You are not preparing for the European Summer. You are already living it — or building the exact foundation that makes it inevitable. The mind, the body, the style: all calibrated. This is what optimisation looks like in practice.' }
+];
+
+function renderQuestion() {
+  var q = quizData[quizState.current];
+  document.getElementById('quizQNum').textContent = 'Question ' + (quizState.current + 1) + ' of ' + quizData.length;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('quizProgress').style.width = ((quizState.current / quizData.length) * 100) + '%';
+  var letters = ['A','B','C','D'];
+  document.getElementById('quizOptions').innerHTML = q.options.map(function(o, i) {
+    return '<button class="quiz-option" data-pts="' + o.pts + '">' +
+      '<span class="quiz-option-letter">' + letters[i] + '</span>' + o.text + '</button>';
+  }).join('');
+  document.getElementById('quizNext').disabled = true;
+  document.querySelectorAll('.quiz-option').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.quiz-option').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      document.getElementById('quizNext').disabled = false;
+      quizState.selectedPts = parseInt(btn.dataset.pts);
+    });
+  });
+}
+
+document.getElementById('quizNext').addEventListener('click', function() {
+  quizState.score += quizState.selectedPts || 0;
+  quizState.current++;
+  if (quizState.current < quizData.length) {
+    renderQuestion();
+  } else {
+    // Show result
+    document.getElementById('quizProgress').style.width = '100%';
+    document.getElementById('quizCard').style.display = 'none';
+    document.querySelector('.quiz-nav').style.display = 'none';
+    var result = quizResults.find(function(r) { return quizState.score >= r.min && quizState.score <= r.max; });
+    document.getElementById('quizBadge').textContent = result.badge;
+    document.getElementById('quizResultTitle').textContent = result.title;
+    document.getElementById('quizScore').textContent = quizState.score + ' / 20';
+    document.getElementById('quizResultDesc').textContent = result.desc;
+    document.getElementById('quizResult').classList.add('show');
+  }
+});
+
+document.getElementById('quizRestart').addEventListener('click', function() {
+  quizState = { current:0, answers:[], score:0, selectedPts:0 };
+  document.getElementById('quizCard').style.display = '';
+  document.querySelector('.quiz-nav').style.display = '';
+  document.getElementById('quizResult').classList.remove('show');
+  renderQuestion();
+});
+
+renderQuestion();
+
+// ══════════════════════════════════════
+//  STACK BUILDER
+// ══════════════════════════════════════
+var sbCompounds = [
+  { id:'lions-mane',   name:"Lion's Mane",      role:'Neural clarity & memory',       icon:'🍄', color:'rgba(201,168,76,.15)' },
+  { id:'cdp-choline',  name:'CDP-Choline',       role:'Acetylcholine synthesis',        icon:'⚡', color:'rgba(74,127,165,.15)' },
+  { id:'ashwagandha',  name:'Ashwagandha KSM-66',role:'Cortisol — the elegance blocker', icon:'🌿', color:'rgba(80,160,80,.15)' },
+  { id:'theanine',     name:'L-Theanine',         role:'Calm focus — no jitter',          icon:'☕', color:'rgba(212,197,169,.1)' },
+  { id:'bromantane',   name:'Bromantane',          role:'Dopaminergic drive',              icon:'🔥', color:'rgba(232,84,26,.15)' },
+  { id:'mag-glycinate',name:'Magnesium Glycinate', role:'Sleep depth & recovery',          icon:'🌙', color:'rgba(100,100,180,.15)' },
+  { id:'bacopa',       name:'Bacopa Monnieri',     role:'Long-term memory consolidation',  icon:'🧠', color:'rgba(140,80,180,.15)' },
+  { id:'rhodiola',     name:'Rhodiola Rosea',      role:'Fatigue resistance',              icon:'⛰',  color:'rgba(196,94,58,.15)' }
+];
+
+var sbStack = [];
+
+var sbSynergies = {
+  'lions-mane+cdp-choline':   "🔗 NGF + Choline: potent stack for deep neuroplasticity.",
+  'theanine+cdp-choline':     "🔗 Theanine + CDP: calm, sustained cognitive output.",
+  'ashwagandha+rhodiola':     "🔗 Dual adaptogen: serious stress resilience.",
+  'bromantane+theanine':      "🔗 Drive without edge — the European Summer frequency.",
+  'bacopa+lions-mane':        "🔗 Memory depth stack. Long-game cognition.",
+  'mag-glycinate+ashwagandha':"🔗 Evening wind-down stack — perfect recovery.",
+};
+
+function checkSynergy() {
+  var ids = sbStack.map(function(c) { return c.id; });
+  var found = null;
+  Object.keys(sbSynergies).forEach(function(key) {
+    var parts = key.split('+');
+    if (parts.every(function(p) { return ids.includes(p); })) found = sbSynergies[key];
+  });
+  var el = document.getElementById('sbSynergy');
+  if (found) { el.textContent = found; el.classList.add('show'); }
+  else { el.textContent = ''; el.classList.remove('show'); }
+}
+
+function renderSbCompounds() {
+  var container = document.getElementById('sbCompounds');
+  container.innerHTML = sbCompounds.map(function(c) {
+    var added = sbStack.some(function(s) { return s.id === c.id; });
+    return '<div class="sb-compound' + (added?' active':'') + '" data-id="' + c.id + '">' +
+      '<div class="sb-compound-icon" style="background:' + c.color + '">' + c.icon + '</div>' +
+      '<div class="sb-compound-info">' +
+        '<div class="sb-compound-name">' + c.name + '</div>' +
+        '<div class="sb-compound-role">' + c.role + '</div>' +
+      '</div>' +
+      '<button class="sb-compound-add' + (added?' added':'') + '" data-id="' + c.id + '">' +
+        (added ? '✓' : '+') +
+      '</button>' +
+    '</div>';
+  }).join('');
+
+  container.querySelectorAll('.sb-compound-add').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var id = btn.dataset.id;
+      var comp = sbCompounds.find(function(c) { return c.id === id; });
+      if (sbStack.some(function(s) { return s.id === id; })) {
+        sbStack = sbStack.filter(function(s) { return s.id !== id; });
+      } else {
+        if (sbStack.length >= 6) return;
+        sbStack.push(comp);
+      }
+      renderSbCompounds();
+      renderSbSlots();
+      checkSynergy();
+    });
+  });
+}
+
+function renderSbSlots() {
+  var container = document.getElementById('sbSlots');
+  if (!sbStack.length) {
+    container.innerHTML = '<div class="sb-empty-msg">Add compounds from the left →</div>';
+    return;
+  }
+  container.innerHTML = sbStack.map(function(c) {
+    return '<div class="sb-slot filled">' +
+      '<span>' + c.icon + ' ' + c.name + '</span>' +
+      '<button class="sb-slot-remove" data-id="' + c.id + '">✕</button>' +
+    '</div>';
+  }).join('');
+  // Fill remaining with empty
+  for (var i = sbStack.length; i < 6; i++) {
+    container.innerHTML += '<div class="sb-slot">Empty slot ' + (i+1) + '</div>';
+  }
+  container.querySelectorAll('.sb-slot-remove').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      sbStack = sbStack.filter(function(s) { return s.id !== btn.dataset.id; });
+      renderSbCompounds();
+      renderSbSlots();
+      checkSynergy();
+    });
+  });
+}
+
+document.getElementById('sbClear').addEventListener('click', function() {
+  sbStack = [];
+  renderSbCompounds();
+  renderSbSlots();
+  checkSynergy();
+});
+
+renderSbCompounds();
+renderSbSlots();
+
+// ══════════════════════════════════════
+//  NAV (same as index)
+// ══════════════════════════════════════
+(function() {
+  var burger   = document.getElementById('ndBurger');
+  var nav      = document.getElementById('ndNav');
+  var header   = document.getElementById('ndHeader');
+  if (!burger || !nav) return;
+  function openMenu()  { nav.classList.add('is-open'); burger.classList.add('is-open'); var bd=document.getElementById('ndNavBackdrop'); if(bd)bd.classList.add('is-open'); burger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+  function closeMenu() { nav.classList.remove('is-open'); burger.classList.remove('is-open'); var bd=document.getElementById('ndNavBackdrop'); if(bd)bd.classList.remove('is-open'); burger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+  burger.addEventListener('click', function() { nav.classList.contains('is-open') ? closeMenu() : openMenu(); });
+  var closeBtn = document.getElementById('ndNavClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+  var backdrop = document.getElementById('ndNavBackdrop');
+  if (backdrop) backdrop.addEventListener('click', closeMenu);
+  nav.querySelectorAll('.nd-nav__link').forEach(function(a) { a.addEventListener('click', closeMenu); });
+  document.addEventListener('keydown', function(e) { if (e.key==='Escape') closeMenu(); });
+  window.addEventListener('resize', function() { if (window.innerWidth > 768) closeMenu(); });
+  if (header) { window.addEventListener('scroll', function() { header.classList.toggle('scrolled', window.scrollY > 10); }, { passive:true }); }
+})();
+
+// ══════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════
+var authBtn = document.getElementById('authBtn');
+if (authBtn) {
+  authBtn.addEventListener('click', function() {
+    if (typeof firebase !== 'undefined' && firebase.auth().currentUser) { window.location.href='profile.html'; }
+    else { document.getElementById('authModal').classList.add('open'); }
+  });
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(function(user) { authBtn.textContent = user ? 'Profile' : 'Login'; });
+  }
+}
+function closeAuthModal() { document.getElementById('authModal').classList.remove('open'); }
+function switchAuthMode() {
+  var isLogin = document.getElementById('loginForm').style.display !== 'none';
+  document.getElementById('loginForm').style.display = isLogin ? 'none' : 'block';
+  document.getElementById('signupForm').style.display = isLogin ? 'block' : 'none';
+  document.getElementById('authTitle').textContent = isLogin ? 'Sign Up' : 'Login';
+  document.getElementById('switchText').innerHTML = isLogin
+    ? 'Already have an account? <a onclick="switchAuthMode()">Log in</a>'
+    : 'No account? <a onclick="switchAuthMode()">Sign up</a>';
+}
+if (document.getElementById('loginForm')) {
+  document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try { await firebase.auth().signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPassword').value); closeAuthModal(); }
+    catch(err) { document.getElementById('loginError').textContent = err.message; }
+  });
+  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      var cred = await firebase.auth().createUserWithEmailAndPassword(document.getElementById('signupEmail').value, document.getElementById('signupPassword').value);
+      await firebase.firestore().collection('users').doc(cred.user.uid).set({ email:cred.user.email, createdAt:firebase.firestore.FieldValue.serverTimestamp() });
+      closeAuthModal();
+    } catch(err) { document.getElementById('signupError').textContent = err.message; }
+  });
+}
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').catch(function(){}); });
+}
+document.addEventListener('DOMContentLoaded', function() { if (typeof i18n !== 'undefined') i18n.init(); });
+</script>
+</body>
+</html>

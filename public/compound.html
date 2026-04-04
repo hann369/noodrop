@@ -93,6 +93,19 @@
   .evidence-item-title{color:var(--cream);font-weight:400}
   .evidence-item-meta{color:var(--m2)}
 
+  /* transparency blocks */
+  .transparency-block{margin-top:24px}
+  .tb-divider{height:1px;background:var(--m4);margin-bottom:16px}
+  .tb-row{border-bottom:1px solid var(--m4)}
+  .tb-row:last-child{border-bottom:none}
+  .tb-detail{width:100%}
+  .tb-summary{padding:13px 0;cursor:pointer;font-size:14px;font-weight:500;color:var(--m1);list-style:none;display:flex;justify-content:space-between;align-items:center;user-select:none;transition:color .2s}
+  .tb-summary:hover{color:var(--orange)}
+  .tb-summary::-webkit-details-marker{display:none}
+  .tb-summary::after{content:'+';color:var(--orange);font-size:16px}
+  .tb-detail[open] .tb-summary::after{content:'−'}
+  .tb-body{padding:0 0 14px;font-size:14px;color:var(--m2);line-height:1.65}
+
   /* ── 3D viewer — THE FIX ── */
   .viewer-section{margin-top:1px}
   .viewer-card{background:var(--bg-2);border:1px solid var(--m4);border-radius:12px;overflow:hidden}
@@ -251,6 +264,32 @@
       </div>
     </div>
 
+    <!-- Ingredient Transparency Block (LMTLS-inspired) -->
+    <div class="card-full nd-r" style="margin-top:1px" id="transparencySection">
+      <div class="card-title"><div class="card-icon">◈</div>Ingredient Transparency</div>
+      <div class="transparency-block">
+        <div class="tb-divider"></div>
+        <div class="tb-row">
+          <details class="tb-detail">
+            <summary class="tb-summary">Wirkmechanismus</summary>
+            <p class="tb-body" id="transMechanism">Wird ergänzt.</p>
+          </details>
+        </div>
+        <div class="tb-row">
+          <details class="tb-detail">
+            <summary class="tb-summary">Typische Dosierung</summary>
+            <p class="tb-body" id="transDosage">Sieh die Compound-Seite für Details.</p>
+          </details>
+        </div>
+        <div class="tb-row">
+          <details class="tb-detail">
+            <summary class="tb-summary">Bekannte Interaktionen</summary>
+            <p class="tb-body" id="transInteractions">Keine bekannten klinisch relevanten Interaktionen.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+
     <div class="viewer-section nd-r">
       <div class="viewer-card">
         <div class="viewer-header">
@@ -315,6 +354,20 @@ document.addEventListener('DOMContentLoaded',function(){
   document.getElementById('onsetTime').textContent=comp.onsetTime||'–';
   document.getElementById('duration').textContent=comp.duration||'–';
   document.getElementById('mechanisms').textContent=comp.mechanisms||'Mechanism information coming soon.';
+
+  // ── Transparency blocks ──
+  var transMech=document.getElementById('transMechanism');
+  var transDosage=document.getElementById('transDosage');
+  var transInter=document.getElementById('transInteractions');
+  if(transMech) transMech.textContent=comp.mechanisms||'Wird ergänzt.';
+  if(transDosage) transDosage.textContent=comp.dosage||'Keine Dosierungsinformationen verfügbar.';
+  if(transInter){
+    if(comp.sideEffects&&comp.sideEffects.length){
+      transInter.textContent='Bekannte Nebenwirkungen: '+comp.sideEffects.slice(0,3).join(', ')+'.';
+    }else{
+      transInter.textContent='Keine bekannten klinisch relevanten Interaktionen.';
+    }
+  }
 
   // side effects
   var seUl=document.getElementById('sideEffects');
