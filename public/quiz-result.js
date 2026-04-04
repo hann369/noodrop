@@ -99,14 +99,23 @@ function toggleMechanism(btn) {
     : '+ Wie es wirkt (Mechanismus)';
 }
 
-/* ── Stripe checkout — ruft /api/create-checkout auf ── */
+/* ── Stripe checkout — Login-Pflicht + uid ── */
 document.querySelectorAll('.btn-checkout').forEach(function(btn) {
   btn.addEventListener('click', async function() {
     var priceId = btn.dataset.price;
-    var productType = btn.dataset.product; // 'pro' oder 'onetime'
+    var productType = btn.dataset.product;
 
     if (!priceId || priceId.includes('_HERE')) {
-      alert('Stripe noch nicht konfiguriert — Price ID in quiz-result.html eintragen.');
+      alert('Stripe noch nicht konfiguriert.');
+      return;
+    }
+
+    /* Login-Check */
+    var user = firebase.auth().currentUser;
+    if (!user) {
+      /* User muss eingeloggt sein */
+      alert('Bitte melde dich an oder erstelle einen Account, um fortzufahren.');
+      window.location.href = 'index.html';
       return;
     }
 
@@ -116,9 +125,7 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
 
     var mode = productType === 'pro' ? 'subscription' : 'onetime';
     var emailInput = document.getElementById('emailInput');
-    var email = emailInput ? emailInput.value.trim() : '';
-
-    /* Quiz-Antworten holen für Metadata */
+    var email = emailInput ? emailInput.value.trim() : user.email || '';
     var answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
 
     try {
@@ -129,7 +136,8 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
           priceId: priceId,
           mode: mode,
           goal: answers.goal || goal,
-          email: email || answers.email || '',
+          email: email,
+          firebaseUid: user.uid,
         }),
       });
 
@@ -139,7 +147,6 @@ document.querySelectorAll('.btn-checkout').forEach(function(btn) {
         throw new Error(data.error || 'Checkout fehlgeschlagen');
       }
 
-      /* Weiterleitung zu Stripe Checkout */
       window.location.href = data.url;
 
     } catch (err) {

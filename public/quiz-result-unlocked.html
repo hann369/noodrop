@@ -89,6 +89,16 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
 
+  <!-- Auth: User muss eingeloggt sein -->
+  <script>
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) {
+      /* Nicht eingeloggt → zurück zur Ergebnis-Seite */
+      window.location.href = 'quiz-result.html';
+    }
+  });
+  </script>
+
   <!-- Compound data -->
   <script src="quiz-result-data.js"></script>
   <script src="quiz-result-unlocked.js"></script>

@@ -17,7 +17,7 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'STRIPE_SECRET_KEY not configured in Vercel env vars' });
   }
 
-  const { priceId, mode, goal, email } = req.body || {};
+  const { priceId, mode, goal, email, firebaseUid } = req.body || {};
 
   if (!priceId) {
     return res.status(400).json({ error: 'priceId required' });
@@ -31,13 +31,14 @@ module.exports = async function handler(req, res) {
     params.set('mode', sessionMode);
     params.set('line_items[0][price]', priceId);
     params.set('line_items[0][quantity]', '1');
-    params.set('success_url', `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${goal || 'focus'}`);
-    params.set('cancel_url', `${DOMAIN}/quiz-result.html`);
+    params.set('success_url', `${DOMAIN}/quiz-result-unlocked.html?session_id={CHECKOUT_SESSION_ID}&goal=${encodeURIComponent(goal || 'focus')}`);
+    params.set('cancel_url', `${DOMAIN}/quiz-result.html?canceled=1`);
 
-    /* Metadata als flache keys */
+    /* Metadata als flache keys — inkl. firebase uid */
     params.set('metadata[goal]', goal || '');
     params.set('metadata[email]', email || '');
     params.set('metadata[product_type]', mode === 'subscription' ? 'pro' : 'onetime');
+    if (firebaseUid) params.set('metadata[firebase_uid]', firebaseUid);
 
     /* customer_email nur wenn vorhanden */
     if (email) params.set('customer_email', email);

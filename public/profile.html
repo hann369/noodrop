@@ -165,6 +165,14 @@
   <div id="stacksLoading" class="loading-indicator"><div class="spinner"></div><span>Loading stacks…</span></div>
   <div id="stacksGrid" class="stacks-list" style="display:none;"></div>
 
+  <!-- Purchased Protocols -->
+  <div class="nd-r nd-d2">
+    <span class="s-eyebrow">Purchased</span>
+    <h2 class="s-title">Meine Protokolle</h2>
+  </div>
+  <div id="purchasesLoading" class="loading-indicator" style="display:none;"><div class="spinner"></div><span>Loading protocols…</span></div>
+  <div id="purchasesGrid" class="bookmarks-grid" style="display:none;"></div>
+
   <footer style="margin-top:24px;padding-top:24px;border-top:1px solid var(--m4);text-align:center;color:rgba(245,240,232,.35);font-size:12px">
     © 2026 Noodrop · Educational purposes only. &nbsp;|&nbsp;
     <a href="impressum.html" style="color:inherit;text-decoration:none;transition:color .2s" onmouseover="this.style.color='#E8541A'" onmouseout="this.style.color='inherit'">Impressum</a>
@@ -240,6 +248,32 @@ window.deleteStack=async function(stackId,uid){
   catch(e){console.error(e);}
 };
 
+async function loadPurchases(uid){
+  const grid=document.getElementById('purchasesGrid');
+  const loading=document.getElementById('purchasesLoading');
+  try{
+    const snap=await db.collection('users').doc(uid).collection('purchases').orderBy('purchasedAt','desc').get();
+    loading.style.display='none';
+    if(snap.empty){
+      grid.style.display='none';
+      return;
+    }
+    grid.innerHTML='';
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const goalLabel=d.goalLabel||d.goal||'Stack';
+      const dateStr=d.purchasedAt?d.purchasedAt.toDate().toLocaleDateString('de-DE',{day:'2-digit',month:'short',year:'numeric'}):'';
+      const card=document.createElement('div');card.className='bookmark-card';
+      card.innerHTML=`<div class="bk-cat">Protokoll</div><div class="bk-name">${escHtml(goalLabel)}</div><div class="bk-desc">${dateStr?'Gekauft am '+dateStr:''}</div><div class="bk-footer"><button class="bk-view" onclick="window.location.href='quiz-result-unlocked.html?goal=${d.goal||'focus'}'">Ansehen →</button></div>`;
+      grid.appendChild(card);
+    });
+    grid.style.display='grid';
+  }catch(e){
+    loading.innerHTML='<p style="color:rgba(245,240,232,.55)">Fehler beim Laden.</p>';
+    console.error(e);
+  }
+}
+
 firebase.auth().onAuthStateChanged(function(user){
   const authBtn=document.getElementById('authBtn');
   if(!user){setTimeout(()=>{window.location.href='index.html';},300);return;}
@@ -249,6 +283,7 @@ firebase.auth().onAuthStateChanged(function(user){
   const av=document.getElementById('profileAvatar');if(av)av.textContent=email.charAt(0).toUpperCase()||'U';
   loadBookmarks(user.uid);
   loadSavedStacks(user.uid);
+  loadPurchases(user.uid);
 });
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}

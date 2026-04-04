@@ -1,6 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════
    NOODROP — quiz-result-unlocked.js
    Zeigt das vollständige Protokoll nach erfolgreicher Zahlung.
+   Speichert den Kauf in Firestore unter users/{uid}/purchases.
    ═══════════════════════════════════════════════════════════════ */
 
 const GOAL_LABELS = {
@@ -18,6 +19,37 @@ const goal = params.get('goal') || 'focus';
 
 /* ── Compound-Daten holen ── */
 const stack = (typeof STACKS !== 'undefined' ? STACKS[goal] : null) || (typeof STACKS !== 'undefined' ? STACKS.focus : []);
+
+/* ── Kauf in Firestore speichern (wenn eingeloggt) ── */
+function savePurchase() {
+  if (!sessionId) return;
+
+  const user = typeof firebase !== 'undefined' ? firebase.auth().currentUser : null;
+  if (!user) return;
+
+  /* Prüfen ob schon gespeichert */
+  const alreadySaved = sessionStorage.getItem('purchase_saved_' + sessionId);
+  if (alreadySaved) return;
+
+  const db = firebase.firestore();
+  const purchaseData = {
+    goal: goal,
+    goalLabel: GOAL_LABELS[goal] || goal,
+    stripeSessionId: sessionId,
+    productType: 'onetime',
+    purchasedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    compounds: stack.map(function(c) { return { name: c.name, dose: c.dose }; }),
+  };
+
+  db.collection('users').doc(user.uid).collection('purchases').add(purchaseData)
+    .then(function() {
+      sessionStorage.setItem('purchase_saved_' + sessionId, 'true');
+      console.log('[Unlock] Purchase saved for user:', user.uid);
+    })
+    .catch(function(err) {
+      console.error('[Unlock] Error saving purchase:', err);
+    });
+}
 
 /* ── Protocol Details rendern ── */
 function renderProtocol() {
@@ -65,27 +97,12 @@ function toggleMechanism(btn) {
     : '+ Wie es wirkt (Mechanismus)';
 }
 
-/* ── Stripe Session verifizieren (optional, extra Sicherheit) ── */
-function verifySession() {
-  if (!sessionId) {
-    /* Kein session_id → User hat die URL manuell aufgerufen */
-    /* Zeig das Protokoll trotzdem — kein Gatekeeping */
-    renderProtocol();
-    return;
-  }
-
-  /* Optional: Session-Status bei Stripe prüfen */
-  /* Für MVP: einfach rendern — der Webhook hat den Kauf schon gespeichert */
-  renderProtocol();
-
-  /* Future: fetch(`/api/verify-session?id=${sessionId}`) */
-}
-
 /* ── Init ── */
 if (!stack || !stack.length) {
   document.getElementById('unlockLoading').innerHTML =
     '<p style="color:var(--color-muted);font-size:15px;">Protokoll konnte nicht geladen werden.</p>' +
     '<a href="quiz-result.html" class="btn-primary" style="margin-top:1rem;display:inline-block;">Zurück <span class="btn-arrow">→</span></a>';
 } else {
-  verifySession();
+  if (sessionId) savePurchase();
+  renderProtocol();
 }
