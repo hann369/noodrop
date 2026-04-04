@@ -85,16 +85,24 @@
 
   <!-- Auth: User muss eingeloggt sein -->
   <script>
+  console.log('[Unlock HTML] Page loaded, checking auth...');
   firebase.auth().onAuthStateChanged(function(user) {
+    console.log('[Unlock HTML] Auth state:', user ? user.email : 'NOT LOGGED IN');
     if (!user) {
-      /* Nicht eingeloggt → zurück zur Ergebnis-Seite */
+      console.warn('[Unlock HTML] Redirecting to quiz-result.html — not logged in');
       window.location.href = 'quiz-result.html';
+    } else {
+      console.log('[Unlock HTML] User authenticated, proceeding...');
     }
   });
   </script>
 
   <!-- Compound data -->
   <script src="quiz-result-data.js"></script>
+  <script>
+    console.log('[Unlock HTML] quiz-result-data.js loaded');
+    console.log('[Unlock HTML] STACKS keys:', typeof STACKS !== 'undefined' ? Object.keys(STACKS) : 'UNDEFINED');
+  </script>
   <script src="quiz-result-unlocked.js"></script>
 
   <!-- Theme -->
