@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz.js  v2
+   Metacognition — quiz.js  v2
    11-Schritte Quiz: MC, Slider, Freitext.
    Sendet alle Antworten an NooAI API → personalisierter Stack.
    ═══════════════════════════════════════════════════════════════ */
@@ -196,7 +196,7 @@ function animateLoadingSteps() {
     } else {
       clearInterval(interval);
       /* Quiz-Antworten speichern und zur Result-Seite */
-      sessionStorage.setItem('noodrop_quiz', JSON.stringify(answers));
+      sessionStorage.setItem('Metacognition_quiz', JSON.stringify(answers));
       setTimeout(() => { window.location.href = 'quiz-result.html'; }, 600);
     }
   }, 480);

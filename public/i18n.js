@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — i18n.js  v2.0
+   Metacognition — i18n.js  v2.0
    All locales INLINE — no external JSON files, no 404s.
    Works on file://, localhost, Vercel — everywhere.
 ═══════════════════════════════════════════════════════════════ */
@@ -70,7 +70,7 @@
       result_email_cta:"Get Stack",
       result_skip:"Skip →",
       blog:{
-        eyebrow:'Noodrop · Research & Insights',
+        eyebrow:'Metacognition · Research & Insights',
         h1:'Deep dives. Evidence first. No fluff.',
         sub:"Research breakdowns, protocol guides, and skillmaxxing science — written for people who actually want to understand what they're putting in their brain.",
         tabAll:'All Posts',tabNootropics:'Nootropics',tabSkillmaxxing:'Skillmaxxing',
@@ -88,7 +88,7 @@
       },
       common:{
         cookieNotice:'We use cookies to improve your experience.',
-        accept:'Accept',impressum:'Impressum',copyright:'© 2026 Noodrop · Educational purposes only.'
+        accept:'Accept',impressum:'Impressum',copyright:'© 2026 Metacognition · Educational purposes only.'
       }
     },
     de:{
@@ -143,7 +143,7 @@
       result_email_cta:"Stack erhalten",
       result_skip:"Überspringen →",
       blog:{
-        eyebrow:'Noodrop · Forschung & Einblicke',
+        eyebrow:'Metacognition · Forschung & Einblicke',
         h1:'Tiefe Einblicke. Evidenz zuerst. Kein Füllstoff.',
         sub:'Forschungsanalysen, Protokollführer und Skillmaxxing-Wissenschaft — für Menschen, die wirklich verstehen wollen, was sie in ihr Gehirn stecken.',
         tabAll:'Alle Beiträge',tabNootropics:'Nootropika',tabSkillmaxxing:'Skillmaxxing',
@@ -161,7 +161,7 @@
       },
       common:{
         cookieNotice:'Wir verwenden Cookies, um deine Erfahrung zu verbessern.',
-        accept:'Akzeptieren',impressum:'Impressum',copyright:'© 2026 Noodrop · Nur zu Bildungszwecken.'
+        accept:'Akzeptieren',impressum:'Impressum',copyright:'© 2026 Metacognition · Nur zu Bildungszwecken.'
       }
     },
     pt:{
@@ -216,7 +216,7 @@
       result_email_cta:"Receber Stack",
       result_skip:"Pular →",
       blog:{
-        eyebrow:'Noodrop · Pesquisa & Insights',
+        eyebrow:'Metacognition · Pesquisa & Insights',
         h1:'Análises profundas. Evidências primeiro. Sem enrolação.',
         sub:'Análises de pesquisa, guias de protocolo e ciência de skillmaxxing — para pessoas que querem entender o que estão colocando no cérebro.',
         tabAll:'Todos os posts',tabNootropics:'Nootrópicos',tabSkillmaxxing:'Skillmaxxing',
@@ -234,7 +234,7 @@
       },
       common:{
         cookieNotice:'Usamos cookies para melhorar sua experiência.',
-        accept:'Aceitar',impressum:'Aviso Legal',copyright:'© 2026 Noodrop · Apenas para fins educacionais.'
+        accept:'Aceitar',impressum:'Aviso Legal',copyright:'© 2026 Metacognition · Apenas para fins educacionais.'
       }
     }
   };

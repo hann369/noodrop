@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz-result-data.js  v2
+   Metacognition — quiz-result-data.js  v2
    Erweiterte Compound-Daten mit dynamischen Werten für:
    - Dosierung (nach Erfahrungslevel)
    - Timing (nach Lifestyle)

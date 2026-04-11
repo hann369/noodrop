@@ -1,11 +1,11 @@
 // api/generate-stack.js — Vercel Serverless Function
 // NooAI generiert aus 11 Quiz-Antworten einen personalisierten Stack.
-// Nutzt Groq (Llama 3.3 70B) mit Noodrop Compound Database als Kontext.
+// Nutzt Groq (Llama 3.3 70B) mit Metacognition Compound Database als Kontext.
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL = 'llama-3.3-70b-versatile';
 
-const SYSTEM_PROMPT = `You are NooAI, the expert nootropics engine for Noodrop.
+const SYSTEM_PROMPT = `You are NooAI, the expert nootropics engine for Metacognition.
 
 TASK: Generate a personalized nootropics stack based on user quiz answers.
 

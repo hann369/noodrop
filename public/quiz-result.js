@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz-result.js  v4
+   Metacognition — quiz-result.js  v4
    Email Capture → NooAI generiert Stack → Stripe Paywall.
    Fixes: Free preview zeigt NUR Namen, Stripe besser, Fallback robuster
    ═══════════════════════════════════════════════════════════════ */
 
-const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
+const answers = JSON.parse(sessionStorage.getItem('Metacognition_quiz') || '{}');
 const goal = answers.goal || 'focus';
 let aiStack = null;
 
@@ -39,7 +39,7 @@ async function generateStack() {
   }
 
   /* In sessionStorage für Unlock-Seite */
-  sessionStorage.setItem('noodrop_ai_stack', JSON.stringify(aiStack));
+  sessionStorage.setItem('Metacognition_ai_stack', JSON.stringify(aiStack));
 
   /* UI updaten */
   const label = document.getElementById('compoundsLabel');

@@ -3,7 +3,7 @@
 // OHNE firebase-admin — nutzt Firestore REST API mit Service Account Token.
 
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
-const FIRESTORE_PROJECT = process.env.FIREBASE_PROJECT_ID || 'noodrop-c9be9';
+const FIRESTORE_PROJECT = process.env.FIREBASE_PROJECT_ID || 'Metacognition-c9be9';
 
 /* 
   Hinweis: Da wir kein firebase-admin im Serverless Kontext nutzen,

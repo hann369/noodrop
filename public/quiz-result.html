@@ -9,7 +9,7 @@
   <script src="i18n.js"></script>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#E8541A">
-  <title>Dein Stack — Noodrop</title>
+  <title>Dein Stack — Metacognition</title>
 
   <link rel="stylesheet" href="quiz-result.css">
 </head>
@@ -17,14 +17,16 @@
 
   <!-- NAV -->
   <header class="nd-header" id="ndHeader">
-    <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>noodrop</a>
+    <a href="landing.html" class="nd-logo"><span class="nd-logo-pip"></span>Metacognition</a>
     <nav class="nd-nav" id="ndNav" aria-label="Main navigation">
-      <div class="nd-nav-header"><span class="nd-nav-title">noodrop</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
+      <div class="nd-nav-header"><span class="nd-nav-title">Metacognition</span><button class="nd-nav-close" id="ndNavClose" aria-label="Close">✕</button></div>
       <div class="nd-nav-links">
         <a href="landing.html" class="nd-nav__link" data-i18n="nav.home">Home<span class="nav-arrow">›</span></a>
         <a href="index.html"   class="nd-nav__link" data-i18n="nav.library">Library<span class="nav-arrow">›</span></a>
         <a href="stack.html"   class="nd-nav__link" data-i18n="nav.stacks">Stacks<span class="nav-arrow">›</span></a>
         <a href="marketplace.html" class="nd-nav__link" data-i18n="nav.marketplace">Marketplace<span class="nav-arrow">›</span></a>
+        <a href="european-summer.html" class="nd-nav__link">European Summer<span class="nav-arrow">›</span></a>
+        <a href="health.html"   class="nd-nav__link">Health<span class="nav-arrow">›</span></a>
         <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
         <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
         <a href="nooai.html"   class="nd-nav__link" data-i18n="nav.nooai">NooAI<span class="nav-arrow">›</span></a>
@@ -131,7 +133,7 @@
           <!-- Pro (shown first — price anchoring) -->
           <div class="pricing-card featured">
             <div class="pricing-badge">Beliebteste Wahl</div>
-            <div class="pricing-name">Noodrop Pro</div>
+            <div class="pricing-name">Metacognition Pro</div>
             <div class="pricing-price">€4,99 <span>/Monat</span></div>
             <ul class="pricing-features">
               <li>✓ Alle Stack-Protokolle (unbegrenzt)</li>
@@ -234,7 +236,7 @@
   <!-- No-quiz-redirect guard -->
   <script>
   (function(){
-    var raw = sessionStorage.getItem('noodrop_quiz');
+    var raw = sessionStorage.getItem('Metacognition_quiz');
     if(!raw){
       document.getElementById('noData').style.display='block';
       document.getElementById('emailGate').style.display='none';

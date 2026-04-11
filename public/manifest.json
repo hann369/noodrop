@@ -1,7 +1,7 @@
 {
-  "name": "Noodrop",
-  "short_name": "Noodrop",
-  "description": "Nootropics research platform — library, stack builder & marketplace",
+  "name": "Metacognition",
+  "short_name": "Metacognition",
+  "description": "Brain optimization platform — 5 pillars: Health, Fitness, Supplementation, Skills, Social",
   "start_url": "/landing.html",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -26,14 +26,14 @@
     {
       "name": "Library",
       "short_name": "Library",
-      "description": "Browse compounds",
+      "description": "Browse compounds and protocols",
       "url": "/index.html",
       "icons": [{ "src": "https://res.cloudinary.com/noodrop/image/upload/icon-96.png", "sizes": "96x96" }]
     },
     {
       "name": "Stack Builder",
       "short_name": "Stacks",
-      "description": "Build your nootropic stack",
+      "description": "Build your optimization protocol",
       "url": "/stack.html",
       "icons": [{ "src": "https://res.cloudinary.com/noodrop/image/upload/icon-96.png", "sizes": "96x96" }]
     }

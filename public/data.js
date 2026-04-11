@@ -1,5 +1,5 @@
 // =============================================
-// NOODROP CENTRALIZED DATA - data.js  v2
+// Metacognition CENTRALIZED DATA - data.js  v2
 // Fixed: broken URLs replaced with real PubMed links
 // Added: type field for evidence tabs (rct/animal/review/anecdotal)
 // =============================================
@@ -715,4 +715,4 @@ window.interactions = {
   }
 };
 
-console.log('%c✅ Noodrop data.js v2 loaded — ' + compounds.length + ' compounds', 'color:#E8541A;font-weight:bold');
+console.log('%c✅ Metacognition data.js v2 loaded — ' + compounds.length + ' compounds', 'color:#E8541A;font-weight:bold');

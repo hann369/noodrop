@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
-   Noodrop Service Worker — v5
+   Metacognition Service Worker — v5
    ⚠️  BUMP THIS VERSION STRING ON EVERY DEPLOY
-       e.g. noodrop-v5 → noodrop-v6
+       e.g. Metacognition-v5 → Metacognition-v6
        This is what triggers cache invalidation for all users.
 ═══════════════════════════════════════════════════════════════ */
-const CACHE = 'noodrop-v5';
+const CACHE = 'Metacognition-v5';
 const OFFLINE_URL = '/404.html';
 
 // Only static assets are cached — HTML is always fetched fresh.

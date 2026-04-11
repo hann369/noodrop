@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — firebase-config.js
+   Metacognition — firebase-config.js
    Single source of truth for Firebase configuration.
    Include this file ONCE in every page that uses Firebase,
    BEFORE any other Firebase usage scripts.
@@ -11,9 +11,9 @@
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFu_w-MmLJRdiOOZoLii8-SQBN9FUtG60",
-  authDomain: "noodrop-c9be9.firebaseapp.com",
-  projectId: "noodrop-c9be9",
-  storageBucket: "noodrop-c9be9.firebasestorage.app",
+  authDomain: "Metacognition-c9be9.firebaseapp.com",
+  projectId: "Metacognition-c9be9",
+  storageBucket: "Metacognition-c9be9.firebasestorage.app",
   messagingSenderId: "903301545011",
   appId: "1:903301545011:web:84a6c4ba643a9b255d7746"
 };

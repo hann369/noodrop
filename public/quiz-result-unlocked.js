@@ -1,12 +1,12 @@
 /* ═══════════════════════════════════════════════════════════════
-   NOODROP — quiz-result-unlocked.js  v4
+   Metacognition — quiz-result-unlocked.js  v4
    Fixes: 1) Purchase speichern (warte auf Auth) 2) Print-Text dunkel
    ═══════════════════════════════════════════════════════════════ */
 
 const params = new URLSearchParams(window.location.search);
 const sessionId = params.get('session_id');
 const goalParam = params.get('goal') || 'focus';
-const answers = JSON.parse(sessionStorage.getItem('noodrop_quiz') || '{}');
+const answers = JSON.parse(sessionStorage.getItem('Metacognition_quiz') || '{}');
 
 const GOAL_LABELS = {
   focus: 'Fokus & Konzentration',
@@ -166,7 +166,7 @@ function init() {
   try {
     if (sessionId) savePurchase();
 
-    const aiStackStr = sessionStorage.getItem('noodrop_ai_stack');
+    const aiStackStr = sessionStorage.getItem('Metacognition_ai_stack');
     if (aiStackStr) {
       try {
         const stack = JSON.parse(aiStackStr);

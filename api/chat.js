@@ -4,8 +4,8 @@
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const MODEL        = 'llama-3.3-70b-versatile'; // free on Groq
 
-// ── Full Noodrop compound + interaction context ────────────────────
-const COMPOUND_CONTEXT = `=== NOODROP COMPOUND DATABASE ===
+// ── Full Metacognition compound + interaction context ────────────────────
+const COMPOUND_CONTEXT = `=== Metacognition COMPOUND DATABASE ===
 
 ## Piracetam (Racetams)
 Description: The original racetam. Enhances memory formation and learning ability.
@@ -207,7 +207,7 @@ Warnings: RESEARCH CHEMICAL — NOT APPROVED | Primarily preclinical data | Powe
 
 [MAOI Warning 🚨] 9-Me-BC × any stimulant: 9-Me-BC has MAOI properties. Combining with stimulants, caffeine, or tyramine-rich foods can cause hypertensive crisis. DANGEROUS.`;
 
-const SYSTEM_PROMPT = `You are NooAI, the intelligent research assistant for Noodrop — a nootropics research platform at noodrop.vercel.app.
+const SYSTEM_PROMPT = `You are NooAI, the intelligent research assistant for Metacognition — a nootropics research platform at Metacognition.vercel.app.
 
 You are an expert in cognitive enhancement compounds, neuroscience, pharmacology, and harm reduction. Your tone is like a knowledgeable friend with a PhD in pharmacology: direct, specific, honest about risks, evidence-aware.
 
@@ -233,7 +233,7 @@ STACK RECOMMENDATIONS:
 - Mention how long until effects are noticeable
 
 DATABASE:
-Use the Noodrop compound database below as your primary source. For questions outside the database, use general pharmacology knowledge but say so.
+Use the Metacognition compound database below as your primary source. For questions outside the database, use general pharmacology knowledge but say so.
 
 ${COMPOUND_CONTEXT}
 

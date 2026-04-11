@@ -3,7 +3,7 @@
 // Wird von quiz-result.html aufgerufen.
 
 const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY; // sk_test_... oder sk_live_...
-const DOMAIN = process.env.NOODROP_URL || 'https://noodrop.vercel.app';
+const DOMAIN = process.env.Metacognition_URL || 'https://Metacognition.vercel.app';
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,5 +1,5 @@
-# Noodrop robots.txt
-# https://noodrop.vercel.app
+# Metacognition robots.txt
+# https://metacognition.vercel.app
 
 User-agent: *
 Allow: /
@@ -29,4 +29,4 @@ Allow: /nooai.html
 Allow: /european-summer.html
 
 # Sitemap
-Sitemap: https://noodrop.vercel.app/sitemap.xml
+Sitemap: https://metacognition.vercel.app/sitemap.xml
