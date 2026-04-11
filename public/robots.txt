@@ -1,0 +1,32 @@
+# Noodrop robots.txt
+# https://noodrop.vercel.app
+
+User-agent: *
+Allow: /
+
+# Private pages
+Disallow: /impressum.html
+Disallow: /profile.html
+Disallow: /quiz-result.html
+Disallow: /quiz-result-unlocked.html
+Disallow: /pay-verification.html
+
+# Admin/API paths
+Disallow: /api/
+Disallow: /firebase-config.js
+
+# Allow important pages
+Allow: /landing.html
+Allow: /index.html
+Allow: /quiz.html
+Allow: /marketplace.html
+Allow: /stack.html
+Allow: /about.html
+Allow: /faq.html
+Allow: /blog.html
+Allow: /health.html
+Allow: /nooai.html
+Allow: /european-summer.html
+
+# Sitemap
+Sitemap: https://noodrop.vercel.app/sitemap.xml

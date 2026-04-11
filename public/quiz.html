@@ -9,7 +9,20 @@
   <script src="i18n.js"></script>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#E8541A">
-  <title>Finde deinen Stack — Noodrop</title>
+  <title>Personalisierter Nootropics Stack Builder — Noodrop Quiz | hann369</title>
+  <meta name="description" content="Finde deinen perfekten Nootropics-Stack in 2 Minuten. Beantworte persönliche Fragen und erhalte ein evidenzbasiertes Cognitive Enhancement Protokoll von hann369.">
+  <meta name="keywords" content="noodrop, hann369, nootropics stack builder, personalisierte Nootropika, Quiz, Cognitive Enhancement Protokoll">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://noodrop.vercel.app/quiz.html">
+  <meta property="og:title" content="Personalisierter Nootropics Stack Builder — Noodrop Quiz">
+  <meta property="og:description" content="Finde deinen perfekten Stack in 2 Minuten. Ein evidenzbasiertes Protokoll, zugeschnitten auf deine Ziele.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://noodrop.vercel.app/quiz.html">
+  <meta property="og:site_name" content="Noodrop">
+  <meta property="og:locale" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Nootropics Stack Builder Quiz — Noodrop">
+  <meta name="twitter:description" content="Finde deinen perfekten Stack in 2 Minuten. Evidenzbasiert, personalisiert.">
 
   <link rel="stylesheet" href="quiz.css">
 </head>
@@ -30,6 +43,8 @@
         <a href="index.html"   class="nd-nav__link">Library<span class="nav-arrow">›</span></a>
         <a href="stack.html"   class="nd-nav__link">Stacks<span class="nav-arrow">›</span></a>
         <a href="marketplace.html" class="nd-nav__link">Marketplace<span class="nav-arrow">›</span></a>
+        <a href="european-summer.html" class="nd-nav__link">European Summer<span class="nav-arrow">›</span></a>
+        <a href="health.html"   class="nd-nav__link">Health<span class="nav-arrow">›</span></a>
         <a href="about.html"   class="nd-nav__link">About<span class="nav-arrow">›</span></a>
         <a href="faq.html"     class="nd-nav__link">FAQ<span class="nav-arrow">›</span></a>
         <a href="nooai.html"   class="nd-nav__link">NooAI<span class="nav-arrow">›</span></a>
@@ -54,7 +69,7 @@
 
     <!-- 1: Hauptziel -->
     <div class="quiz-step active" data-step="1">
-      <h1 class="quiz-headline">Was ist dein<br><em>Hauptziel?</em></h1>
+      <h2 class="quiz-headline">Was ist dein<br><em>Hauptziel?</em></h2>
       <p class="quiz-desc">Wähle das, was dir gerade am wichtigsten ist.</p>
       <div class="quiz-options" data-key="goal">
         <button class="quiz-option" data-value="focus">
@@ -87,7 +102,7 @@
 
     <!-- 2: Erfahrungslevel -->
     <div class="quiz-step" data-step="2">
-      <h1 class="quiz-headline">Wie erfahren bist du<br><em>mit Nootropics?</em></h1>
+      <h2 class="quiz-headline">Wie erfahren bist du<br><em>mit Nootropics?</em></h2>
       <p class="quiz-desc">Das beeinflusst welche Compounds und Dosierungen wir empfehlen.</p>
       <div class="quiz-options" data-key="experience">
         <button class="quiz-option" data-value="beginner">
@@ -110,7 +125,7 @@
 
     <!-- 3: Größtes Problem -->
     <div class="quiz-step" data-step="3">
-      <h1 class="quiz-headline">Was ist dein<br><em>größtes Problem?</em></h1>
+      <h2 class="quiz-headline">Was ist dein<br><em>größtes Problem?</em></h2>
       <p class="quiz-desc">Sei ehrlich — das macht dein Protokoll präziser.</p>
       <div class="quiz-options" data-key="problem">
         <button class="quiz-option" data-value="brainfog">
@@ -143,7 +158,7 @@
 
     <!-- 4: Lifestyle -->
     <div class="quiz-step" data-step="4">
-      <h1 class="quiz-headline">Wie sieht dein<br><em>Alltag aus?</em></h1>
+      <h2 class="quiz-headline">Wie sieht dein<br><em>Alltag aus?</em></h2>
       <p class="quiz-desc">Verschiedene Lifestyles brauchen verschiedene Stacks.</p>
       <div class="quiz-options" data-key="lifestyle">
         <button class="quiz-option" data-value="student">
@@ -171,7 +186,7 @@
 
     <!-- 5: Medikamente/Supplemente -->
     <div class="quiz-step" data-step="5">
-      <h1 class="quiz-headline">Nimmst du aktuell<br><em>andere Mittel?</em></h1>
+      <h2 class="quiz-headline">Nimmst du aktuell<br><em>andere Mittel?</em></h2>
       <p class="quiz-desc">Wichtig für Sicherheit und Interaktions-Check.</p>
       <div class="quiz-options" data-key="medication">
         <button class="quiz-option" data-value="none">
@@ -194,7 +209,7 @@
 
     <!-- 6: Koffein-Konsum -->
     <div class="quiz-step" data-step="6">
-      <h1 class="quiz-headline">Wie viel Koffein<br><em>nimmst du täglich?</em></h1>
+      <h2 class="quiz-headline">Wie viel Koffein<br><em>nimmst du täglich?</em></h2>
       <p class="quiz-desc">Beeinflusst ob und wie wir Koffein in deinen Stack integrieren.</p>
       <div class="quiz-options" data-key="caffeine">
         <button class="quiz-option" data-value="none">
@@ -222,7 +237,7 @@
 
     <!-- 7: Budget -->
     <div class="quiz-step" data-step="7">
-      <h1 class="quiz-headline">Was ist dir dein Stack<br><em>pro Monat wert?</em></h1>
+      <h2 class="quiz-headline">Was ist dir dein Stack<br><em>pro Monat wert?</em></h2>
       <p class="quiz-desc">Wir optimieren für dein Budget — gute Stacks gibt es in jeder Preisklasse.</p>
       <div class="quiz-options" data-key="budget">
         <button class="quiz-option" data-value="low">
@@ -245,7 +260,7 @@
 
     <!-- 8: Schlafqualität (Slider) -->
     <div class="quiz-step" data-step="8">
-      <h1 class="quiz-headline">Wie bewertest du<br><em>deinen Schlaf?</em></h1>
+      <h2 class="quiz-headline">Wie bewertest du<br><em>deinen Schlaf?</em></h2>
       <p class="quiz-desc">1 = fühlst dich gerädert, 10 = perfekt erholt.</p>
       <div class="quiz-slider-wrap">
         <div class="quiz-slider-labels">
@@ -260,7 +275,7 @@
 
     <!-- 9: Stresslevel (Slider) -->
     <div class="quiz-step" data-step="9">
-      <h1 class="quiz-headline">Wie hoch ist dein<br><em>Stresslevel?</em></h1>
+      <h2 class="quiz-headline">Wie hoch ist dein<br><em>Stresslevel?</em></h2>
       <p class="quiz-desc">1 = sehr entspannt, 10 = chronisch gestresst.</p>
       <div class="quiz-slider-wrap">
         <div class="quiz-slider-labels">
@@ -275,7 +290,7 @@
 
     <!-- 10: Besonderheiten (Freitext) -->
     <div class="quiz-step" data-step="10">
-      <h1 class="quiz-headline">Gibt es etwas<br><em>das wir wissen sollten?</em></h1>
+      <h2 class="quiz-headline">Gibt es etwas<br><em>das wir wissen sollten?</em></h2>
       <p class="quiz-desc">Vorerkrankungen, Allergien, aktuelle Beschwerden — alles was deinen Stack beeinflussen könnte.</p>
       <textarea class="quiz-textarea" id="notesInput" data-key="notes" placeholder="z.B. Hashimoto, Reizdarm, häufige Kopfschmerzen, nehme seit 3 Monaten Ashwagandha..." maxlength="500"></textarea>
       <div class="quiz-textarea-counter"><span id="notesCount">0</span>/500</div>
@@ -284,7 +299,7 @@
 
     <!-- 11: Erwartungen (Freitext optional) -->
     <div class="quiz-step" data-step="11">
-      <h1 class="quiz-headline">Was erwartest du dir<br><em>von deinem Stack?</em></h1>
+      <h2 class="quiz-headline">Was erwartest du dir<br><em>von deinem Stack?</em></h2>
       <p class="quiz-desc">Beschreibe in eigenen Worten was sich ändern soll.</p>
       <textarea class="quiz-textarea" id="expectationsInput" data-key="expectations" placeholder="z.B. Ich möchte morgens klarer denken können, nachmittags keinen Crash mehr haben, und besser mit Stress umgehen..." maxlength="500"></textarea>
       <div class="quiz-textarea-counter"><span id="expectationsCount">0</span>/500</div>
